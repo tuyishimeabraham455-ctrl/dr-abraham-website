@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Make It Great | Coaching Platform Concept</title>
-<meta name="description" content="Concept demo: an all-in-one coaching, speaking and community platform."/>
+<title>Yolanda Butler | Make It Great</title>
+<meta name="description" content="Concept demo for Yolanda Butler: financial well-being and small business coaching platform."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet"/>
@@ -102,8 +102,9 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 /* About */
 .about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center}
 .about-art{aspect-ratio:4/5;border-radius:28px;background:linear-gradient(150deg,#FCEFD9,#F3D9A6 50%,var(--gold));position:relative;overflow:hidden;display:grid;place-items:center}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
 .about-art .portrait-mono{color:var(--ink);font-size:6rem}
-.about-art::after{content:"Your photo here";position:absolute;bottom:18px;font-family:var(--head);font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(17,26,23,.5)}
+.about-art:not(:has(.photo))::after{content:"Yolanda's photo here";position:absolute;bottom:18px;font-family:var(--head);font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(17,26,23,.5)}
 .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:2rem}
 .pillar{padding:1.1rem;border-radius:14px;background:var(--cream);border:1px solid var(--line)}
 .pillar b{font-family:var(--head);display:block;margin:.5rem 0 .2rem}
@@ -474,11 +475,11 @@ footer a:hover{color:var(--gold-2)}
   </defs>
 </svg>
 
-<div class="ribbon"><b>CONCEPT DEMO</b>Sample website prepared for review. Content, names and numbers are placeholders.</div>
+<div class="ribbon"><b>CONCEPT DEMO</b>Prepared for Yolanda Butler. Not an official site; sample content for review.</div>
 
 <header>
   <div class="wrap nav">
-    <a href="#home" class="logo"><span class="logo-mark">M</span>Make It Great</a>
+    <a href="#home" class="logo"><span class="logo-mark">YB</span>Yolanda Butler</a>
     <nav class="nav-links">
       <a href="#about">About</a><a href="#programs">Coaching</a><a href="#community">Community</a>
       <a href="#ai">AI Coach</a><a href="#events">Events</a><a href="#shop">Shop</a><a href="#contact">Contact</a>
@@ -505,24 +506,24 @@ footer a:hover{color:var(--gold-2)}
 <section class="hero" id="home">
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">Coach · Speaker · Community Builder</span>
-      <h1>Let's make your next chapter <em>great.</em></h1>
-      <p class="lead">Coaching, live experiences, an AI coach that knows your goals, and a community that keeps you growing, all in one place.</p>
+      <span class="eyebrow">Financial Well-Being Coach · Speaker · Small Business Advisor</span>
+      <h1>Build wealth. Build business. <em>Make it great.</em></h1>
+      <p class="lead">I help entrepreneurs, families, non-profits and ministries grow with financial confidence, practical business strategy and the right connections.</p>
       <div class="hero-ctas">
-        <a href="#programs" class="btn btn-dark">Explore Coaching <svg class="ic" style="width:16px;height:16px"><use href="#i-arrow"/></svg></a>
+        <a href="#programs" class="btn btn-dark">Work With Me <svg class="ic" style="width:16px;height:16px"><use href="#i-arrow"/></svg></a>
         <a href="#booking" class="btn btn-ghost">Book a Free Call</a>
       </div>
       <div class="trust">
-        <div><b>2,400+</b><span>Clients coached</span></div>
-        <div><b>180+</b><span>Stages spoken on</span></div>
-        <div><b>4.9★</b><span>Average rating</span></div>
+        <div><b>30+</b><span>Years as an entrepreneur</span></div>
+        <div><b>13+</b><span>Years at Operation HOPE</span></div>
+        <div><b>33</b><span>Client recommendations</span></div>
       </div>
     </div>
     <div class="hero-visual">
-      <div class="portrait"><span class="portrait-mono">MIG</span><span class="portrait-cap">Portrait / hero video goes here</span></div>
-      <div class="float f1"><span class="dot-live"></span><div><b>Live now</b><small>Monday Momentum Session</small></div></div>
-      <div class="float f2"><span class="avatar a2">JT</span><div><b>"Best investment I made."</b><small>Jordan T., Program client</small></div></div>
-      <div class="float f3"><svg class="ic" style="color:var(--green)"><use href="#i-users"/></svg><div><b>1,280 members</b><small>active in the community</small></div></div>
+      <div class="portrait"><span class="portrait-mono">YB</span><img class="photo" src="images/yolanda.jpg" alt="Yolanda Butler" onerror="this.remove()"/><span class="portrait-cap">Yolanda Butler · Antioch, CA</span></div>
+      <div class="float f1"><span class="dot-live"></span><div><b>Live now</b><small>Money Moves Monday</small></div></div>
+      <div class="float f2"><span class="avatar a2">JS</span><div><b>"THE small business extraordinaire!"</b><small>Jasper S., Financial Planner</small></div></div>
+      <div class="float f3"><svg class="ic" style="color:var(--green)"><use href="#i-users"/></svg><div><b>Each one, reach one</b><small>Entrepreneurs lifting entrepreneurs</small></div></div>
     </div>
   </div>
 </section>
@@ -542,16 +543,16 @@ footer a:hover{color:var(--gold-2)}
 <!-- 2. ABOUT -->
 <section id="about">
   <div class="wrap about-grid">
-    <div class="about-art"><span class="portrait-mono">MIG</span></div>
+    <div class="about-art"><span class="portrait-mono">YB</span><img class="photo" src="images/yolanda.jpg" alt="Yolanda Butler" onerror="this.remove()"/></div>
     <div>
       <span class="eyebrow">About</span>
-      <h2>Hi, I help people <em>make it great.</em></h2>
-      <p class="lead" style="margin-bottom:1rem">This is where her story goes: where she started, the turning point, and why she now helps leaders, entrepreneurs and teams step into their best work.</p>
-      <p class="muted">A short, warm bio builds trust fast. We'll write it together from her real journey, credentials and the people she serves, so every visitor knows within seconds that they're in the right place.</p>
+      <h2>Hi, I'm Yolanda. <em>Let's make it great.</em></h2>
+      <p class="lead" style="margin-bottom:1rem">I've been an entrepreneur for over 30 years, so I know the road because I've walked it. I ran Christian Family Preschool in Oakland for 13 years, grew a consignment business, and have spent the years since helping others build theirs.</p>
+      <p class="muted">I trained women entrepreneurs at Women's Initiative for Self Employment, advised owners at the Contra Costa SBDC, and over 13+ years at Operation HOPE have grown from Small Business Coordinator to VP Community Relations to Financial Well-Being Coach. I studied Business Administration at Cal State East Bay, where I was president of the Black Business Association. Today I bring keynotes, workshops and one-on-one coaching to businesses, non-profits and ministries.</p>
       <div class="pillars">
-        <div class="pillar"><svg class="ic"><use href="#i-target"/></svg><b>Clarity</b><small>Know exactly where you're going.</small></div>
-        <div class="pillar"><svg class="ic"><use href="#i-flame"/></svg><b>Confidence</b><small>Show up fully, every time.</small></div>
-        <div class="pillar"><svg class="ic"><use href="#i-trophy"/></svg><b>Results</b><small>Turn plans into wins.</small></div>
+        <div class="pillar"><svg class="ic"><use href="#i-card"/></svg><b>Financial dignity</b><small>Credit, money management and wealth that lasts.</small></div>
+        <div class="pillar"><svg class="ic"><use href="#i-trophy"/></svg><b>Business growth</b><small>Plans, funding and access to markets.</small></div>
+        <div class="pillar"><svg class="ic"><use href="#i-users"/></svg><b>Social capital</b><small>The right people in your corner.</small></div>
       </div>
     </div>
   </div>
@@ -562,32 +563,32 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap">
     <div class="sec-head center">
       <span class="eyebrow">Coaching &amp; Programs</span>
-      <h2>Choose how you want to <em>grow.</em></h2>
+      <h2>Choose your path to <em>financial freedom.</em></h2>
       <p class="lead">From self-paced courses to private 1:1 coaching. Every program connects to the dashboard, community and AI coach.</p>
     </div>
     <div class="grid g3" style="align-items:stretch">
       <div class="card prog">
         <span class="tag" style="align-self:flex-start">Self-paced</span>
-        <h3>Foundations Course</h3>
-        <div class="price">$297 <small>one-time</small></div>
-        <p class="muted">Video lessons, worksheets and lifetime access to start strong.</p>
-        <ul class="checks"><li>8 video modules</li><li>Downloadable workbook</li><li>Community access</li><li>AI coach (basic)</li></ul>
+        <h3>Money Foundations</h3>
+        <div class="price">$197 <small>one-time</small></div>
+        <p class="muted">Self-paced lessons on budgeting, credit and building generational wealth.</p>
+        <ul class="checks"><li>8 video modules</li><li>Credit &amp; budget workbook</li><li>Community access</li><li>AI coach (basic)</li></ul>
         <a href="#payment" class="btn btn-ghost">Enroll</a>
       </div>
       <div class="card prog feature">
         <span class="tag gold" style="align-self:flex-start">Most popular</span>
-        <h3>Group Accelerator</h3>
-        <div class="price">$1,497 <small>/ 12 weeks</small></div>
-        <p class="muted">Weekly live coaching with a small cohort that keeps you accountable.</p>
-        <ul class="checks"><li>12 live group sessions</li><li>Private cohort space</li><li>Progress dashboard</li><li>AI coach (full)</li><li>Session replays</li></ul>
-        <a href="#payment" class="btn btn-gold">Join the Next Cohort</a>
+        <h3>Small Business Launch Lab</h3>
+        <div class="price">$997 <small>/ 11 weeks</small></div>
+        <p class="muted">Yolanda's signature 11-week course: from business plan to funding-ready.</p>
+        <ul class="checks"><li>11 live group sessions</li><li>Business plan templates</li><li>Progress dashboard</li><li>AI coach (full)</li><li>Session replays</li></ul>
+        <a href="#payment" class="btn btn-gold">Join the Next Lab</a>
       </div>
       <div class="card prog">
         <span class="tag rose" style="align-self:flex-start">Application only</span>
-        <h3>1:1 Private Coaching</h3>
-        <div class="price">$4,500 <small>/ 3 months</small></div>
-        <p class="muted">Deep, personal work with direct access between sessions.</p>
-        <ul class="checks"><li>Bi-weekly private calls</li><li>Voice-note access</li><li>Custom action plans</li><li>VIP event seats</li></ul>
+        <h3>1:1 Business &amp; Money Coaching</h3>
+        <div class="price">$2,500 <small>/ 3 months</small></div>
+        <p class="muted">Personal strategy for financing, growth and access to markets.</p>
+        <ul class="checks"><li>Bi-weekly private calls</li><li>Funding &amp; lender readiness</li><li>Introductions to her network</li><li>VIP event seats</li></ul>
         <a href="#booking" class="btn btn-ghost">Apply Now</a>
       </div>
     </div>
@@ -605,12 +606,12 @@ footer a:hover{color:var(--gold-2)}
     <div class="book-grid">
       <div class="session-list" id="sessions">
         <button class="session active"><span><svg class="ic"><use href="#i-phone"/></svg></span><div><b>Discovery Call</b><small>20 min · Video</small></div><em>Free</em></button>
-        <button class="session"><span><svg class="ic"><use href="#i-target"/></svg></span><div><b>Strategy Session</b><small>60 min · Video</small></div><em>$250</em></button>
-        <button class="session"><span><svg class="ic"><use href="#i-mic"/></svg></span><div><b>Speaking Inquiry</b><small>30 min · For event planners</small></div><em>Free</em></button>
-        <button class="session"><span><svg class="ic"><use href="#i-users"/></svg></span><div><b>Team Workshop</b><small>Half / full day · On-site</small></div><em>Quote</em></button>
+        <button class="session"><span><svg class="ic"><use href="#i-target"/></svg></span><div><b>Business Strategy Session</b><small>60 min · Video</small></div><em>$250</em></button>
+        <button class="session"><span><svg class="ic"><use href="#i-mic"/></svg></span><div><b>Keynote / Panel Inquiry</b><small>30 min · Speaker, moderator</small></div><em>Free</em></button>
+        <button class="session"><span><svg class="ic"><use href="#i-users"/></svg></span><div><b>Workshop for Your Group</b><small>Non-profits, ministries, teams</small></div><em>Quote</em></button>
       </div>
       <div class="card cal">
-        <div class="cal-head"><b>November 2026</b><span class="muted" style="font-size:.85rem">GMT-5 · Eastern</span></div>
+        <div class="cal-head"><b>November 2026</b><span class="muted" style="font-size:.85rem">PT · Pacific</span></div>
         <div class="cal-days" id="calDays"></div>
         <div class="slots" id="slots"><button>9:00 AM</button><button class="sel">10:30 AM</button><button>1:00 PM</button><button>2:30 PM</button><button>4:00 PM</button></div>
         <a href="#" class="btn btn-dark demo" style="width:100%;justify-content:center">Confirm Booking</a>
@@ -639,14 +640,14 @@ footer a:hover{color:var(--gold-2)}
       <div class="feed">
         <div class="card compose"><span class="avatar a4">YOU</span><input placeholder="Share a win or ask the community..."/><button class="btn btn-dark btn-sm demo">Post</button></div>
         <div class="card post">
-          <div class="post-top"><span class="avatar a1">MG</span><div><b>Make It Great <span class="tag" style="margin-left:.3rem">Coach</span></b><small>Pinned · 2h ago</small></div></div>
-          <p>This week's challenge: write down ONE thing you've been putting off and do it before Friday. Drop it in the comments so we can cheer you on!</p>
-          <div class="post-media"><svg class="ic" style="color:var(--green);width:30px;height:30px"><use href="#i-flame"/></svg><div><b>Weekly Challenge #14</b><br/><small class="muted">142 members joined</small></div></div>
+          <div class="post-top"><span class="avatar a1">YB</span><div><b>Yolanda Butler <span class="tag" style="margin-left:.3rem">Coach</span></b><small>Pinned · 2h ago</small></div></div>
+          <p>Know your worth and know where you are valued. 💎 This week's challenge: raise ONE price or send ONE proposal you've been sitting on. Drop it in the comments so we can cheer you on!</p>
+          <div class="post-media"><svg class="ic" style="color:var(--green);width:30px;height:30px"><use href="#i-flame"/></svg><div><b>Know Your Worth Challenge</b><br/><small class="muted">142 members joined</small></div></div>
           <div class="post-act"><button class="like"><svg class="ic" style="width:18px;height:18px"><use href="#i-heart"/></svg><span>214</span></button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-chat"/></svg>68</button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-share"/></svg>Share</button></div>
         </div>
         <div class="card post">
-          <div class="post-top"><span class="avatar a2">AR</span><div><b>Amara R.</b><small>Group Accelerator · 5h ago</small></div></div>
-          <p>Just signed my first corporate client after 6 weeks in the program. Still shaking! Thank you all for the support on my pitch practice. 🎉</p>
+          <div class="post-top"><span class="avatar a2">AR</span><div><b>Amara R.</b><small>Launch Lab · 5h ago</small></div></div>
+          <p>Just got approved for my first business microloan after the Launch Lab! Thank you Yolanda and everyone who reviewed my plan. 🎉</p>
           <div class="post-act"><button class="like"><svg class="ic" style="width:18px;height:18px"><use href="#i-heart"/></svg><span>97</span></button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-chat"/></svg>31</button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-share"/></svg>Share</button></div>
         </div>
       </div>
@@ -674,22 +675,22 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap ai-grid">
     <div>
       <span class="eyebrow">Custom-Trained AI</span>
-      <h2>Her coaching, <em>available 24/7.</em></h2>
-      <p class="lead">An AI assistant trained on her frameworks, talks and courses. It answers in her voice, recommends the right program and books calls while she sleeps.</p>
+      <h2>Yolanda's guidance, <em>available 24/7.</em></h2>
+      <p class="lead">An AI assistant trained on Yolanda's workshops, courses and decades of small business know-how. It answers in her voice, recommends the right program and books calls around the clock.</p>
       <div class="ai-points">
-        <div class="ai-point"><span><svg class="ic"><use href="#i-book"/></svg></span><div><b>Trained on her content</b><small>Courses, podcast, books and FAQs.</small></div></div>
+        <div class="ai-point"><span><svg class="ic"><use href="#i-book"/></svg></span><div><b>Trained on her content</b><small>Workshops, courses, podcast and FAQs.</small></div></div>
         <div class="ai-point"><span><svg class="ic"><use href="#i-target"/></svg></span><div><b>Personal to each client</b><small>Remembers goals and progress from the dashboard.</small></div></div>
         <div class="ai-point"><span><svg class="ic"><use href="#i-cal"/></svg></span><div><b>Converts visitors</b><small>Suggests programs and books discovery calls.</small></div></div>
       </div>
     </div>
     <div class="chat">
-      <div class="chat-top"><span class="avatar a1"><svg class="ic" style="width:20px;height:20px"><use href="#i-spark"/></svg></span><div><b>MIG Coach AI</b><small>Online · trained on her methods</small></div></div>
+      <div class="chat-top"><span class="avatar a1"><svg class="ic" style="width:20px;height:20px"><use href="#i-spark"/></svg></span><div><b>Yolanda AI</b><small>Online · trained on Yolanda's methods</small></div></div>
       <div class="chat-body" id="chatBody">
-        <div class="msg bot">Hi! I'm the Make It Great coach. What would you like to work on today?</div>
-        <div class="msg me">I keep procrastinating on launching my business.</div>
-        <div class="msg bot">You're not alone. Let's use the <b>3-Step Momentum Method</b>: 1) pick the smallest next step, 2) set a 25-minute timer, 3) share it in the community for accountability. What's one step you could take today?</div>
+        <div class="msg bot">Hi! I'm Yolanda AI. Are we working on your money, your business, or both today?</div>
+        <div class="msg me">I want to start a business but my credit isn't great.</div>
+        <div class="msg bot">Great place to start. Let's take it in three steps: 1) pull your free credit report and list what's hurting your score, 2) separate business and personal spending from day one, 3) look at microloan lenders that work with growing credit. Want a 30-day credit action plan?</div>
       </div>
-      <div class="chips" id="chips"><button>Which program fits me?</button><button>Book a call</button><button>Give me a daily challenge</button></div>
+      <div class="chips" id="chips"><button>Which program fits me?</button><button>Book a call with Yolanda</button><button>How do I get funding?</button></div>
       <form class="chat-form" id="chatForm"><input id="chatInput" placeholder="Ask the AI coach anything..." autocomplete="off"/><button aria-label="Send"><svg class="ic" style="width:18px;height:18px"><use href="#i-send"/></svg></button></form>
     </div>
   </div>
@@ -701,7 +702,7 @@ footer a:hover{color:var(--gold-2)}
     <div class="sec-head center">
       <span class="eyebrow">Dashboard</span>
       <h2>Every client gets <em>their own space.</em></h2>
-      <p class="lead">Courses, sessions, goals, purchases and messages in one login. She gets an admin view of revenue, members and engagement.</p>
+      <p class="lead">Courses, sessions, goals, purchases and messages in one login. Yolanda gets an admin view of revenue, members and engagement.</p>
     </div>
     <div class="card dash">
       <div class="dash-nav">
@@ -730,14 +731,14 @@ footer a:hover{color:var(--gold-2)}
           <div class="card chart">
             <b style="font-family:var(--head)">Up next</b>
             <div class="upnext"><div class="date"><b>14</b><small>Nov</small></div><div>Group Coaching Call<br/><small class="muted">10:30 AM · Zoom</small></div></div>
-            <div class="upnext"><div class="date"><b>16</b><small>Nov</small></div><div>Module 6: Pricing<br/><small class="muted">Unlocks Saturday</small></div></div>
+            <div class="upnext"><div class="date"><b>16</b><small>Nov</small></div><div>Module 6: Funding &amp; Lenders<br/><small class="muted">Unlocks Saturday</small></div></div>
             <div class="upnext"><div class="date"><b>21</b><small>Nov</small></div><div>Live Q&amp;A Session<br/><small class="muted">7:00 PM · Live</small></div></div>
           </div>
         </div>
         <div class="card chart">
           <b style="font-family:var(--head)">My goals</b>
-          <div class="prog-item"><div><span>Launch my offer</span><span>80%</span></div><div class="track"><i style="width:80%"></i></div></div>
-          <div class="prog-item"><div><span>Speak at 2 events</span><span>50%</span></div><div class="track"><i style="width:50%"></i></div></div>
+          <div class="prog-item"><div><span>Finish my business plan</span><span>80%</span></div><div class="track"><i style="width:80%"></i></div></div>
+          <div class="prog-item"><div><span>Raise credit score to 720</span><span>50%</span></div><div class="track"><i style="width:50%"></i></div></div>
         </div>
       </div>
     </div>
@@ -749,23 +750,23 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Podcast</span>
-      <h2>The <em>Make It Great</em> Show</h2>
+      <h2>The <em>Make It Great</em> Show</h2><p style="font-family:var(--head);font-weight:700;margin:-.4rem 0 .8rem">with Yolanda Butler</p>
       <p class="lead">Every episode playable on-site with show notes, transcripts and links, plus one-tap subscribe on every platform.</p>
     </div>
     <div class="card player">
       <div class="cover">Make It Great Show</div>
       <div>
         <span class="tag">Latest episode · Ep. 48</span>
-        <h3 style="font-size:1.4rem;margin-top:.6rem">Confidence Is a Skill, Not a Personality Trait</h3>
+        <h3 style="font-size:1.4rem;margin-top:.6rem">Know Your Worth: Pricing Your Business for Profit</h3>
         <div class="wave" id="wave"></div>
         <div class="p-ctrl"><button class="play" id="playBtn" aria-label="Play"><svg class="ic" style="width:20px;height:20px"><use href="#i-play"/></svg></button><span>12:04 / 38:20</span></div>
       </div>
     </div>
     <div class="grid g2">
-      <div class="card ep"><span class="ep-n">47</span><div><b>From Burnout to Balance</b><small>42 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
-      <div class="card ep"><span class="ep-n">46</span><div><b>Pricing Your Worth</b><small>35 min · Solo</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
-      <div class="card ep"><span class="ep-n">45</span><div><b>Leading Through Change</b><small>51 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
-      <div class="card ep"><span class="ep-n">44</span><div><b>The Morning Momentum Routine</b><small>28 min · Solo</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+      <div class="card ep"><span class="ep-n">47</span><div><b>Credit 101 for Entrepreneurs</b><small>42 min · Solo</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+      <div class="card ep"><span class="ep-n">46</span><div><b>Building Social Capital for Business Growth</b><small>35 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+      <div class="card ep"><span class="ep-n">45</span><div><b>From Preschool Owner to Business Coach</b><small>51 min · My story</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+      <div class="card ep"><span class="ep-n">44</span><div><b>Money Talk for Ministries &amp; Non-Profits</b><small>28 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
     </div>
     <div class="platforms"><span>Spotify</span><span>Apple Podcasts</span><span>YouTube</span><span>Amazon Music</span><span>Audible</span></div>
   </div>
@@ -777,18 +778,18 @@ footer a:hover{color:var(--gold-2)}
     <div class="sec-head">
       <span class="eyebrow">Philanthropy</span>
       <h2>Growth that <em>gives back.</em></h2>
-      <p class="lead">Show the causes she supports, live fundraising progress, and let clients donate or volunteer directly.</p>
+      <p class="lead">The causes Yolanda champions, with live fundraising progress so clients can donate or volunteer directly. Amounts below are sample goals.</p>
     </div>
     <div class="impact">
-      <div><b>$120K</b><small>Raised for causes</small></div>
-      <div><b>3,500</b><small>Youth mentored</small></div>
-      <div><b>12</b><small>Partner charities</small></div>
+      <div><b>01</b><small>Economic Empowerment</small></div>
+      <div><b>02</b><small>Children &amp; Education</small></div>
+      <div><b>03</b><small>Arts &amp; Culture</small></div>
       <div><b>5%</b><small>Of every sale donated</small></div>
     </div>
     <div class="grid g3">
-      <div class="cause"><span><svg class="ic"><use href="#i-cap"/></svg></span><h3>Scholarships for Young Leaders</h3><p>Funding education and mentorship for first-generation students.</p><div class="track"><i style="width:72%"></i></div><div class="meta"><span>$36,000 raised</span><span>72%</span></div></div>
-      <div class="cause"><span><svg class="ic"><use href="#i-water"/></svg></span><h3>Clean Water Initiative</h3><p>Building wells and sanitation in partner communities.</p><div class="track"><i style="width:45%"></i></div><div class="meta"><span>$22,500 raised</span><span>45%</span></div></div>
-      <div class="cause"><span><svg class="ic"><use href="#i-hand"/></svg></span><h3>Women in Business Fund</h3><p>Micro-grants and coaching for women starting businesses.</p><div class="track"><i style="width:88%"></i></div><div class="meta"><span>$44,000 raised</span><span>88%</span></div></div>
+      <div class="cause"><span><svg class="ic"><use href="#i-card"/></svg></span><h3>Financial Literacy for Families</h3><p>Free money-management and credit workshops for underserved communities.</p><div class="track"><i style="width:72%"></i></div><div class="meta"><span>$36,000 raised</span><span>72%</span></div></div>
+      <div class="cause"><span><svg class="ic"><use href="#i-bag"/></svg></span><h3>Black Business Visibility</h3><p>Each one, reach one: spotlighting and funding Black-owned businesses.</p><div class="track"><i style="width:45%"></i></div><div class="meta"><span>$22,500 raised</span><span>45%</span></div></div>
+      <div class="cause"><span><svg class="ic"><use href="#i-cap"/></svg></span><h3>Early Learning Foundations</h3><p>Supporting preschool programs that give young children a strong start.</p><div class="track"><i style="width:88%"></i></div><div class="meta"><span>$44,000 raised</span><span>88%</span></div></div>
     </div>
     <div style="margin-top:28px;display:flex;gap:.8rem;flex-wrap:wrap"><a href="#payment" class="btn btn-gold">Donate</a><a href="#contact" class="btn btn-ghost">Volunteer</a></div>
   </div>
@@ -799,16 +800,16 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Gallery</span>
-      <h2>See her <em>in action.</em></h2>
+      <h2>See Yolanda <em>in action.</em></h2>
       <p class="lead">Speaking reels, coaching moments and highlights, organized so event planners and clients can find them fast.</p>
     </div>
-    <div class="gal-tabs" id="galTabs"><button class="on">All</button><button>Keynotes</button><button>Workshops</button><button>Coaching</button><button>Interviews</button></div>
+    <div class="gal-tabs" id="galTabs"><button class="on">All</button><button>Keynotes</button><button>Panels</button><button>Workshops</button><button>Coaching</button></div>
     <div class="gal">
-      <div class="vid v1"><span class="dur">3:42</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Speaker Reel 2026</b><small>Keynotes · Highlights</small></div></div>
-      <div class="vid v2"><span class="dur">12:10</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Leadership Summit</b><small>Keynote</small></div></div>
-      <div class="vid v3"><span class="dur">8:25</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Team Workshop</b><small>Workshop</small></div></div>
-      <div class="vid v4"><span class="dur">5:02</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Client Breakthrough</b><small>Coaching</small></div></div>
-      <div class="vid v5"><span class="dur">24:18</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Morning Show Interview</b><small>Interview</small></div></div>
+      <div class="vid v1"><span class="dur">3:42</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Speaker Reel</b><small>Keynotes · Panels · Moderating</small></div></div>
+      <div class="vid v2"><span class="dur">12:10</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Small Business Panel</b><small>Panel</small></div></div>
+      <div class="vid v3"><span class="dur">8:25</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Financial Wellness Workshop</b><small>Workshop</small></div></div>
+      <div class="vid v4"><span class="dur">5:02</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Client Success Story</b><small>Coaching</small></div></div>
+      <div class="vid v5"><span class="dur">24:18</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Business Owner Spotlight</b><small>Interview</small></div></div>
     </div>
   </div>
 </section>
@@ -824,15 +825,15 @@ footer a:hover{color:var(--gold-2)}
     <div class="grid g4">
       <div class="card res res-quiz">
         <span style="background:rgba(246,197,107,.15);color:var(--gold-2)"><svg class="ic"><use href="#i-target"/></svg></span>
-        <h3>Quiz: What's holding you back?</h3>
+        <h3>Quiz: Is your business funding-ready?</h3>
         <p>2-minute assessment with a personalized results page and program recommendation.</p>
-        <div class="quiz-opts" id="quiz"><button>Fear of failure</button><button>Lack of clarity</button><button>No time</button><button>No support</button></div>
+        <div class="quiz-opts" id="quiz"><button>I have an idea</button><button>I'm just starting</button><button>I'm growing</button><button>I need capital</button></div>
         <a href="#" class="demo">Get my results <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a>
       </div>
-      <div class="card res"><span style="background:var(--mint);color:var(--green)"><svg class="ic"><use href="#i-book"/></svg></span><h3>Goal-Setting Workbook</h3><p>A printable 20-page PDF to plan your next 90 days.</p><a href="#" class="demo">Download <svg class="ic" style="width:14px;height:14px"><use href="#i-down"/></svg></a></div>
-      <div class="card res"><span style="background:#FCEFD9;color:#9A6413"><svg class="ic"><use href="#i-video"/></svg></span><h3>Free Masterclass</h3><p>A 45-minute on-demand training on building unstoppable momentum.</p><a href="#" class="demo">Watch now <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
-      <div class="card res"><span style="background:#EEE7F6;color:var(--plum)"><svg class="ic"><use href="#i-cal"/></svg></span><h3>30-Day Challenge</h3><p>Daily prompts by email and in the community.</p><a href="#" class="demo">Join free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
-      <div class="card res"><span style="background:#E3EEF7;color:var(--sky)"><svg class="ic"><use href="#i-mail"/></svg></span><h3>Weekly Newsletter</h3><p>One idea, one action, every Monday.</p><a href="#" class="demo">Subscribe <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:var(--mint);color:var(--green)"><svg class="ic"><use href="#i-book"/></svg></span><h3>Business Plan Starter Kit</h3><p>Fill-in templates to write a plan lenders take seriously.</p><a href="#" class="demo">Download <svg class="ic" style="width:14px;height:14px"><use href="#i-down"/></svg></a></div>
+      <div class="card res"><span style="background:#FCEFD9;color:#9A6413"><svg class="ic"><use href="#i-video"/></svg></span><h3>Free Masterclass</h3><p>Credit &amp; Capital: 45 minutes on financing your small business.</p><a href="#" class="demo">Watch now <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:#EEE7F6;color:var(--plum)"><svg class="ic"><use href="#i-cal"/></svg></span><h3>30-Day Money Reset</h3><p>Daily budgeting and credit prompts by email and in the community.</p><a href="#" class="demo">Join free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:#E3EEF7;color:var(--sky)"><svg class="ic"><use href="#i-mail"/></svg></span><h3>Each One Reach One</h3><p>Weekly newsletter: resources, funding news and opportunities.</p><a href="#" class="demo">Subscribe <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
     </div>
   </div>
 </section>
@@ -846,9 +847,9 @@ footer a:hover{color:var(--gold-2)}
       <p class="lead">In-person and virtual events with ticketing, reminders and check-in built in.</p>
     </div>
     <div class="grid" style="gap:14px">
-      <div class="card event"><div class="e-date"><b>06</b><small>Dec</small></div><div><span class="tag gold">In person · VIP available</span><h3>Make It Great LIVE: Annual Summit</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Atlanta, GA</span><span><svg class="ic"><use href="#i-clock"/></svg>9:00 AM - 5:00 PM</span><span><svg class="ic"><use href="#i-ticket"/></svg>48 seats left</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Get Tickets</a></div>
-      <div class="card event"><div class="e-date"><b>18</b><small>Jan</small></div><div><span class="tag">Virtual</span><h3>Vision Board Workshop 2027</h3><div class="e-meta"><span><svg class="ic"><use href="#i-video"/></svg>Online</span><span><svg class="ic"><use href="#i-clock"/></svg>7:00 PM EST</span><span><svg class="ic"><use href="#i-ticket"/></svg>Free for members</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Register</a></div>
-      <div class="card event"><div class="e-date"><b>22</b><small>Feb</small></div><div><span class="tag rose">Retreat · Application</span><h3>Women Who Lead Retreat</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Tulum, Mexico</span><span><svg class="ic"><use href="#i-clock"/></svg>4 days</span><span><svg class="ic"><use href="#i-ticket"/></svg>12 spots</span></div></div><a href="#contact" class="btn btn-dark btn-sm">Apply</a></div>
+      <div class="card event"><div class="e-date"><b>06</b><small>Dec</small></div><div><span class="tag gold">In person · VIP available</span><h3>Make It Great Small Business Summit</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Oakland, CA</span><span><svg class="ic"><use href="#i-clock"/></svg>9:00 AM - 5:00 PM</span><span><svg class="ic"><use href="#i-ticket"/></svg>48 seats left</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Get Tickets</a></div>
+      <div class="card event"><div class="e-date"><b>18</b><small>Jan</small></div><div><span class="tag">Virtual</span><h3>Credit &amp; Capital Workshop</h3><div class="e-meta"><span><svg class="ic"><use href="#i-video"/></svg>Online</span><span><svg class="ic"><use href="#i-clock"/></svg>6:00 PM PT</span><span><svg class="ic"><use href="#i-ticket"/></svg>Free for members</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Register</a></div>
+      <div class="card event"><div class="e-date"><b>22</b><small>Feb</small></div><div><span class="tag rose">Brunch · Limited seats</span><h3>Women in Business Brunch</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Antioch, CA</span><span><svg class="ic"><use href="#i-clock"/></svg>11:00 AM PT</span><span><svg class="ic"><use href="#i-ticket"/></svg>40 seats</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Reserve</a></div>
     </div>
   </div>
 </section>
@@ -858,13 +859,13 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Live Sessions</span>
-      <h2>Go live, <em>right on her site.</em></h2>
+      <h2>Go live, <em>right on the site.</em></h2>
       <p class="lead">Stream coaching calls, Q&amp;As and workshops with live chat, raised hands and automatic replays saved to the dashboard.</p>
     </div>
     <div class="live-grid">
       <div class="stage">
         <div class="stage-top"><span class="tag live">● Live</span><span class="viewers"><svg class="ic" style="width:16px;height:16px"><use href="#i-users"/></svg>326 watching</span></div>
-        <div class="stage-center"><span class="avatar a2">MG</span><b>Monday Momentum Session</b><small>Topic: Setting boundaries that stick</small></div>
+        <div class="stage-center"><span class="avatar a2">YB</span><b>Money Moves Monday</b><small>Topic: Separating business &amp; personal finances</small></div>
         <div class="stage-bar"><span><svg class="ic"><use href="#i-mic"/></svg></span><span><svg class="ic"><use href="#i-video"/></svg></span><span><svg class="ic"><use href="#i-hand"/></svg></span><span class="end"><svg class="ic"><use href="#i-x"/></svg></span></div>
       </div>
       <div class="live-chat">
@@ -872,7 +873,7 @@ footer a:hover{color:var(--gold-2)}
         <div class="lc-body">
           <div><span class="avatar a3">DK</span><p><b>David</b>This is exactly what I needed today 🙌</p></div>
           <div><span class="avatar a5">SL</span><p><b>Sofia</b>Joining from London!</p></div>
-          <div class="lc-q"><span class="avatar a4">TM</span><p><b>Question</b>How do I say no to my boss without guilt?</p></div>
+          <div class="lc-q"><span class="avatar a4">TM</span><p><b>Question</b>Should I open a business account before my LLC is approved?</p></div>
           <div><span class="avatar a2">AR</span><p><b>Amara</b>Taking so many notes 📝</p></div>
         </div>
         <div class="lc-input"><input placeholder="Say something..."/></div>
@@ -895,16 +896,16 @@ footer a:hover{color:var(--gold-2)}
       </div>
     </div>
     <div class="card checkout">
-      <h3 style="margin-bottom:1rem">Group Accelerator</h3>
+      <h3 style="margin-bottom:1rem">Small Business Launch Lab</h3>
       <div class="plan-tog" id="planTog">
-        <button class="sel" data-price="1,497"><b>Pay in full</b><small>$1,497 · save $303</small></button>
-        <button data-price="600"><b>3 payments</b><small>$600 / month</small></button>
+        <button class="sel" data-price="997"><b>Pay in full</b><small>$997 · save $203</small></button>
+        <button data-price="400"><b>3 payments</b><small>$400 / month</small></button>
       </div>
       <div class="pay-methods"><span class="sel">Card</span><span>Apple Pay</span><span>PayPal</span></div>
       <div class="field"><label>Card number</label><input placeholder="4242 4242 4242 4242" disabled/></div>
       <div class="frow"><div class="field"><label>Expiry</label><input placeholder="MM / YY" disabled/></div><div class="field"><label>CVC</label><input placeholder="123" disabled/></div></div>
       <div class="field"><label>Coupon code</label><input placeholder="MAKEITGREAT" disabled/></div>
-      <div class="total"><span>Total today</span><b id="payTotal">$1,497</b></div>
+      <div class="total"><span>Total today</span><b id="payTotal">$997</b></div>
       <a href="#" class="btn btn-gold demo"><svg class="ic" style="width:16px;height:16px"><use href="#i-lock"/></svg>Pay Securely</a>
     </div>
   </div>
@@ -919,10 +920,10 @@ footer a:hover{color:var(--gold-2)}
       <p class="lead">Physical and digital products with inventory, shipping and instant downloads.</p>
     </div>
     <div class="grid g4">
-      <div class="card prod"><div class="prod-img" style="background:#FCEFD9"><span class="tag gold">Bestseller</span><div class="mock-book" style="background:linear-gradient(160deg,var(--deep),var(--ink))">Make It Great</div></div><div class="prod-body"><b>Make It Great: The Book</b><small>Hardcover · Signed</small><div class="prod-foot"><strong>$24</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
-      <div class="card prod"><div class="prod-img" style="background:var(--mint)"><span class="tag">Digital</span><div class="mock-card" style="background:linear-gradient(135deg,var(--green),var(--deep))">90-DAY<br/>PLANNER</div></div><div class="prod-body"><b>90-Day Digital Planner</b><small>PDF · Instant download</small><div class="prod-foot"><strong>$19</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:#FCEFD9"><span class="tag gold">Coming soon</span><div class="mock-book" style="background:linear-gradient(160deg,var(--deep),var(--ink))">Make It Great</div></div><div class="prod-body"><b>Make It Great Business Workbook</b><small>Paperback · Signed</small><div class="prod-foot"><strong>$24</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:var(--mint)"><span class="tag">Digital</span><div class="mock-card" style="background:linear-gradient(135deg,var(--green),var(--deep))">MONEY<br/>PLANNER</div></div><div class="prod-body"><b>Budget &amp; Credit Planner</b><small>PDF · Instant download</small><div class="prod-foot"><strong>$19</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
       <div class="card prod"><div class="prod-img" style="background:#EEE7F6"><div class="mock-shirt" style="background:var(--ink)">MAKE IT<br/>GREAT</div></div><div class="prod-body"><b>Signature Tee</b><small>Unisex · 5 colors</small><div class="prod-foot"><strong>$32</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
-      <div class="card prod"><div class="prod-img" style="background:#E3EEF7"><span class="tag rose">New</span><div class="mock-mug">MIG</div></div><div class="prod-body"><b>Morning Momentum Mug</b><small>Ceramic · 14 oz</small><div class="prod-foot"><strong>$18</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:#E3EEF7"><span class="tag rose">New</span><div class="mock-mug">YB</div></div><div class="prod-body"><b>Know Your Worth Mug</b><small>Ceramic · 14 oz</small><div class="prod-foot"><strong>$18</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
     </div>
   </div>
 </section>
@@ -933,11 +934,11 @@ footer a:hover{color:var(--gold-2)}
     <div class="sec-head center">
       <span class="eyebrow">Let's Get Social</span>
       <h2>Follow the <em>journey.</em></h2>
-      <p class="lead">All her handles in one place, with live follower counts and her latest posts.</p>
+      <p class="lead">All of Yolanda's handles in one place, with her latest posts.</p>
     </div>
     <div class="social-grid">
       <a href="#" class="soc s-ig demo"><svg class="ic"><use href="#i-ig"/></svg><b>Instagram</b><small>@makeitgreat</small></a>
-      <a href="#" class="soc s-li demo"><svg class="ic"><use href="#i-li"/></svg><b>LinkedIn</b><small>/in/makeitgreat</small></a>
+      <a href="#" class="soc s-li demo"><svg class="ic"><use href="#i-li"/></svg><b>LinkedIn</b><small>/in/yobutlermakeitgreat</small></a>
       <a href="#" class="soc s-yt demo"><svg class="ic"><use href="#i-yt"/></svg><b>YouTube</b><small>@makeitgreat</small></a>
       <a href="#" class="soc s-tt demo"><svg class="ic"><use href="#i-tt"/></svg><b>TikTok</b><small>@makeitgreat</small></a>
       <a href="#" class="soc s-fb demo"><svg class="ic"><use href="#i-fb"/></svg><b>Facebook</b><small>/makeitgreat</small></a>
@@ -952,16 +953,16 @@ footer a:hover{color:var(--gold-2)}
     <div>
       <span class="eyebrow">Contact Us</span>
       <h2>Let's <em>talk.</em></h2>
-      <p class="lead">Coaching questions, speaking requests, media and partnerships. Every message goes straight to her team's inbox and admin dashboard.</p>
+      <p class="lead">Coaching, keynotes, panels, workshops and partnerships for businesses, non-profits and ministries. Every message goes straight to Yolanda's inbox and dashboard.</p>
       <div class="cinfo">
         <div><span><svg class="ic"><use href="#i-mail"/></svg></span><div><b>Email</b><small>hello@yourdomain.com</small></div></div>
         <div><span><svg class="ic"><use href="#i-mic"/></svg></span><div><b>Speaking &amp; media</b><small>booking@yourdomain.com</small></div></div>
-        <div><span><svg class="ic"><use href="#i-clock"/></svg></span><div><b>Response time</b><small>Within 1 business day</small></div></div>
+        <div><span><svg class="ic"><use href="#i-pin"/></svg></span><div><b>Based in</b><small>Antioch, California · Bay Area &amp; virtual</small></div></div>
       </div>
     </div>
     <form class="card cform" id="contactForm">
       <div class="frow"><div class="field"><label>Name *</label><input name="name" required/></div><div class="field"><label>Email *</label><input name="email" type="email" required/></div></div>
-      <div class="field"><label>I'm interested in</label><select name="inquiry_type"><option>Coaching</option><option>Speaking</option><option>Events</option><option>Media / Partnership</option><option>Other</option></select></div>
+      <div class="field"><label>I'm interested in</label><select name="inquiry_type"><option>Coaching</option><option>Keynote / Panel</option><option>Workshop</option><option>Events</option><option>Media / Partnership</option><option>Other</option></select></div>
       <div class="field"><label>Message *</label><textarea name="message" rows="5" required></textarea></div>
       <button class="btn btn-dark" style="width:100%;justify-content:center">Send Message</button>
       <p class="form-msg" id="formMsg"></p>
@@ -972,12 +973,12 @@ footer a:hover{color:var(--gold-2)}
 <footer>
   <div class="wrap">
     <div class="foot-grid">
-      <div><span class="logo"><span class="logo-mark">M</span>Make It Great</span><p>Coaching, community and live experiences for people ready to grow.</p></div>
+      <div><span class="logo"><span class="logo-mark">YB</span>Yolanda Butler</span><p>Financial well-being and small business coaching for entrepreneurs, families, non-profits and ministries.</p></div>
       <div><h4>Grow</h4><ul><li><a href="#programs">Coaching</a></li><li><a href="#resources">Free Resources</a></li><li><a href="#ai">AI Coach</a></li><li><a href="#podcast">Podcast</a></li></ul></div>
       <div><h4>Connect</h4><ul><li><a href="#community">Community</a></li><li><a href="#events">Events</a></li><li><a href="#live">Live Sessions</a></li><li><a href="#social">Social</a></li></ul></div>
       <div><h4>More</h4><ul><li><a href="#shop">Shop</a></li><li><a href="#philanthropy">Philanthropy</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#contact">Contact</a></li></ul></div>
     </div>
-    <div class="foot-bottom"><span>© 2026 Make It Great · Concept demo</span><span>Privacy · Terms</span></div>
+    <div class="foot-bottom"><span>© 2026 Yolanda Butler · Concept demo</span><span>Privacy · Terms</span></div>
   </div>
 </footer>
 
@@ -986,11 +987,11 @@ footer a:hover{color:var(--gold-2)}
 <script>
 const FEATURES = [
   ['home','Home','A bold first impression','#home'],
-  ['user','About','Her story & mission','#about'],
+  ['user','About','Yolanda\'s story','#about'],
   ['target','Coaching & Programs','Courses, groups & 1:1','#programs'],
   ['cal','Bookings','Self-serve scheduling','#booking'],
   ['users','Community','Private social network','#community'],
-  ['spark','Custom AI','Coach trained on her methods','#ai'],
+  ['spark','Custom AI','Yolanda AI, 24/7','#ai'],
   ['grid','Dashboard','Client portal & admin','#dashboard'],
   ['mic','Podcast','On-site player & episodes','#podcast'],
   ['heart','Philanthropy','Causes & donations','#philanthropy'],
@@ -1045,16 +1046,17 @@ document.querySelectorAll('.like').forEach(b => b.addEventListener('click', () =
 // AI chat (scripted demo replies)
 const chatBody = document.getElementById('chatBody');
 const replies = [
-  [/program|fit|which/i, 'Based on what you shared, the <b>Group Accelerator</b> is a great fit: weekly live coaching plus accountability. Want me to save you a spot in the next cohort?'],
-  [/book|call|session/i, 'Happy to help! I have openings this Thursday at 10:30 AM and Friday at 2:30 PM for a free Discovery Call. Which works better?'],
-  [/challenge|daily/i, "Today's challenge: send one message you've been avoiding, then celebrate it in the community. Small courage compounds! 💪"],
+  [/program|fit|which/i, 'Based on what you shared, the <b>Small Business Launch Lab</b> is a great fit: 11 weeks from business plan to funding-ready. Want me to save you a spot?'],
+  [/fund|loan|capital/i, 'Start with a solid business plan and clean books. Then look at microloans and CDFIs, which often work with newer businesses. Yolanda covers lender readiness step by step in the Launch Lab.'],
+  [/book|call|session/i, 'Happy to help! Yolanda has openings Thursday at 10:30 AM and Friday at 2:30 PM (Pacific) for a free Discovery Call. Which works better?'],
+  [/credit|plan/i, "Here's week one of your credit plan: get your free reports, dispute any errors, and set up autopay on every bill. Small steps, big results! 💪"],
 ];
 const say = (text, who) => { const m = document.createElement('div'); m.className = 'msg ' + who; m.innerHTML = text; chatBody.appendChild(m); chatBody.scrollTop = chatBody.scrollHeight; };
 const ask = q => {
   if (!q.trim()) return;
   say(q.replace(/&/g, '&amp;').replace(/</g, '&lt;'), 'me');
   const hit = replies.find(([re]) => re.test(q));
-  setTimeout(() => say(hit ? hit[1] : "Great question. In the full version I'll answer using her actual courses, talks and frameworks, personalized to your goals.", 'bot'), 650);
+  setTimeout(() => say(hit ? hit[1] : "Great question. In the full version I'll answer using Yolanda's actual workshops and frameworks, personalized to your goals.", 'bot'), 650);
 };
 document.getElementById('chips').addEventListener('click', e => { if (e.target.tagName === 'BUTTON') ask(e.target.textContent); });
 document.getElementById('chatForm').addEventListener('submit', e => { e.preventDefault(); const i = document.getElementById('chatInput'); ask(i.value); i.value = ''; });
@@ -1075,7 +1077,7 @@ document.querySelectorAll('.add').forEach(b => b.addEventListener('click', () =>
 }));
 
 // Gallery
-document.querySelectorAll('.vid').forEach(v => v.addEventListener('click', () => toast('Her speaking & coaching videos will play here.')));
+document.querySelectorAll('.vid').forEach(v => v.addEventListener('click', () => toast("Yolanda's speaking & coaching videos will play here.")));
 
 // Contact form → existing API
 document.getElementById('contactForm').addEventListener('submit', async e => {
