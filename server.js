@@ -40,19 +40,11 @@ app.get('/admin', (req, res) => {
 });
 
 // ── HTML page routes ─────────────────────────────────────────
-const pages = {
-  '/':          'index.html',
-  '/about':     'about.html',
-  '/programs':  'programs.html',
-  '/book':      'book.html',
-  '/blog':      'blog.html',
-  '/contact':   'contact.html',
-};
-
-Object.entries(pages).forEach(([route, file]) => {
-  app.get(route, (req, res) => {
-    res.sendFile(path.join(__dirname, file));
-  });
+// Single-page demo: every feature lives on index.html; old URLs jump to their section
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+const sections = { about: 'about', programs: 'programs', book: 'shop', blog: 'resources', contact: 'contact' };
+Object.entries(sections).forEach(([route, anchor]) => {
+  app.get(['/' + route, '/' + route + '.html'], (req, res) => res.redirect(301, '/#' + anchor));
 });
 
 // Also serve .html extensions via static middleware above
@@ -72,7 +64,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log('');
   console.log('  =================================================');
-  console.log('   DR. ABRAHAM — Website Server');
+  console.log('   MAKE IT GREAT — Concept Demo Server');
   console.log('  =================================================');
   console.log(`   Local:    http://localhost:${PORT}`);
   console.log(`   Admin:    http://localhost:${PORT}/admin`);

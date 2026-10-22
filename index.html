@@ -1,415 +1,1095 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Dr. Abraham — #1 NYT Bestselling Author, PhD, Army Veteran, and founder of S3 Academy. Build a business and life you love with the S3 Method."/>
-  <title>Dr. Abraham | #1 NYT Bestselling Author &amp; Founder of S3 Academy</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link rel="stylesheet" href="css/theme.css?v=7"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Make It Great | Coaching Platform Concept</title>
+<meta name="description" content="Concept demo: an all-in-one coaching, speaking and community platform."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#111A17; --ink-2:#1E2C27; --green:#17775F; --deep:#0F4A3C; --mint:#E4F1EC;
+  --gold:#E9A23B; --gold-2:#F6C56B; --cream:#F7F2E9; --paper:#FFFFFF; --line:#E6E0D4;
+  --muted:#5D6B66; --soft:#8A9691; --rose:#E86F5C; --sky:#4A90C2; --plum:#7A5BA6;
+  --head:'Archivo',Arial,sans-serif; --body:'DM Sans',Arial,sans-serif; --disp:'Fraunces',Georgia,serif;
+  --r:18px; --shadow:0 18px 50px rgba(17,26,23,.10); --shadow-sm:0 4px 16px rgba(17,26,23,.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{font-family:var(--body);color:var(--ink);background:var(--cream);line-height:1.6;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+svg{display:block}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+section{padding:96px 0;scroll-margin-top:70px}
+.eyebrow{font-family:var(--head);font-weight:800;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green);display:inline-flex;align-items:center;gap:.6rem}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--gold)}
+h1,h2,h3,h4{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
+h2{font-size:clamp(2rem,4vw,3rem);margin:.8rem 0 1rem}
+h2 em,h1 em{font-family:var(--disp);font-style:italic;font-weight:500;color:var(--green)}
+.lead{color:var(--muted);font-size:1.08rem;max-width:620px}
+.sec-head{margin-bottom:48px}
+.sec-head.center{text-align:center}.sec-head.center .lead{margin-inline:auto}
+.btn{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--head);font-weight:800;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;padding:1rem 1.6rem;border-radius:999px;border:2px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn-gold{background:var(--gold);color:var(--ink);box-shadow:0 10px 26px rgba(233,162,59,.35)}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-ghost{border-color:currentColor}
+.btn-sm{padding:.65rem 1.1rem;font-size:.7rem}
+.card{background:var(--paper);border-radius:var(--r);box-shadow:var(--shadow-sm);border:1px solid var(--line)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tag{display:inline-block;font-family:var(--head);font-weight:700;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .65rem;border-radius:999px;background:var(--mint);color:var(--deep)}
+.tag.gold{background:#FCEFD9;color:#9A6413}.tag.rose{background:#FBE5E1;color:#A8402F}.tag.live{background:var(--rose);color:#fff}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0}
+.a1{background:linear-gradient(135deg,var(--green),var(--deep))}.a2{background:linear-gradient(135deg,var(--gold),#C97D16)}
+.a3{background:linear-gradient(135deg,var(--plum),#4E3478)}.a4{background:linear-gradient(135deg,var(--sky),#2B5F86)}.a5{background:linear-gradient(135deg,var(--rose),#B4473A)}
+.grid{display:grid;gap:24px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.dark{background:var(--ink);color:#fff}.dark .lead{color:rgba(255,255,255,.7)}.dark .eyebrow{color:var(--gold-2)}.dark h2 em{color:var(--gold-2)}
+.white{background:var(--paper)}
+
+/* Demo ribbon + header */
+.ribbon{background:var(--deep);color:#fff;font-size:.82rem;text-align:center;padding:.55rem 16px}
+.ribbon b{font-family:var(--head);letter-spacing:.12em;font-size:.68rem;background:var(--gold);color:var(--ink);padding:.15rem .55rem;border-radius:999px;margin-right:.5rem}
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:1rem}
+.logo{font-family:var(--head);font-weight:900;font-size:1.3rem;letter-spacing:-.03em;display:flex;align-items:center;gap:.55rem}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--gold);display:grid;place-items:center;font-size:.95rem}
+.nav-links{display:flex;gap:1.6rem;font-family:var(--head);font-weight:700;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase}
+.nav-links a:hover{color:var(--green)}
+.nav-right{display:flex;align-items:center;gap:.7rem}
+.menu-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
+.drawer{position:fixed;inset:0;z-index:60;background:var(--ink);color:#fff;padding:24px 16px;overflow:auto;transform:translateY(-100%);transition:transform .4s}
+.drawer.open{transform:none}
+.drawer-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.drawer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.drawer-grid a{display:flex;align-items:center;gap:.8rem;padding:1rem 1.1rem;border-radius:14px;background:rgba(255,255,255,.06);font-family:var(--head);font-weight:700}
+.drawer-grid a:hover{background:rgba(255,255,255,.12)}
+.drawer-grid span{width:34px;height:34px;border-radius:10px;background:rgba(233,162,59,.18);color:var(--gold-2);display:grid;place-items:center}
+
+/* Hero */
+.hero{padding:80px 0 90px;background:radial-gradient(1000px 500px at 85% 10%,#E4F1EC 0,transparent 60%),radial-gradient(800px 400px at 0% 100%,#FCEFD9 0,transparent 60%),var(--cream)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(2.6rem,6vw,4.6rem);margin:1rem 0 1.3rem}
+.hero .lead{font-size:1.15rem;margin-bottom:2rem}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:2.4rem}
+.trust{display:flex;gap:2rem;flex-wrap:wrap}
+.trust b{display:block;font-family:var(--head);font-size:1.7rem;font-weight:900}
+.trust span{font-size:.82rem;color:var(--muted)}
+.hero-visual{position:relative;min-height:470px}
+.portrait{position:absolute;inset:0 40px 40px 0;border-radius:28px;background:linear-gradient(160deg,var(--ink-2),var(--deep) 60%,var(--green));overflow:hidden;display:grid;place-items:center}
+.portrait::before{content:"";position:absolute;width:380px;height:380px;border-radius:50%;border:1px solid rgba(246,197,107,.25);box-shadow:0 0 0 50px rgba(246,197,107,.06),0 0 0 110px rgba(246,197,107,.04)}
+.portrait-mono{position:relative;font-family:var(--disp);font-style:italic;font-size:7rem;color:var(--gold-2);line-height:1}
+.portrait-cap{position:absolute;bottom:22px;left:22px;font-size:.75rem;color:rgba(255,255,255,.6);letter-spacing:.1em;text-transform:uppercase;font-family:var(--head);font-weight:700}
+.float{position:absolute;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;display:flex;align-items:center;gap:.8rem;font-size:.85rem}
+.float b{font-family:var(--head);display:block}
+.float small{color:var(--muted)}
+.f1{right:0;top:40px}.f2{left:-20px;bottom:90px}.f3{right:10px;bottom:0}
+.dot-live{width:10px;height:10px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 4px rgba(232,111,92,.25);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(232,111,92,0)}}
+
+/* Feature index */
+.features{padding:70px 0}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.feat{display:flex;flex-direction:column;gap:.7rem;padding:1.2rem;border-radius:16px;background:#fff;border:1px solid var(--line);transition:transform .2s,border-color .2s,box-shadow .2s}
+.feat:hover{transform:translateY(-3px);border-color:var(--green);box-shadow:var(--shadow-sm)}
+.feat span{width:40px;height:40px;border-radius:12px;background:var(--mint);color:var(--green);display:grid;place-items:center}
+.feat b{font-family:var(--head);font-size:.95rem}
+.feat small{color:var(--muted);font-size:.8rem;line-height:1.45}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center}
+.about-art{aspect-ratio:4/5;border-radius:28px;background:linear-gradient(150deg,#FCEFD9,#F3D9A6 50%,var(--gold));position:relative;overflow:hidden;display:grid;place-items:center}
+.about-art .portrait-mono{color:var(--ink);font-size:6rem}
+.about-art::after{content:"Your photo here";position:absolute;bottom:18px;font-family:var(--head);font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(17,26,23,.5)}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:2rem}
+.pillar{padding:1.1rem;border-radius:14px;background:var(--cream);border:1px solid var(--line)}
+.pillar b{font-family:var(--head);display:block;margin:.5rem 0 .2rem}
+.pillar small{color:var(--muted);font-size:.82rem}
+.pillar svg{color:var(--green)}
+
+/* Programs */
+.prog{padding:2rem;display:flex;flex-direction:column;gap:1rem;position:relative}
+.prog.feature{background:var(--ink);color:#fff;border-color:var(--ink);transform:translateY(-12px)}
+.prog.feature .muted{color:rgba(255,255,255,.65)}
+.prog h3{font-size:1.4rem}
+.price{font-family:var(--head);font-weight:900;font-size:2.4rem;letter-spacing:-.03em}
+.price small{font-size:.9rem;font-weight:500;color:var(--soft)}
+.muted{color:var(--muted)}
+.checks{list-style:none;display:grid;gap:.55rem;font-size:.92rem}
+.checks li{display:flex;gap:.6rem;align-items:flex-start}
+.checks li::before{content:"";width:18px;height:18px;flex-shrink:0;margin-top:3px;border-radius:50%;background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317775F' stroke-width='3'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/11px no-repeat}
+.prog .btn{margin-top:auto;justify-content:center}
+
+/* Booking */
+.book-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:24px}
+.session-list{display:grid;gap:12px}
+.session{display:flex;align-items:center;gap:1rem;padding:1.1rem;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;text-align:left;width:100%}
+.session.active{border-color:var(--green);background:var(--mint)}
+.session span{width:44px;height:44px;border-radius:12px;background:var(--cream);display:grid;place-items:center;color:var(--green)}
+.session b{font-family:var(--head);display:block}.session small{color:var(--muted)}
+.session em{margin-left:auto;font-style:normal;font-family:var(--head);font-weight:800}
+.cal{padding:1.6rem}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.cal-head b{font-family:var(--head);font-size:1.1rem}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:.85rem}
+.cal-days .dn{font-family:var(--head);font-size:.68rem;letter-spacing:.1em;color:var(--soft);padding:.3rem 0}
+.cal-days button{aspect-ratio:1;border-radius:10px;border:0;background:transparent;cursor:pointer}
+.cal-days button.av{background:var(--cream);font-weight:700}
+.cal-days button.sel{background:var(--green);color:#fff}
+.cal-days button.off{color:#C5CBC8;cursor:default}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin:1.2rem 0}
+.slots button{padding:.55rem .9rem;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:.85rem;cursor:pointer}
+.slots button.sel{border-color:var(--green);background:var(--green);color:#fff}
+
+/* Community */
+.com-grid{display:grid;grid-template-columns:240px 1fr 280px;gap:20px}
+.com-side{padding:1.2rem;display:grid;gap:4px;align-content:start}
+.com-side a{display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;border-radius:10px;font-weight:500;font-size:.92rem}
+.com-side a.on{background:var(--mint);color:var(--deep);font-weight:700}
+.com-side .count{margin-left:auto;font-size:.72rem;background:var(--gold);color:var(--ink);border-radius:999px;padding:0 .45rem;font-weight:700}
+.feed{display:grid;gap:16px;min-width:0}
+.com-grid>*{min-width:0}
+.compose{padding:1rem;display:flex;gap:.8rem;align-items:center}
+.compose input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:.75rem 1rem;background:var(--cream)}
+.post{padding:1.3rem}
+.post-top{display:flex;gap:.8rem;align-items:center;margin-bottom:.8rem}
+.post-top b{font-family:var(--head);font-size:.95rem}.post-top small{color:var(--soft);display:block;font-size:.78rem}
+.post p{font-size:.95rem}
+.post-media{margin-top:.9rem;border-radius:12px;padding:1.2rem;background:linear-gradient(135deg,var(--mint),#fff);border:1px solid var(--line);display:flex;align-items:center;gap:1rem}
+.post-media b{font-family:var(--head)}
+.post-act{display:flex;gap:1.4rem;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+.post-act button{display:flex;align-items:center;gap:.4rem;background:none;border:0;cursor:pointer;color:inherit}
+.post-act button.liked{color:var(--rose)}
+.post-act button.liked .ic{fill:var(--rose);stroke:var(--rose)}
+.com-right{display:grid;gap:16px;align-content:start}
+.widget{padding:1.2rem}
+.widget h4{font-size:.95rem;margin-bottom:.9rem}
+.leader{display:flex;align-items:center;gap:.7rem;padding:.45rem 0;font-size:.9rem}
+.leader em{margin-left:auto;font-style:normal;font-family:var(--head);font-weight:800;color:var(--green)}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap}
+.badge{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--cream);color:var(--gold)}
+
+/* AI */
+.ai-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+.ai-points{display:grid;gap:14px;margin-top:1.6rem}
+.ai-point{display:flex;gap:.9rem}
+.ai-point span{width:40px;height:40px;border-radius:12px;background:rgba(246,197,107,.15);color:var(--gold-2);display:grid;place-items:center;flex-shrink:0}
+.ai-point b{font-family:var(--head);display:block}
+.ai-point small{color:rgba(255,255,255,.65)}
+.chat{background:#fff;color:var(--ink);border-radius:22px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.chat-top{display:flex;align-items:center;gap:.8rem;padding:1rem 1.2rem;border-bottom:1px solid var(--line)}
+.chat-top b{font-family:var(--head)}.chat-top small{color:var(--green);display:flex;align-items:center;gap:.35rem;font-size:.78rem}
+.chat-top small::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
+.chat-body{padding:1.2rem;display:flex;flex-direction:column;gap:.8rem;height:360px;overflow:auto;background:var(--cream)}
+.msg{max-width:82%;padding:.8rem 1rem;border-radius:16px;font-size:.92rem}
+.msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg.me{background:var(--green);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:.8rem 1.2rem 0}
+.chips button{font-size:.78rem;padding:.4rem .75rem;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.chat-form{display:flex;gap:.6rem;padding:1rem 1.2rem}
+.chat-form input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:.75rem 1rem}
+.chat-form button{width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:var(--gold);display:grid;place-items:center;cursor:pointer;flex-shrink:0}
+
+/* Dashboard */
+.dash{display:grid;grid-template-columns:220px 1fr;overflow:hidden}
+.dash-nav{background:var(--ink);color:#fff;padding:1.4rem 1rem;display:grid;gap:4px;align-content:start}
+.dash-nav .logo{font-size:1rem;margin-bottom:1.2rem;padding:0 .5rem}
+.dash-nav a{display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;border-radius:10px;font-size:.88rem;color:rgba(255,255,255,.7)}
+.dash-nav a.on{background:rgba(255,255,255,.1);color:#fff}
+.dash-main{padding:1.6rem;display:grid;gap:18px;background:#FBFAF7;min-width:0}
+.dash-top{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.dash-top h3{font-size:1.3rem}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{padding:1rem 1.1rem}
+.kpi small{color:var(--muted);font-size:.78rem}
+.kpi b{display:block;font-family:var(--head);font-size:1.6rem;font-weight:900}
+.kpi i{font-style:normal;font-size:.75rem;color:var(--green);font-weight:700}
+.dash-row{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+.chart{padding:1.2rem}
+.bars{display:flex;align-items:flex-end;gap:10px;height:160px;margin-top:1rem}
+.bars div{flex:1;border-radius:8px 8px 3px 3px;background:var(--mint);position:relative}
+.bars div.hi{background:var(--green)}
+.bars-x{display:flex;gap:10px;margin-top:.5rem;font-size:.7rem;color:var(--soft)}
+.bars-x span{flex:1;text-align:center}
+.prog-item{margin:.9rem 0}
+.prog-item div{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:.35rem}
+.track{height:8px;border-radius:99px;background:var(--cream);overflow:hidden}
+.track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold))}
+.upnext{display:flex;align-items:center;gap:.8rem;padding:.65rem 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.upnext:last-child{border:0}
+.upnext .date{width:44px;text-align:center;font-family:var(--head);line-height:1.1;flex-shrink:0}
+.upnext .date b{display:block;font-size:1.1rem}.upnext .date small{font-size:.65rem;color:var(--soft);text-transform:uppercase}
+
+/* Podcast */
+.player{padding:1.6rem;display:grid;grid-template-columns:150px 1fr;gap:1.6rem;align-items:center;margin-bottom:24px}
+.cover{aspect-ratio:1;border-radius:16px;background:linear-gradient(135deg,var(--plum),var(--ink));display:grid;place-items:center;color:var(--gold-2);font-family:var(--disp);font-style:italic;font-size:1.4rem;text-align:center;padding:.8rem;line-height:1.1}
+.wave{display:flex;align-items:center;gap:3px;height:44px;margin:1rem 0}
+.wave i{flex:1;border-radius:2px;background:var(--line)}
+.wave i.p{background:var(--green)}
+.p-ctrl{display:flex;align-items:center;gap:1rem;font-size:.82rem;color:var(--muted)}
+.play{width:52px;height:52px;border-radius:50%;border:0;background:var(--ink);color:var(--gold);display:grid;place-items:center;cursor:pointer}
+.ep{display:flex;gap:1rem;align-items:center;padding:1rem 1.2rem}
+.ep-n{font-family:var(--head);font-weight:900;font-size:1.3rem;color:var(--soft);width:42px;flex-shrink:0}
+.ep b{font-family:var(--head);display:block;font-size:.98rem}.ep small{color:var(--muted)}
+.ep .mini{margin-left:auto;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.platforms{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.platforms span{padding:.55rem 1rem;border-radius:999px;background:#fff;border:1px solid var(--line);font-family:var(--head);font-weight:700;font-size:.78rem}
+
+/* Philanthropy */
+.impact{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.impact div{padding:1.4rem;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.impact b{font-family:var(--head);font-size:2.2rem;font-weight:900;color:var(--gold-2);display:block}
+.impact small{color:rgba(255,255,255,.7)}
+.cause{padding:1.6rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r)}
+.cause>span{width:46px;height:46px;border-radius:14px;background:rgba(246,197,107,.15);color:var(--gold-2);display:grid;place-items:center;margin-bottom:1rem}
+.cause h3{font-size:1.15rem;margin-bottom:.4rem}
+.cause p{color:rgba(255,255,255,.7);font-size:.92rem}
+.cause .track{background:rgba(255,255,255,.1);margin-top:1.2rem}
+.cause .meta{display:flex;justify-content:space-between;font-size:.8rem;margin-top:.5rem;color:rgba(255,255,255,.7)}
+
+/* Gallery */
+.gal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:14px}
+.vid{border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:1rem;color:#fff;cursor:pointer}
+.vid::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 60%)}
+.vid>*{position:relative}
+.vid .pbtn{position:absolute;top:50%;left:50%;translate:-50% -50%;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.95);color:var(--ink);display:grid;place-items:center;transition:transform .2s}
+.vid:hover .pbtn{transform:scale(1.1)}
+.vid b{font-family:var(--head);display:block;font-size:.95rem}
+.vid small{font-size:.75rem;opacity:.8}
+.vid .dur{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.5);padding:.15rem .5rem;border-radius:6px;font-size:.72rem}
+.v1{grid-column:span 2;grid-row:span 2;background:linear-gradient(135deg,var(--deep),var(--green))}
+.v2{background:linear-gradient(135deg,var(--plum),#3B2860)}.v3{background:linear-gradient(135deg,#C97D16,var(--gold))}
+.v4{background:linear-gradient(135deg,var(--sky),#22496A)}.v5{background:linear-gradient(135deg,var(--rose),#8E3428)}
+.gal-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.gal-tabs button{padding:.55rem 1rem;border-radius:999px;border:1px solid var(--line);background:#fff;font-family:var(--head);font-weight:700;font-size:.78rem;cursor:pointer}
+.gal-tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* Resources */
+.res{padding:1.5rem;display:flex;flex-direction:column;gap:.7rem}
+.res>span{width:46px;height:46px;border-radius:14px;display:grid;place-items:center}
+.res h3{font-size:1.05rem}
+.res p{color:var(--muted);font-size:.9rem;flex:1}
+.res a{font-family:var(--head);font-weight:800;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:.4rem}
+.res-quiz{grid-column:span 2;grid-row:span 2;background:var(--ink);color:#fff;border-color:var(--ink)}
+.res-quiz p{color:rgba(255,255,255,.7)}
+.res-quiz a{color:var(--gold-2)}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:.4rem 0}
+.quiz-opts button{padding:.8rem;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#fff;text-align:left;font-size:.88rem;cursor:pointer}
+.quiz-opts button:hover,.quiz-opts button.sel{border-color:var(--gold);background:rgba(233,162,59,.15)}
+
+/* Events */
+.event{display:grid;grid-template-columns:90px 1fr auto;gap:1.4rem;align-items:center;padding:1.4rem}
+.e-date{text-align:center;padding:.8rem;border-radius:14px;background:var(--cream);font-family:var(--head)}
+.e-date b{display:block;font-size:1.8rem;font-weight:900;line-height:1}
+.e-date small{font-size:.7rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.event h3{font-size:1.15rem;margin:.4rem 0 .3rem}
+.e-meta{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.e-meta span{display:flex;align-items:center;gap:.35rem}
+.e-meta .ic{width:16px;height:16px}
+
+/* Live */
+.live-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:0;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+.stage{background:linear-gradient(135deg,#0B1411,var(--deep));min-height:400px;position:relative;display:grid;place-items:center;color:#fff}
+.stage-top{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center}
+.viewers{background:rgba(0,0,0,.4);padding:.3rem .7rem;border-radius:999px;font-size:.8rem;display:flex;align-items:center;gap:.4rem}
+.stage-center{text-align:center;padding:0 16px}
+.stage-center .avatar{width:96px;height:96px;font-size:1.8rem;margin:0 auto 1rem;box-shadow:0 0 0 8px rgba(255,255,255,.08),0 0 0 18px rgba(255,255,255,.04)}
+.stage-center b{font-family:var(--head);font-size:1.2rem;display:block}
+.stage-center small{color:rgba(255,255,255,.65)}
+.stage-bar{position:absolute;bottom:16px;left:50%;translate:-50% 0;display:flex;gap:10px}
+.stage-bar span{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.stage-bar span.end{background:var(--rose)}
+.live-chat{background:#fff;display:flex;flex-direction:column}
+.live-chat h4{padding:1rem 1.2rem;border-bottom:1px solid var(--line);font-size:.95rem}
+.lc-body{flex:1;padding:1rem 1.2rem;display:grid;gap:.8rem;align-content:start;font-size:.88rem}
+.lc-body div{display:flex;gap:.6rem}
+.lc-body .avatar{width:30px;height:30px;font-size:.65rem}
+.lc-body b{font-family:var(--head);font-size:.8rem;margin-right:.3rem}
+.lc-q{background:#FCEFD9;border-radius:10px;padding:.6rem .7rem}
+.lc-input{padding:.8rem 1.2rem;border-top:1px solid var(--line)}
+.lc-input input{width:100%;border:1px solid var(--line);border-radius:999px;padding:.6rem .9rem;background:var(--cream)}
+
+/* Payment */
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.secure{display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:1.6rem}
+.secure span{display:flex;align-items:center;gap:.45rem;font-size:.88rem;color:var(--muted)}
+.secure .ic{color:var(--green)}
+.checkout{padding:1.8rem}
+.plan-tog{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.2rem}
+.plan-tog button{padding:.9rem;border-radius:12px;border:2px solid var(--line);background:#fff;text-align:left;cursor:pointer}
+.plan-tog button b{font-family:var(--head);display:block}
+.plan-tog button small{color:var(--muted);font-size:.8rem}
+.plan-tog button.sel{border-color:var(--green);background:var(--mint)}
+.pay-methods{display:flex;gap:8px;margin-bottom:1rem}
+.pay-methods span{flex:1;text-align:center;padding:.7rem .3rem;border-radius:10px;border:1.5px solid var(--line);font-family:var(--head);font-weight:800;font-size:.78rem}
+.pay-methods span.sel{border-color:var(--ink)}
+.field{display:grid;gap:.35rem;margin-bottom:.8rem}
+.field label{font-size:.78rem;font-weight:700;color:var(--muted)}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:10px;padding:.8rem .9rem;background:#fff;width:100%}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.total{display:flex;justify-content:space-between;padding:1rem 0;border-top:1px dashed var(--line);margin-top:.4rem;font-family:var(--head)}
+.total b{font-size:1.3rem}
+.checkout .btn{width:100%;justify-content:center}
+
+/* Shop */
+.prod{overflow:hidden;display:flex;flex-direction:column}
+.prod-img{aspect-ratio:1.1;display:grid;place-items:center;position:relative}
+.prod-img .tag{position:absolute;top:12px;left:12px}
+.mock-book{width:46%;aspect-ratio:.68;border-radius:4px 10px 10px 4px;box-shadow:12px 14px 30px rgba(0,0,0,.25);display:grid;place-items:center;text-align:center;padding:.6rem;font-family:var(--disp);font-style:italic;color:#fff;font-size:.95rem;line-height:1.1}
+.mock-mug{width:40%;aspect-ratio:1;border-radius:10px 10px 22px 22px;position:relative;display:grid;place-items:center;font-family:var(--disp);font-style:italic;font-size:1.1rem;background:var(--ink);color:var(--gold-2);box-shadow:10px 14px 26px rgba(0,0,0,.18)}
+.mock-mug::after{content:"";position:absolute;right:-24%;top:22%;width:28%;height:46%;border:8px solid var(--ink);border-left:0;border-radius:0 40px 40px 0}
+.mock-shirt{width:56%;aspect-ratio:1;clip-path:polygon(25% 0,38% 6%,62% 6%,75% 0,100% 18%,88% 34%,80% 30%,80% 100%,20% 100%,20% 30%,12% 34%,0 18%);display:grid;place-items:center;text-align:center;font-family:var(--head);font-weight:900;font-size:.75rem;color:var(--gold-2);padding-top:12%}
+.mock-card{width:60%;aspect-ratio:1.4;border-radius:12px;display:grid;place-items:center;text-align:center;font-family:var(--head);font-weight:900;color:#fff;box-shadow:10px 14px 26px rgba(0,0,0,.2);transform:rotate(-6deg)}
+.prod-body{padding:1.2rem;display:flex;flex-direction:column;gap:.35rem;flex:1}
+.prod-body b{font-family:var(--head)}
+.prod-body small{color:var(--muted)}
+.prod-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:.7rem}
+.prod-foot strong{font-family:var(--head);font-size:1.15rem}
+.add{width:40px;height:40px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .2s}
+.add.done{background:var(--green)}
+.cart{position:relative;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center}
+.cart i{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:99px;background:var(--gold);font-style:normal;font-size:.7rem;font-weight:800;display:grid;place-items:center;padding:0 4px}
+
+/* Social */
+.social-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.soc{padding:1.4rem 1rem;text-align:center;border-radius:18px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:.5rem;transition:transform .2s}
+.soc:hover{transform:translateY(-4px)}
+.soc svg{width:30px;height:30px}
+.soc b{font-family:var(--head);font-size:.95rem}
+.soc small{opacity:.85;font-size:.78rem}
+.s-ig{background:linear-gradient(135deg,#F58529,#DD2A7B 50%,#8134AF)}.s-li{background:#0A66C2}.s-yt{background:#E62117}
+.s-tt{background:#111}.s-fb{background:#1877F2}.s-x{background:#2B2B2B}
+
+/* Contact */
+.contact-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px}
+.cinfo{display:grid;gap:14px;margin-top:1.6rem}
+.cinfo>div{display:flex;gap:.9rem;align-items:center}
+.cinfo span{width:46px;height:46px;border-radius:14px;background:var(--mint);color:var(--green);display:grid;place-items:center;flex-shrink:0}
+.cinfo b{font-family:var(--head);display:block;font-size:.9rem}
+.cinfo small{color:var(--muted)}
+.cform{padding:2rem}
+.form-msg{margin-top:.8rem;font-size:.9rem;font-weight:700;color:var(--green);min-height:1.2em}
+
+footer{background:var(--ink);color:rgba(255,255,255,.7);padding:56px 0 28px;font-size:.9rem}
+.foot-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px;margin-bottom:36px}
+footer .logo{color:#fff;margin-bottom:.8rem}
+footer h4{color:#fff;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.9rem}
+footer ul{list-style:none;display:grid;gap:.45rem}
+footer a:hover{color:var(--gold-2)}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.8rem}
+
+.toast{position:fixed;bottom:24px;left:50%;translate:-50% 140px;background:var(--ink);color:#fff;padding:.85rem 1.3rem;border-radius:999px;font-size:.9rem;z-index:80;transition:translate .35s;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
+.toast.show{translate:-50% 0}
+
+/* Responsive */
+@media (max-width:1100px){
+  .nav-links{display:none}
+  .com-grid{grid-template-columns:1fr 280px}.com-side{display:none}
+  .social-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:900px){
+  section{padding:72px 0}
+  .hero-grid,.about-grid,.ai-grid,.pay-grid,.contact-grid,.book-grid{grid-template-columns:1fr}
+  .hero-visual{min-height:380px}
+  .g3,.g4{grid-template-columns:repeat(2,1fr)}
+  .prog.feature{transform:none}
+  .com-grid{grid-template-columns:1fr}.com-right{grid-template-columns:1fr 1fr}
+  .dash{grid-template-columns:1fr}.dash-nav{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}.dash-row{grid-template-columns:1fr}
+  .impact{grid-template-columns:repeat(2,1fr)}
+  .gal{grid-template-columns:repeat(2,1fr)}
+  .live-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:600px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .pillars{grid-template-columns:1fr}
+  .com-right{grid-template-columns:1fr}
+  .player{grid-template-columns:1fr}.cover{max-width:160px}
+  .event{grid-template-columns:70px 1fr}.event .btn{grid-column:1/-1;justify-content:center}
+  .res-quiz{grid-column:auto;grid-row:auto}.quiz-opts{grid-template-columns:1fr}
+  .social-grid{grid-template-columns:repeat(2,1fr)}
+  .frow{grid-template-columns:1fr}
+  .impact div{padding:1rem;min-width:0}.impact b{font-size:1.7rem}
+  .compose .avatar{display:none}.post-act{gap:1rem}
+  .f2{left:0}.float{font-size:.78rem;padding:10px 12px}
+  .nav-right .btn{display:none}
+  .foot-grid{grid-template-columns:1fr}
+  .portrait-mono{font-size:5rem}
+}
+</style>
 </head>
 <body>
 
-<!-- ==================== ANNOUNCEMENT ==================== -->
-<div class="mf-announce">
-  <div class="mf-announce-inner">
-    <span class="mf-announce-tag">Free Training</span>
-    <span class="mf-announce-text"><span class="mf-long">The 5-Step S3 Blueprint: build a business that funds the life you want.</span><span class="mf-short">S3 Blueprint</span></span>
-    <a href="index.html#insider" class="mf-announce-link">Watch free <span aria-hidden="true">&rarr;</span></a>
-  </div>
-</div>
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.5c3 .2 5 1.8 5 4.5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9.3-9.2C1.5 7.4 3.7 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.5 0 5.7 3.4 4.5 6.8C19.5 15.4 12 20 12 20z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M10 9.5v5l4-2.5z"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8c-1.5-3-5-4-5-1.5S10 8 12 8zm0 0c1.5-3 5-4 5-1.5S14 8 12 8z"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 0 0 4v0a2 2 0 0 1 0 4v2h18v-2a2 2 0 0 1 0-4 2 2 0 0 0 0-4V6H3z"/><path d="M14 6v12" stroke-dasharray="2 2"/></symbol>
+    <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6zM9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 13v4M9 17h6v4H9z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.7 7-7 0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-2 2-5 5-5 8 0 4.3 3 7 7 7z"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5a1.5 1.5 0 0 1 3 0v6M11 11V3.5a1.5 1.5 0 0 1 3 0V11M14 11V5a1.5 1.5 0 0 1 3 0v8c0 4.4-2.7 8-7 8-3 0-4.5-1.5-6-4l-1.6-3a1.5 1.5 0 0 1 2.6-1.5L8 15"/></symbol>
+    <symbol id="i-water" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></symbol>
+    <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5zM6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".8" fill="currentColor"/></symbol>
+    <symbol id="i-li" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></symbol>
+    <symbol id="i-yt" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9v6l5-3z" fill="currentColor"/></symbol>
+    <symbol id="i-tt" viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.5 2.5 4.5 5 5"/></symbol>
+    <symbol id="i-fb" viewBox="0 0 24 24"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h2z"/></symbol>
+    <symbol id="i-xx" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></symbol>
+  </defs>
+</svg>
 
-<!-- ==================== NAV ==================== -->
-<header class="mf-nav">
-  <div class="mf-wrap mf-nav-inner">
-    <a href="index.html" class="mf-logo">Dr. Abraham<span>.</span></a>
-    <nav class="mf-menu" aria-label="Main">
-      <a href="about.html">About</a>
-      <a href="programs.html">Programs</a>
-      <a href="book.html">The Book</a>
-      <a href="blog.html">Blog</a>
-      <a href="index.html#podcast">Podcast</a>
-      <a href="contact.html">Speaking</a>
+<div class="ribbon"><b>CONCEPT DEMO</b>Sample website prepared for review. Content, names and numbers are placeholders.</div>
+
+<header>
+  <div class="wrap nav">
+    <a href="#home" class="logo"><span class="logo-mark">M</span>Make It Great</a>
+    <nav class="nav-links">
+      <a href="#about">About</a><a href="#programs">Coaching</a><a href="#community">Community</a>
+      <a href="#ai">AI Coach</a><a href="#events">Events</a><a href="#shop">Shop</a><a href="#contact">Contact</a>
     </nav>
-    <a href="programs.html" class="mf-btn mf-btn-pink mf-nav-cta">Join S3 Academy</a>
-    <button class="mf-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="nav-right">
+      <a href="#shop" class="cart" aria-label="Cart"><svg class="ic"><use href="#i-bag"/></svg><i id="cartCount">0</i></a>
+      <a href="#booking" class="btn btn-gold btn-sm">Book a Call</a>
+      <button class="menu-btn" id="menuOpen" aria-label="Open menu"><svg class="ic"><use href="#i-menu"/></svg></button>
+    </div>
   </div>
 </header>
-<div class="mf-drawer" aria-label="Mobile menu">
-  <a href="index.html">Home</a>
-  <a href="about.html">About</a>
-  <a href="programs.html">Programs</a>
-  <a href="book.html">The Book</a>
-  <a href="blog.html">Blog</a>
-  <a href="contact.html">Speaking</a>
-  <a href="programs.html" class="mf-btn mf-btn-pink">Join S3 Academy</a>
-</div>
 
-<main>
-
-<!-- ==================== HERO ==================== -->
-<section class="mf-hero">
-  <div class="mf-wrap mf-hero-grid">
-    <div class="mf-hero-copy">
-      <span class="mf-eyebrow">#1 New York Times Bestselling Author</span>
-      <h1 class="mf-display">Turn your story into your <em>strength.</em></h1>
-      <p class="mf-lead">I help ambitious leaders and entrepreneurs build profitable businesses and purpose-driven lives with one proven system: <strong>Strength, Strategy, Success.</strong></p>
-
-      <div class="mf-hero-optin">
-        <div class="mf-hero-optin-title">Free training: The 5-Step S3 Blueprint</div>
-        <p class="mf-hero-optin-sub">The exact framework I use with every client to go from stuck to scaling. Watch it free, today.</p>
-        <form class="mf-form email-form">
-          <input type="email" placeholder="Your best email" aria-label="Email address" required/>
-          <button type="submit" class="mf-btn mf-btn-pink">Get Instant Access</button>
-        </form>
-      </div>
-
-      <button class="mf-play" data-video="videos/story.mp4">
-        <span class="mf-play-dot"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-        Watch My Story
-      </button>
+<div class="drawer" id="drawer">
+  <div class="wrap">
+    <div class="drawer-top">
+      <span class="logo" style="color:#fff"><span class="logo-mark">M</span>All Features</span>
+      <button class="menu-btn" id="menuClose" aria-label="Close menu" style="background:transparent;border-color:rgba(255,255,255,.2);color:#fff"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
-    <div class="mf-hero-media" data-hero-video="videos/hero.mp4">
-      <div class="mf-kb"><img src="images/photo-bridge2.jpg" alt="Dr. Abraham"/><img src="images/photo-bridge1.jpg" alt=""/><img src="images/photo-event.jpg" alt=""/></div>
-      <div class="mf-hero-sticker"><div><b>50K+</b>Students<br/>Worldwide</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================== PRESS ==================== -->
-<div class="mf-press">
-  <div class="mf-wrap">
-    <div class="mf-press-label">As featured in</div>
-    <div class="mf-press-row">
-      <span class="mf-press-logo p-forbes">Forbes</span>
-      <span class="mf-press-logo p-nyt">The New York Times</span>
-      <span class="mf-press-logo p-today">TODAY</span>
-      <span class="mf-press-logo p-oprah">Oprah Daily</span>
-      <span class="mf-press-logo p-cnn">CNN</span>
-      <span class="mf-press-logo p-inc">Inc.</span>
-      <span class="mf-press-logo p-nbc">NBC NEWS</span>
-      <span class="mf-press-logo p-success">SUCCESS</span>
-    </div>
+    <div class="drawer-grid" id="drawerGrid"></div>
   </div>
 </div>
 
-<!-- ==================== HEY THERE INTRO ==================== -->
-<section class="mf-section">
-  <div class="mf-wrap mf-intro-grid">
-    <div class="mf-photo-stack mf-reveal">
-      <img src="images/photo-portrait.jpg" alt="Portrait of Dr. Abraham"/>
-      <div class="mf-photo-note">Everything is possible.</div>
-    </div>
-    <div class="mf-reveal mf-d1">
-      <span class="mf-hey">Hello, friend.</span>
-      <h2 class="mf-h2">I'm Dr. Abraham, and I believe <em>everything is possible.</em></h2>
-      <div class="mf-body">
-        <p>I grew up in rural Mississippi, the youngest of six, in a house where dreams felt like a luxury. I enlisted in the Army at 18, served 21 years, survived three combat deployments, and came home determined to turn every scar into a stepping stone.</p>
-        <p>Today I help ambitious leaders build profitable businesses and lives they're proud of, using the <strong>S3 Method: Strength, Strategy, Success.</strong> My clients have generated more than $100 million in new revenue, and my book <em>Everything Is Possible</em> debuted at #1 on the New York Times list.</p>
-        <p>Your past doesn't decide your future. Your next decision does. If you're ready to stop waiting and start building, you're in the right place.</p>
+<!-- 1. HOME -->
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Coach · Speaker · Community Builder</span>
+      <h1>Let's make your next chapter <em>great.</em></h1>
+      <p class="lead">Coaching, live experiences, an AI coach that knows your goals, and a community that keeps you growing, all in one place.</p>
+      <div class="hero-ctas">
+        <a href="#programs" class="btn btn-dark">Explore Coaching <svg class="ic" style="width:16px;height:16px"><use href="#i-arrow"/></svg></a>
+        <a href="#booking" class="btn btn-ghost">Book a Free Call</a>
       </div>
-      <div class="mf-signature">With belief in you, Abraham</div>
-      <div class="mf-btn-row">
-        <a href="about.html" class="mf-btn">Read My Story</a>
-        <a href="contact.html" class="mf-link">Book Me to Speak</a>
+      <div class="trust">
+        <div><b>2,400+</b><span>Clients coached</span></div>
+        <div><b>180+</b><span>Stages spoken on</span></div>
+        <div><b>4.9★</b><span>Average rating</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="portrait"><span class="portrait-mono">MIG</span><span class="portrait-cap">Portrait / hero video goes here</span></div>
+      <div class="float f1"><span class="dot-live"></span><div><b>Live now</b><small>Monday Momentum Session</small></div></div>
+      <div class="float f2"><span class="avatar a2">JT</span><div><b>"Best investment I made."</b><small>Jordan T., Program client</small></div></div>
+      <div class="float f3"><svg class="ic" style="color:var(--green)"><use href="#i-users"/></svg><div><b>1,280 members</b><small>active in the community</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Feature index -->
+<section class="features white">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">One Platform</span>
+      <h2>Everything your brand needs, <em>in one home.</em></h2>
+      <p class="lead">Seventeen features built to attract, convert, serve and keep clients for the long run.</p>
+    </div>
+    <div class="feat-grid" id="featGrid"></div>
+  </div>
+</section>
+
+<!-- 2. ABOUT -->
+<section id="about">
+  <div class="wrap about-grid">
+    <div class="about-art"><span class="portrait-mono">MIG</span></div>
+    <div>
+      <span class="eyebrow">About</span>
+      <h2>Hi, I help people <em>make it great.</em></h2>
+      <p class="lead" style="margin-bottom:1rem">This is where her story goes: where she started, the turning point, and why she now helps leaders, entrepreneurs and teams step into their best work.</p>
+      <p class="muted">A short, warm bio builds trust fast. We'll write it together from her real journey, credentials and the people she serves, so every visitor knows within seconds that they're in the right place.</p>
+      <div class="pillars">
+        <div class="pillar"><svg class="ic"><use href="#i-target"/></svg><b>Clarity</b><small>Know exactly where you're going.</small></div>
+        <div class="pillar"><svg class="ic"><use href="#i-flame"/></svg><b>Confidence</b><small>Show up fully, every time.</small></div>
+        <div class="pillar"><svg class="ic"><use href="#i-trophy"/></svg><b>Results</b><small>Turn plans into wins.</small></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== OFFERS ==================== -->
-<section class="mf-section mf-bg-cream">
-  <div class="mf-wrap">
-
-    <!-- S3 Academy -->
-    <div class="mf-offer">
-      <div class="mf-offer-media mf-reveal">
-        <div class="mf-mock-offset"></div>
-        <div class="mf-mock">
-          <img src="images/photo-event.jpg" alt="S3 Academy live coaching"/>
-          <div class="mf-mock-label"><small>Flagship Program</small><strong>S3<br/>Academy</strong></div>
-        </div>
-      </div>
-      <div class="mf-reveal mf-d1">
-        <span class="mf-offer-tag is-pink">Enrollment Open</span>
-        <h2 class="mf-h2">Grow a business that pays you, <em>consistently.</em></h2>
-        <p class="mf-p">S3 Academy is my six-month live coaching experience. You get a proven, step-by-step system, weekly group coaching, live hot seats, and the exact frameworks behind 7-figure brands, so you stop guessing and start growing.</p>
-        <div class="mf-stats-inline">
-          <div><b data-count="50000" data-suffix="+">50,000+</b><span>Students trained</span></div>
-          <div><b>6</b><span>Core modules</span></div>
-          <div><b>35</b><span>Countries</span></div>
-        </div>
-        <div class="mf-btn-row">
-          <a href="programs.html" class="mf-btn mf-btn-pink">Explore S3 Academy</a>
-          <a href="#results" class="mf-link">Success Stories</a>
-        </div>
-      </div>
+<!-- 3. COACHING & PROGRAMS -->
+<section id="programs" class="white">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Coaching &amp; Programs</span>
+      <h2>Choose how you want to <em>grow.</em></h2>
+      <p class="lead">From self-paced courses to private 1:1 coaching. Every program connects to the dashboard, community and AI coach.</p>
     </div>
-
-    <!-- S3 Foundation -->
-    <div class="mf-offer is-flipped">
-      <div class="mf-offer-media mf-reveal">
-        <div class="mf-mock is-pink">
-          <img src="images/photo-bridge1.jpg" alt="S3 Foundation self-paced course"/>
-          <div class="mf-mock-label"><small style="color:#fff;">Self-Paced Course</small><strong>S3<br/>Foundation</strong></div>
-        </div>
+    <div class="grid g3" style="align-items:stretch">
+      <div class="card prog">
+        <span class="tag" style="align-self:flex-start">Self-paced</span>
+        <h3>Foundations Course</h3>
+        <div class="price">$297 <small>one-time</small></div>
+        <p class="muted">Video lessons, worksheets and lifetime access to start strong.</p>
+        <ul class="checks"><li>8 video modules</li><li>Downloadable workbook</li><li>Community access</li><li>AI coach (basic)</li></ul>
+        <a href="#payment" class="btn btn-ghost">Enroll</a>
       </div>
-      <div class="mf-reveal mf-d1">
-        <span class="mf-offer-tag">Start Today</span>
-        <h2 class="mf-h2">Get clear. Get confident. <em>Get moving.</em></h2>
-        <p class="mf-p">Twelve video modules, workbooks, and templates to master your mindset, shape your brand, and launch your offer, at your own pace and with lifetime updates.</p>
-        <div class="mf-btn-row">
-          <a href="programs.html" class="mf-btn">Start the Course</a>
-          <a href="#results" class="mf-link">Student Results</a>
-        </div>
+      <div class="card prog feature">
+        <span class="tag gold" style="align-self:flex-start">Most popular</span>
+        <h3>Group Accelerator</h3>
+        <div class="price">$1,497 <small>/ 12 weeks</small></div>
+        <p class="muted">Weekly live coaching with a small cohort that keeps you accountable.</p>
+        <ul class="checks"><li>12 live group sessions</li><li>Private cohort space</li><li>Progress dashboard</li><li>AI coach (full)</li><li>Session replays</li></ul>
+        <a href="#payment" class="btn btn-gold">Join the Next Cohort</a>
       </div>
-    </div>
-
-    <!-- VIP Mastermind -->
-    <div class="mf-offer">
-      <div class="mf-offer-media mf-reveal">
-        <div class="mf-mock is-cream">
-          <img src="images/photo-portrait.jpg" alt="VIP Mastermind with Dr. Abraham"/>
-          <div class="mf-mock-label"><small>12 Seats Per Year</small><strong>VIP Mastermind</strong></div>
-        </div>
-      </div>
-      <div class="mf-reveal mf-d1">
-        <span class="mf-offer-tag">By Application</span>
-        <h2 class="mf-h2">Break through your <em>next ceiling.</em></h2>
-        <p class="mf-p">An intimate group of 12 established founders with direct access to me, monthly VIP intensive days, quarterly strategy deep dives, and white-glove support.</p>
-        <div class="mf-btn-row">
-          <a href="contact.html" class="mf-btn">Apply for a Seat</a>
-          <a href="programs.html" class="mf-link">Learn More</a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ==================== ABRAHAM TV ==================== -->
-<section class="mf-section mf-bg-ink" id="tv">
-  <div class="mf-wrap mf-tv-grid">
-    <button class="mf-video mf-reveal" data-video="videos/story.mp4" aria-label="Play the latest episode">
-      <div class="mf-kb"><img src="images/photo-bridge1.jpg" alt=""/><img src="images/photo-event.jpg" alt=""/><img src="images/photo-bridge2.jpg" alt=""/></div>
-      <video class="mf-thumb-video" data-src="videos/story.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
-      <span class="mf-play-dot"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-      <span class="mf-video-cap">New episode every Tuesday</span>
-    </button>
-    <div class="mf-reveal mf-d1">
-      <span class="mf-eyebrow" style="color:var(--mf-gold-hi);">Watch &amp; Learn</span>
-      <h2 class="mf-h2">Abraham TV</h2>
-      <p>Free weekly episodes on mindset, money, and leadership. Honest conversations and practical tools to turn big dreams into daily results.</p>
-      <div class="mf-bignums">
-        <div><b>2M+</b><span>Downloads &amp; views</span></div>
-        <div><b data-count="180" data-suffix="+">180+</b><span>Episodes</span></div>
-      </div>
-      <div class="mf-platforms">
-        <a href="#" class="mf-platform"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>YouTube</a>
-        <a href="#" class="mf-platform"><svg viewBox="0 0 24 24"><path d="M18.7 19.5c-.8 1.2-1.7 2.5-3 2.5-1.4 0-1.8-.8-3.3-.8-1.5 0-2 .8-3.3.8-1.3.1-2.3-1.3-3.1-2.5C4.3 17 2.9 12.5 4.7 9.4c.9-1.5 2.4-2.5 4.1-2.5 1.3 0 2.5.9 3.3.9.8 0 2.3-1.1 3.8-.9.7 0 2.5.3 3.6 2-.1.1-2.2 1.3-2.1 3.8 0 3 2.6 4 2.7 4-.1.1-.4 1.4-1.4 2.8M13 3.5c.7-.8 1.9-1.5 2.9-1.5.1 1.2-.3 2.4-1 3.2-.7.9-1.8 1.5-3 1.4-.1-1.1.5-2.3 1.1-3.1z"/></svg>Apple Podcasts</a>
-        <a href="#" class="mf-platform"><svg viewBox="0 0 24 24"><path d="M12 0a12 12 0 100 24 12 12 0 000-24zm5.5 17.3c-.2.4-.7.5-1 .3-2.8-1.7-6.4-2.1-10.6-1.2-.4.1-.8-.2-.9-.5-.1-.4.2-.8.5-.9 4.6-1 8.5-.6 11.6 1.3.4.2.5.7.4 1zm1.5-3.3c-.3.4-.8.6-1.3.3-3.2-2-8.2-2.6-11.9-1.4-.5.1-1-.1-1.1-.6-.1-.5.1-1 .6-1.1C9.6 9.9 15 10.6 18.7 12.8c.4.2.5.8.3 1.2zm.1-3.4C15.2 8.4 8.8 8.2 5.2 9.3c-.6.2-1.2-.2-1.4-.7-.2-.6.2-1.2.7-1.4 4.3-1.3 11.3-1 15.7 1.6.5.3.7 1 .4 1.6-.3.4-1 .6-1.5.2z"/></svg>Spotify</a>
+      <div class="card prog">
+        <span class="tag rose" style="align-self:flex-start">Application only</span>
+        <h3>1:1 Private Coaching</h3>
+        <div class="price">$4,500 <small>/ 3 months</small></div>
+        <p class="muted">Deep, personal work with direct access between sessions.</p>
+        <ul class="checks"><li>Bi-weekly private calls</li><li>Voice-note access</li><li>Custom action plans</li><li>VIP event seats</li></ul>
+        <a href="#booking" class="btn btn-ghost">Apply Now</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== BOOK ==================== -->
-<section class="mf-section">
-  <div class="mf-wrap mf-book-grid">
-    <div class="mf-book-stage mf-reveal">
-      <div class="mf-seal"><div><b>#1</b>NYT<br/>Bestseller</div></div>
-      <div class="mf-book">
-        <div class="mf-book-kicker">The Instant #1 Bestseller</div>
-        <img src="images/photo-portrait.jpg" alt="" style="width:96px;height:96px;border-radius:50%;object-fit:cover;object-position:center 20%;filter:grayscale(1) contrast(1.1);border:3px solid var(--mf-gold-hi);"/>
-        <div class="mf-book-title">Every&shy;thing <em>is</em> Possible</div>
-        <div class="mf-book-author">Dr. Abraham</div>
-      </div>
+<!-- 4. BOOKINGS -->
+<section id="booking">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Bookings</span>
+      <h2>Book a session <em>in seconds.</em></h2>
+      <p class="lead">Live availability, time-zone aware, with automatic reminders and calendar invites.</p>
     </div>
-    <div class="mf-reveal mf-d1">
-      <span class="mf-eyebrow">Instant #1 New York Times Bestseller</span>
-      <h2 class="mf-h2">The book that started <em>a movement.</em></h2>
-      <p class="mf-p">Drawn from my journey as a soldier, a parent, and an entrepreneur, <em>Everything Is Possible</em> isn't a pep talk. It's a battle-tested blueprint for anyone who refuses to accept limits. Now in 14 languages, with more than 500,000 copies sold.</p>
-      <div class="mf-quote-sm">
-        <p>"The guide every leader needs. It changed how I run my company and my life."</p>
-        <cite>— Early reader, CEO &amp; founder</cite>
+    <div class="book-grid">
+      <div class="session-list" id="sessions">
+        <button class="session active"><span><svg class="ic"><use href="#i-phone"/></svg></span><div><b>Discovery Call</b><small>20 min · Video</small></div><em>Free</em></button>
+        <button class="session"><span><svg class="ic"><use href="#i-target"/></svg></span><div><b>Strategy Session</b><small>60 min · Video</small></div><em>$250</em></button>
+        <button class="session"><span><svg class="ic"><use href="#i-mic"/></svg></span><div><b>Speaking Inquiry</b><small>30 min · For event planners</small></div><em>Free</em></button>
+        <button class="session"><span><svg class="ic"><use href="#i-users"/></svg></span><div><b>Team Workshop</b><small>Half / full day · On-site</small></div><em>Quote</em></button>
       </div>
-      <div class="mf-btn-row">
-        <a href="book.html" class="mf-btn mf-btn-pink">Get the Book</a>
-        <a href="book.html" class="mf-link">Read Chapter One Free</a>
+      <div class="card cal">
+        <div class="cal-head"><b>November 2026</b><span class="muted" style="font-size:.85rem">GMT-5 · Eastern</span></div>
+        <div class="cal-days" id="calDays"></div>
+        <div class="slots" id="slots"><button>9:00 AM</button><button class="sel">10:30 AM</button><button>1:00 PM</button><button>2:30 PM</button><button>4:00 PM</button></div>
+        <a href="#" class="btn btn-dark demo" style="width:100%;justify-content:center">Confirm Booking</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== PODCAST ==================== -->
-<section class="mf-section mf-bg-cream" id="podcast">
-  <div class="mf-wrap">
-    <div class="mf-pod-head">
-      <div class="mf-reveal">
-        <span class="mf-eyebrow">The S3 Power Podcast</span>
-        <h2 class="mf-h2" style="margin:0;">New episodes, <em>every Tuesday.</em></h2>
-      </div>
-      <div class="mf-platforms mf-light mf-reveal mf-d1">
-        <a href="#" class="mf-platform">Apple Podcasts</a>
-        <a href="#" class="mf-platform">Spotify</a>
-        <a href="#" class="mf-platform">YouTube</a>
-      </div>
+<!-- 5. COMMUNITY -->
+<section id="community" class="white">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Community</span>
+      <h2>Her own private <em>social network.</em></h2>
+      <p class="lead">A branded space where clients post wins, ask questions, join groups and earn badges. Engagement and loyalty, without the noise of public social media.</p>
     </div>
-    <div class="mf-ep-grid">
-      <a href="blog.html" class="mf-ep mf-reveal">
-        <div class="mf-ep-img"><img src="images/photo-event.jpg" alt="Episode 180"/><span class="mf-ep-num">EP 180</span></div>
-        <div class="mf-ep-body">
-          <span class="mf-ep-cat">Business</span>
-          <h3>How She Built a $50M Brand With Zero Investor Money</h3>
-          <p>Guest Keisha Williams on bootstrapping, pricing, and staying in control of your company.</p>
-          <span class="mf-ep-meta">Oct 19, 2026 &middot; 52 min</span>
+    <div class="com-grid">
+      <div class="card com-side">
+        <a href="#" class="on demo"><svg class="ic"><use href="#i-home"/></svg>Feed</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-users"/></svg>Groups <span class="count">3</span></a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-chat"/></svg>Messages <span class="count">5</span></a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-cal"/></svg>Events</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-book"/></svg>Courses</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-trophy"/></svg>Leaderboard</a>
+      </div>
+      <div class="feed">
+        <div class="card compose"><span class="avatar a4">YOU</span><input placeholder="Share a win or ask the community..."/><button class="btn btn-dark btn-sm demo">Post</button></div>
+        <div class="card post">
+          <div class="post-top"><span class="avatar a1">MG</span><div><b>Make It Great <span class="tag" style="margin-left:.3rem">Coach</span></b><small>Pinned · 2h ago</small></div></div>
+          <p>This week's challenge: write down ONE thing you've been putting off and do it before Friday. Drop it in the comments so we can cheer you on!</p>
+          <div class="post-media"><svg class="ic" style="color:var(--green);width:30px;height:30px"><use href="#i-flame"/></svg><div><b>Weekly Challenge #14</b><br/><small class="muted">142 members joined</small></div></div>
+          <div class="post-act"><button class="like"><svg class="ic" style="width:18px;height:18px"><use href="#i-heart"/></svg><span>214</span></button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-chat"/></svg>68</button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-share"/></svg>Share</button></div>
         </div>
-      </a>
-      <a href="blog.html" class="mf-ep mf-reveal mf-d1">
-        <div class="mf-ep-img"><img src="images/photo-bridge2.jpg" alt="Episode 179"/><span class="mf-ep-num">EP 179</span></div>
-        <div class="mf-ep-body">
-          <span class="mf-ep-cat">Mindset</span>
-          <h3>Veteran to CEO: The Military Mindset That Builds Empires</h3>
-          <p>A solo episode on the seven mindset protocols that carried me through war and into business.</p>
-          <span class="mf-ep-meta">Oct 12, 2026 &middot; 44 min</span>
+        <div class="card post">
+          <div class="post-top"><span class="avatar a2">AR</span><div><b>Amara R.</b><small>Group Accelerator · 5h ago</small></div></div>
+          <p>Just signed my first corporate client after 6 weeks in the program. Still shaking! Thank you all for the support on my pitch practice. 🎉</p>
+          <div class="post-act"><button class="like"><svg class="ic" style="width:18px;height:18px"><use href="#i-heart"/></svg><span>97</span></button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-chat"/></svg>31</button><button><svg class="ic" style="width:18px;height:18px"><use href="#i-share"/></svg>Share</button></div>
         </div>
-      </a>
-      <a href="blog.html" class="mf-ep mf-reveal mf-d2">
-        <div class="mf-ep-img"><img src="images/photo-bridge1.jpg" alt="Episode 178"/><span class="mf-ep-num">EP 178</span></div>
-        <div class="mf-ep-body">
-          <span class="mf-ep-cat">Money</span>
-          <h3>The Truth About Charging High Ticket</h3>
-          <p>Sales psychologist Dr. Priya Shah on pricing, worth, and the hidden beliefs that keep talented people underpaid.</p>
-          <span class="mf-ep-meta">Oct 5, 2026 &middot; 61 min</span>
+      </div>
+      <div class="com-right">
+        <div class="card widget">
+          <h4>Top members this week</h4>
+          <div class="leader"><span class="avatar a2" style="width:32px;height:32px;font-size:.7rem">AR</span>Amara R.<em>1,240</em></div>
+          <div class="leader"><span class="avatar a3" style="width:32px;height:32px;font-size:.7rem">DK</span>David K.<em>980</em></div>
+          <div class="leader"><span class="avatar a5" style="width:32px;height:32px;font-size:.7rem">SL</span>Sofia L.<em>860</em></div>
         </div>
-      </a>
-    </div>
-    <div class="mf-center" style="margin-top:3rem;"><a href="blog.html" class="mf-btn mf-btn-ghost">View All Episodes</a></div>
-  </div>
-</section>
-
-<!-- ==================== RESULTS ==================== -->
-<section class="mf-section" id="results">
-  <div class="mf-wrap">
-    <div class="mf-center mf-reveal">
-      <span class="mf-eyebrow">Real People. Real Results.</span>
-      <h2 class="mf-h2">Results that <em>speak for themselves.</em></h2>
-    </div>
-    <div class="mf-testi-grid">
-      <figure class="mf-testi mf-reveal" style="margin:0;">
-        <div class="mf-stars">★★★★★</div>
-        <p class="mf-testi-result">From $80K to $600K in 12 months.</p>
-        <p>"I joined S3 Academy with a small consulting practice. Twelve months later I crossed $600K in revenue. Dr. Abraham's frameworks are unlike anything I'd ever seen."</p>
-        <figcaption class="mf-testi-who"><img src="images/photo-event.jpg" alt=""/><div><b>Jessica Thompson</b><span>Business Strategist, Atlanta</span></div></figcaption>
-      </figure>
-      <figure class="mf-testi mf-reveal mf-d1" style="margin:0;">
-        <div class="mf-stars">★★★★★</div>
-        <p class="mf-testi-result">Launched and funded in 18 months.</p>
-        <p>"The S3 Method gave me a clear, step-by-step path. I launched my tech company, secured funding, and hired a team of eight. Life-changing."</p>
-        <figcaption class="mf-testi-who"><img src="images/photo-bridge1.jpg" alt=""/><div><b>Amara Patel</b><span>Tech Founder, New York</span></div></figcaption>
-      </figure>
-      <figure class="mf-testi mf-reveal" style="margin:0;">
-        <div class="mf-stars">★★★★★</div>
-        <p class="mf-testi-result">ROI in 3 weeks, then a $1.2M year.</p>
-        <p>"I almost didn't join because of the price. Best decision of my life. I made back my investment in three weeks."</p>
-        <figcaption class="mf-testi-who"><img src="images/photo-portrait.jpg" alt=""/><div><b>Natasha King</b><span>Agency Owner, Chicago</span></div></figcaption>
-      </figure>
-      <figure class="mf-testi mf-reveal mf-d1" style="margin:0;">
-        <div class="mf-stars">★★★★★</div>
-        <p class="mf-testi-result">Now charging $25K per keynote.</p>
-        <p>"The VIP Mastermind took me from local speaker to international keynote. Dr. Abraham's network is priceless."</p>
-        <figcaption class="mf-testi-who"><img src="images/photo-bridge2.jpg" alt=""/><div><b>Lisa Chen</b><span>International Speaker, San Francisco</span></div></figcaption>
-      </figure>
+        <div class="card widget">
+          <h4>Badges to earn</h4>
+          <div class="badge-row">
+            <span class="badge"><svg class="ic"><use href="#i-flame"/></svg></span><span class="badge"><svg class="ic"><use href="#i-star"/></svg></span>
+            <span class="badge"><svg class="ic"><use href="#i-trophy"/></svg></span><span class="badge" style="color:var(--green)"><svg class="ic"><use href="#i-target"/></svg></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== INSIDER ==================== -->
-<section class="mf-section mf-insider" id="insider">
-  <div class="mf-wrap mf-insider-grid">
-    <div class="mf-reveal">
-      <span class="mf-script" style="color:var(--mf-gold-hi);font-size:1.6rem;">Join 50,000+ readers</span>
-      <h2 class="mf-h2" style="margin-top:.6rem;">The Sunday <em>Strategy Letter.</em></h2>
-      <p>One short email every Sunday: a strategy to use, a mindset shift to try, and a story to carry you forward. Plus the free S3 Blueprint, instantly.</p>
+<!-- 6. CUSTOM AI -->
+<section id="ai" class="dark">
+  <div class="wrap ai-grid">
+    <div>
+      <span class="eyebrow">Custom-Trained AI</span>
+      <h2>Her coaching, <em>available 24/7.</em></h2>
+      <p class="lead">An AI assistant trained on her frameworks, talks and courses. It answers in her voice, recommends the right program and books calls while she sleeps.</p>
+      <div class="ai-points">
+        <div class="ai-point"><span><svg class="ic"><use href="#i-book"/></svg></span><div><b>Trained on her content</b><small>Courses, podcast, books and FAQs.</small></div></div>
+        <div class="ai-point"><span><svg class="ic"><use href="#i-target"/></svg></span><div><b>Personal to each client</b><small>Remembers goals and progress from the dashboard.</small></div></div>
+        <div class="ai-point"><span><svg class="ic"><use href="#i-cal"/></svg></span><div><b>Converts visitors</b><small>Suggests programs and books discovery calls.</small></div></div>
+      </div>
     </div>
-    <div class="mf-reveal mf-d1">
-      <form class="mf-form email-form">
-        <input type="email" placeholder="Enter your email" aria-label="Email address" required/>
-        <button type="submit" class="mf-btn">Count Me In</button>
-      </form>
-      <p class="mf-fineprint">Free forever. No spam. Unsubscribe in one click.</p>
+    <div class="chat">
+      <div class="chat-top"><span class="avatar a1"><svg class="ic" style="width:20px;height:20px"><use href="#i-spark"/></svg></span><div><b>MIG Coach AI</b><small>Online · trained on her methods</small></div></div>
+      <div class="chat-body" id="chatBody">
+        <div class="msg bot">Hi! I'm the Make It Great coach. What would you like to work on today?</div>
+        <div class="msg me">I keep procrastinating on launching my business.</div>
+        <div class="msg bot">You're not alone. Let's use the <b>3-Step Momentum Method</b>: 1) pick the smallest next step, 2) set a 25-minute timer, 3) share it in the community for accountability. What's one step you could take today?</div>
+      </div>
+      <div class="chips" id="chips"><button>Which program fits me?</button><button>Book a call</button><button>Give me a daily challenge</button></div>
+      <form class="chat-form" id="chatForm"><input id="chatInput" placeholder="Ask the AI coach anything..." autocomplete="off"/><button aria-label="Send"><svg class="ic" style="width:18px;height:18px"><use href="#i-send"/></svg></button></form>
     </div>
   </div>
 </section>
 
-</main>
+<!-- 7. DASHBOARD -->
+<section id="dashboard">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Dashboard</span>
+      <h2>Every client gets <em>their own space.</em></h2>
+      <p class="lead">Courses, sessions, goals, purchases and messages in one login. She gets an admin view of revenue, members and engagement.</p>
+    </div>
+    <div class="card dash">
+      <div class="dash-nav">
+        <span class="logo" style="color:#fff"><span class="logo-mark">M</span>My Portal</span>
+        <a href="#" class="on demo"><svg class="ic"><use href="#i-grid"/></svg>Overview</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-book"/></svg>My Courses</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-cal"/></svg>Sessions</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-target"/></svg>Goals</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-card"/></svg>Billing</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-chat"/></svg>Messages</a>
+      </div>
+      <div class="dash-main">
+        <div class="dash-top"><h3>Welcome back, Amara 👋</h3><span class="tag gold">🔥 12-day streak</span></div>
+        <div class="kpis">
+          <div class="card kpi"><small>Course progress</small><b>68%</b><i>+12% this week</i></div>
+          <div class="card kpi"><small>Sessions done</small><b>7 / 12</b><i>Next: Thu</i></div>
+          <div class="card kpi"><small>Goals hit</small><b>9</b><i>3 in progress</i></div>
+          <div class="card kpi"><small>Community points</small><b>1,240</b><i>#1 this week</i></div>
+        </div>
+        <div class="dash-row">
+          <div class="card chart">
+            <b style="font-family:var(--head)">Weekly activity</b>
+            <div class="bars"><div style="height:40%"></div><div style="height:65%"></div><div style="height:50%"></div><div class="hi" style="height:90%"></div><div style="height:70%"></div><div style="height:35%"></div><div style="height:55%"></div></div>
+            <div class="bars-x"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          </div>
+          <div class="card chart">
+            <b style="font-family:var(--head)">Up next</b>
+            <div class="upnext"><div class="date"><b>14</b><small>Nov</small></div><div>Group Coaching Call<br/><small class="muted">10:30 AM · Zoom</small></div></div>
+            <div class="upnext"><div class="date"><b>16</b><small>Nov</small></div><div>Module 6: Pricing<br/><small class="muted">Unlocks Saturday</small></div></div>
+            <div class="upnext"><div class="date"><b>21</b><small>Nov</small></div><div>Live Q&amp;A Session<br/><small class="muted">7:00 PM · Live</small></div></div>
+          </div>
+        </div>
+        <div class="card chart">
+          <b style="font-family:var(--head)">My goals</b>
+          <div class="prog-item"><div><span>Launch my offer</span><span>80%</span></div><div class="track"><i style="width:80%"></i></div></div>
+          <div class="prog-item"><div><span>Speak at 2 events</span><span>50%</span></div><div class="track"><i style="width:50%"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- ==================== FOOTER ==================== -->
-<footer class="mf-footer">
-  <div class="mf-wrap">
-    <div class="mf-footer-grid">
+<!-- 8. PODCAST -->
+<section id="podcast" class="white">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Podcast</span>
+      <h2>The <em>Make It Great</em> Show</h2>
+      <p class="lead">Every episode playable on-site with show notes, transcripts and links, plus one-tap subscribe on every platform.</p>
+    </div>
+    <div class="card player">
+      <div class="cover">Make It Great Show</div>
       <div>
-        <a href="index.html" class="mf-logo">Dr. Abraham<span>.</span></a>
-        <span class="mf-footer-tag">Everything is possible.</span>
-        <p>Helping leaders and entrepreneurs build businesses and lives of strength, strategy, and success.</p>
-        <div class="mf-social">
-          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 100 12.4 6.2 6.2 0 000-12.4zM12 16a4 4 0 110-8 4 4 0 010 8zm6.4-11.8a1.4 1.4 0 100 2.9 1.4 1.4 0 000-2.9z"/></svg></a>
-          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/></svg></a>
-          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3-1.9 0-2.1 1.4-2.1 2.9v5.7H9.4V9h3.4v1.6c.5-.9 1.6-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5v6.3zM5.3 7.4a2.1 2.1 0 110-4.1 2.1 2.1 0 010 4.1zm1.8 13.1H3.6V9h3.6v11.5zM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7C24 .8 23.2 0 22.2 0z"/></svg></a>
-          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4h-3v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.3l-.5 3.5h-2.8V24C19.6 23 24 18.1 24 12.1z"/></svg></a>
+        <span class="tag">Latest episode · Ep. 48</span>
+        <h3 style="font-size:1.4rem;margin-top:.6rem">Confidence Is a Skill, Not a Personality Trait</h3>
+        <div class="wave" id="wave"></div>
+        <div class="p-ctrl"><button class="play" id="playBtn" aria-label="Play"><svg class="ic" style="width:20px;height:20px"><use href="#i-play"/></svg></button><span>12:04 / 38:20</span></div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card ep"><span class="ep-n">47</span><div><b>From Burnout to Balance</b><small>42 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+      <div class="card ep"><span class="ep-n">46</span><div><b>Pricing Your Worth</b><small>35 min · Solo</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+      <div class="card ep"><span class="ep-n">45</span><div><b>Leading Through Change</b><small>51 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+      <div class="card ep"><span class="ep-n">44</span><div><b>The Morning Momentum Routine</b><small>28 min · Solo</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+    </div>
+    <div class="platforms"><span>Spotify</span><span>Apple Podcasts</span><span>YouTube</span><span>Amazon Music</span><span>Audible</span></div>
+  </div>
+</section>
+
+<!-- 9. PHILANTHROPY -->
+<section id="philanthropy" class="dark">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Philanthropy</span>
+      <h2>Growth that <em>gives back.</em></h2>
+      <p class="lead">Show the causes she supports, live fundraising progress, and let clients donate or volunteer directly.</p>
+    </div>
+    <div class="impact">
+      <div><b>$120K</b><small>Raised for causes</small></div>
+      <div><b>3,500</b><small>Youth mentored</small></div>
+      <div><b>12</b><small>Partner charities</small></div>
+      <div><b>5%</b><small>Of every sale donated</small></div>
+    </div>
+    <div class="grid g3">
+      <div class="cause"><span><svg class="ic"><use href="#i-cap"/></svg></span><h3>Scholarships for Young Leaders</h3><p>Funding education and mentorship for first-generation students.</p><div class="track"><i style="width:72%"></i></div><div class="meta"><span>$36,000 raised</span><span>72%</span></div></div>
+      <div class="cause"><span><svg class="ic"><use href="#i-water"/></svg></span><h3>Clean Water Initiative</h3><p>Building wells and sanitation in partner communities.</p><div class="track"><i style="width:45%"></i></div><div class="meta"><span>$22,500 raised</span><span>45%</span></div></div>
+      <div class="cause"><span><svg class="ic"><use href="#i-hand"/></svg></span><h3>Women in Business Fund</h3><p>Micro-grants and coaching for women starting businesses.</p><div class="track"><i style="width:88%"></i></div><div class="meta"><span>$44,000 raised</span><span>88%</span></div></div>
+    </div>
+    <div style="margin-top:28px;display:flex;gap:.8rem;flex-wrap:wrap"><a href="#payment" class="btn btn-gold">Donate</a><a href="#contact" class="btn btn-ghost">Volunteer</a></div>
+  </div>
+</section>
+
+<!-- 10. GALLERY -->
+<section id="gallery">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Gallery</span>
+      <h2>See her <em>in action.</em></h2>
+      <p class="lead">Speaking reels, coaching moments and highlights, organized so event planners and clients can find them fast.</p>
+    </div>
+    <div class="gal-tabs" id="galTabs"><button class="on">All</button><button>Keynotes</button><button>Workshops</button><button>Coaching</button><button>Interviews</button></div>
+    <div class="gal">
+      <div class="vid v1"><span class="dur">3:42</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Speaker Reel 2026</b><small>Keynotes · Highlights</small></div></div>
+      <div class="vid v2"><span class="dur">12:10</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Leadership Summit</b><small>Keynote</small></div></div>
+      <div class="vid v3"><span class="dur">8:25</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Team Workshop</b><small>Workshop</small></div></div>
+      <div class="vid v4"><span class="dur">5:02</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Client Breakthrough</b><small>Coaching</small></div></div>
+      <div class="vid v5"><span class="dur">24:18</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Morning Show Interview</b><small>Interview</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. FREE TOOLS & RESOURCES -->
+<section id="resources" class="white">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Free Tools &amp; Resources</span>
+      <h2>Start growing <em>today, for free.</em></h2>
+      <p class="lead">Lead magnets that grow her email list and guide visitors toward the right program.</p>
+    </div>
+    <div class="grid g4">
+      <div class="card res res-quiz">
+        <span style="background:rgba(246,197,107,.15);color:var(--gold-2)"><svg class="ic"><use href="#i-target"/></svg></span>
+        <h3>Quiz: What's holding you back?</h3>
+        <p>2-minute assessment with a personalized results page and program recommendation.</p>
+        <div class="quiz-opts" id="quiz"><button>Fear of failure</button><button>Lack of clarity</button><button>No time</button><button>No support</button></div>
+        <a href="#" class="demo">Get my results <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a>
+      </div>
+      <div class="card res"><span style="background:var(--mint);color:var(--green)"><svg class="ic"><use href="#i-book"/></svg></span><h3>Goal-Setting Workbook</h3><p>A printable 20-page PDF to plan your next 90 days.</p><a href="#" class="demo">Download <svg class="ic" style="width:14px;height:14px"><use href="#i-down"/></svg></a></div>
+      <div class="card res"><span style="background:#FCEFD9;color:#9A6413"><svg class="ic"><use href="#i-video"/></svg></span><h3>Free Masterclass</h3><p>A 45-minute on-demand training on building unstoppable momentum.</p><a href="#" class="demo">Watch now <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:#EEE7F6;color:var(--plum)"><svg class="ic"><use href="#i-cal"/></svg></span><h3>30-Day Challenge</h3><p>Daily prompts by email and in the community.</p><a href="#" class="demo">Join free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:#E3EEF7;color:var(--sky)"><svg class="ic"><use href="#i-mail"/></svg></span><h3>Weekly Newsletter</h3><p>One idea, one action, every Monday.</p><a href="#" class="demo">Subscribe <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. EVENTS -->
+<section id="events">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Events</span>
+      <h2>Upcoming <em>experiences.</em></h2>
+      <p class="lead">In-person and virtual events with ticketing, reminders and check-in built in.</p>
+    </div>
+    <div class="grid" style="gap:14px">
+      <div class="card event"><div class="e-date"><b>06</b><small>Dec</small></div><div><span class="tag gold">In person · VIP available</span><h3>Make It Great LIVE: Annual Summit</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Atlanta, GA</span><span><svg class="ic"><use href="#i-clock"/></svg>9:00 AM - 5:00 PM</span><span><svg class="ic"><use href="#i-ticket"/></svg>48 seats left</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Get Tickets</a></div>
+      <div class="card event"><div class="e-date"><b>18</b><small>Jan</small></div><div><span class="tag">Virtual</span><h3>Vision Board Workshop 2027</h3><div class="e-meta"><span><svg class="ic"><use href="#i-video"/></svg>Online</span><span><svg class="ic"><use href="#i-clock"/></svg>7:00 PM EST</span><span><svg class="ic"><use href="#i-ticket"/></svg>Free for members</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Register</a></div>
+      <div class="card event"><div class="e-date"><b>22</b><small>Feb</small></div><div><span class="tag rose">Retreat · Application</span><h3>Women Who Lead Retreat</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Tulum, Mexico</span><span><svg class="ic"><use href="#i-clock"/></svg>4 days</span><span><svg class="ic"><use href="#i-ticket"/></svg>12 spots</span></div></div><a href="#contact" class="btn btn-dark btn-sm">Apply</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. LIVE EVENTS / SESSIONS -->
+<section id="live" class="white">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Live Sessions</span>
+      <h2>Go live, <em>right on her site.</em></h2>
+      <p class="lead">Stream coaching calls, Q&amp;As and workshops with live chat, raised hands and automatic replays saved to the dashboard.</p>
+    </div>
+    <div class="live-grid">
+      <div class="stage">
+        <div class="stage-top"><span class="tag live">● Live</span><span class="viewers"><svg class="ic" style="width:16px;height:16px"><use href="#i-users"/></svg>326 watching</span></div>
+        <div class="stage-center"><span class="avatar a2">MG</span><b>Monday Momentum Session</b><small>Topic: Setting boundaries that stick</small></div>
+        <div class="stage-bar"><span><svg class="ic"><use href="#i-mic"/></svg></span><span><svg class="ic"><use href="#i-video"/></svg></span><span><svg class="ic"><use href="#i-hand"/></svg></span><span class="end"><svg class="ic"><use href="#i-x"/></svg></span></div>
+      </div>
+      <div class="live-chat">
+        <h4>Live chat</h4>
+        <div class="lc-body">
+          <div><span class="avatar a3">DK</span><p><b>David</b>This is exactly what I needed today 🙌</p></div>
+          <div><span class="avatar a5">SL</span><p><b>Sofia</b>Joining from London!</p></div>
+          <div class="lc-q"><span class="avatar a4">TM</span><p><b>Question</b>How do I say no to my boss without guilt?</p></div>
+          <div><span class="avatar a2">AR</span><p><b>Amara</b>Taking so many notes 📝</p></div>
         </div>
-      </div>
-      <div>
-        <h4>Company</h4>
-        <ul>
-          <li><a href="about.html">About Dr. Abraham</a></li>
-          <li><a href="contact.html">Speaking</a></li>
-          <li><a href="blog.html">Blog</a></li>
-          <li><a href="index.html#podcast">Podcast</a></li>
-          <li><a href="contact.html">Press &amp; Media</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Shop</h4>
-        <ul>
-          <li><a href="programs.html">S3 Academy</a></li>
-          <li><a href="programs.html">S3 Foundation</a></li>
-          <li><a href="programs.html">VIP Mastermind</a></li>
-          <li><a href="book.html">Everything Is Possible</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Support</h4>
-        <ul>
-          <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="contact.html">Corporate Training</a></li>
-          <li><a href="#">Program Login</a></li>
-        </ul>
+        <div class="lc-input"><input placeholder="Say something..."/></div>
       </div>
     </div>
-    <div class="mf-footer-bottom">
-      <span>&copy; 2026 Dr. Abraham. All rights reserved.</span>
-      <span><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimer</a></span>
+  </div>
+</section>
+
+<!-- 14. PAYMENT GATEWAY -->
+<section id="payment">
+  <div class="wrap pay-grid">
+    <div>
+      <span class="eyebrow">Payment Gateway</span>
+      <h2>Fast, secure <em>checkout.</em></h2>
+      <p class="lead">Accept cards, Apple Pay, Google Pay and PayPal. Supports payment plans, subscriptions, coupons and donations, and access unlocks instantly.</p>
+      <div class="secure">
+        <span><svg class="ic"><use href="#i-lock"/></svg>256-bit SSL</span>
+        <span><svg class="ic"><use href="#i-card"/></svg>Stripe / PayPal</span>
+        <span><svg class="ic"><use href="#i-check"/></svg>Instant access</span>
+      </div>
     </div>
+    <div class="card checkout">
+      <h3 style="margin-bottom:1rem">Group Accelerator</h3>
+      <div class="plan-tog" id="planTog">
+        <button class="sel" data-price="1,497"><b>Pay in full</b><small>$1,497 · save $303</small></button>
+        <button data-price="600"><b>3 payments</b><small>$600 / month</small></button>
+      </div>
+      <div class="pay-methods"><span class="sel">Card</span><span>Apple Pay</span><span>PayPal</span></div>
+      <div class="field"><label>Card number</label><input placeholder="4242 4242 4242 4242" disabled/></div>
+      <div class="frow"><div class="field"><label>Expiry</label><input placeholder="MM / YY" disabled/></div><div class="field"><label>CVC</label><input placeholder="123" disabled/></div></div>
+      <div class="field"><label>Coupon code</label><input placeholder="MAKEITGREAT" disabled/></div>
+      <div class="total"><span>Total today</span><b id="payTotal">$1,497</b></div>
+      <a href="#" class="btn btn-gold demo"><svg class="ic" style="width:16px;height:16px"><use href="#i-lock"/></svg>Pay Securely</a>
+    </div>
+  </div>
+</section>
+
+<!-- 15. SHOP -->
+<section id="shop" class="white">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Shop</span>
+      <h2>Books, merch &amp; <em>digital products.</em></h2>
+      <p class="lead">Physical and digital products with inventory, shipping and instant downloads.</p>
+    </div>
+    <div class="grid g4">
+      <div class="card prod"><div class="prod-img" style="background:#FCEFD9"><span class="tag gold">Bestseller</span><div class="mock-book" style="background:linear-gradient(160deg,var(--deep),var(--ink))">Make It Great</div></div><div class="prod-body"><b>Make It Great: The Book</b><small>Hardcover · Signed</small><div class="prod-foot"><strong>$24</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:var(--mint)"><span class="tag">Digital</span><div class="mock-card" style="background:linear-gradient(135deg,var(--green),var(--deep))">90-DAY<br/>PLANNER</div></div><div class="prod-body"><b>90-Day Digital Planner</b><small>PDF · Instant download</small><div class="prod-foot"><strong>$19</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:#EEE7F6"><div class="mock-shirt" style="background:var(--ink)">MAKE IT<br/>GREAT</div></div><div class="prod-body"><b>Signature Tee</b><small>Unisex · 5 colors</small><div class="prod-foot"><strong>$32</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:#E3EEF7"><span class="tag rose">New</span><div class="mock-mug">MIG</div></div><div class="prod-body"><b>Morning Momentum Mug</b><small>Ceramic · 14 oz</small><div class="prod-foot"><strong>$18</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16. LET'S GET SOCIAL -->
+<section id="social">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Let's Get Social</span>
+      <h2>Follow the <em>journey.</em></h2>
+      <p class="lead">All her handles in one place, with live follower counts and her latest posts.</p>
+    </div>
+    <div class="social-grid">
+      <a href="#" class="soc s-ig demo"><svg class="ic"><use href="#i-ig"/></svg><b>Instagram</b><small>@makeitgreat</small></a>
+      <a href="#" class="soc s-li demo"><svg class="ic"><use href="#i-li"/></svg><b>LinkedIn</b><small>/in/makeitgreat</small></a>
+      <a href="#" class="soc s-yt demo"><svg class="ic"><use href="#i-yt"/></svg><b>YouTube</b><small>@makeitgreat</small></a>
+      <a href="#" class="soc s-tt demo"><svg class="ic"><use href="#i-tt"/></svg><b>TikTok</b><small>@makeitgreat</small></a>
+      <a href="#" class="soc s-fb demo"><svg class="ic"><use href="#i-fb"/></svg><b>Facebook</b><small>/makeitgreat</small></a>
+      <a href="#" class="soc s-x demo"><svg class="ic"><use href="#i-xx"/></svg><b>X</b><small>@makeitgreat</small></a>
+    </div>
+  </div>
+</section>
+
+<!-- 17. CONTACT -->
+<section id="contact" class="white">
+  <div class="wrap contact-grid">
+    <div>
+      <span class="eyebrow">Contact Us</span>
+      <h2>Let's <em>talk.</em></h2>
+      <p class="lead">Coaching questions, speaking requests, media and partnerships. Every message goes straight to her team's inbox and admin dashboard.</p>
+      <div class="cinfo">
+        <div><span><svg class="ic"><use href="#i-mail"/></svg></span><div><b>Email</b><small>hello@yourdomain.com</small></div></div>
+        <div><span><svg class="ic"><use href="#i-mic"/></svg></span><div><b>Speaking &amp; media</b><small>booking@yourdomain.com</small></div></div>
+        <div><span><svg class="ic"><use href="#i-clock"/></svg></span><div><b>Response time</b><small>Within 1 business day</small></div></div>
+      </div>
+    </div>
+    <form class="card cform" id="contactForm">
+      <div class="frow"><div class="field"><label>Name *</label><input name="name" required/></div><div class="field"><label>Email *</label><input name="email" type="email" required/></div></div>
+      <div class="field"><label>I'm interested in</label><select name="inquiry_type"><option>Coaching</option><option>Speaking</option><option>Events</option><option>Media / Partnership</option><option>Other</option></select></div>
+      <div class="field"><label>Message *</label><textarea name="message" rows="5" required></textarea></div>
+      <button class="btn btn-dark" style="width:100%;justify-content:center">Send Message</button>
+      <p class="form-msg" id="formMsg"></p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><span class="logo"><span class="logo-mark">M</span>Make It Great</span><p>Coaching, community and live experiences for people ready to grow.</p></div>
+      <div><h4>Grow</h4><ul><li><a href="#programs">Coaching</a></li><li><a href="#resources">Free Resources</a></li><li><a href="#ai">AI Coach</a></li><li><a href="#podcast">Podcast</a></li></ul></div>
+      <div><h4>Connect</h4><ul><li><a href="#community">Community</a></li><li><a href="#events">Events</a></li><li><a href="#live">Live Sessions</a></li><li><a href="#social">Social</a></li></ul></div>
+      <div><h4>More</h4><ul><li><a href="#shop">Shop</a></li><li><a href="#philanthropy">Philanthropy</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Make It Great · Concept demo</span><span>Privacy · Terms</span></div>
   </div>
 </footer>
 
-<!-- Video modal -->
-<div class="mf-modal" role="dialog" aria-modal="true" aria-label="Video">
-  <div class="mf-modal-box">
-    <button class="mf-modal-close" aria-label="Close video">&times;</button>
-    <div class="mf-reel">
-      <div class="mf-reel-slide"><img src="images/photo-portrait.jpg" alt=""/><div class="mf-reel-cap"><small>Chapter 01</small>Small town.<br/>Big dreams.</div></div>
-      <div class="mf-reel-slide"><img src="images/photo-bridge2.jpg" alt=""/><div class="mf-reel-cap"><small>Chapter 02</small>21 years in uniform taught me discipline.</div></div>
-      <div class="mf-reel-slide"><img src="images/photo-bridge1.jpg" alt=""/><div class="mf-reel-cap"><small>Chapter 03</small>Every scar became a stepping stone.</div></div>
-      <div class="mf-reel-slide"><img src="images/photo-event.jpg" alt=""/><div class="mf-reel-cap"><small>Today</small>50,000+ students in 35 countries.</div></div>
-      <div class="mf-reel-slide mf-reel-end"><div><span class="mf-script">Your turn.</span><h3>Everything is possible.</h3><a href="index.html#insider" class="mf-btn">Get the Free Training</a></div></div>
-    </div>
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
-<script src="js/main.js?v=7"></script>
-<script src="js/theme.js?v=7"></script>
+<script>
+const FEATURES = [
+  ['home','Home','A bold first impression','#home'],
+  ['user','About','Her story & mission','#about'],
+  ['target','Coaching & Programs','Courses, groups & 1:1','#programs'],
+  ['cal','Bookings','Self-serve scheduling','#booking'],
+  ['users','Community','Private social network','#community'],
+  ['spark','Custom AI','Coach trained on her methods','#ai'],
+  ['grid','Dashboard','Client portal & admin','#dashboard'],
+  ['mic','Podcast','On-site player & episodes','#podcast'],
+  ['heart','Philanthropy','Causes & donations','#philanthropy'],
+  ['film','Gallery','Speaking & coaching videos','#gallery'],
+  ['gift','Free Tools','Lead magnets & quizzes','#resources'],
+  ['ticket','Events','Ticketed experiences','#events'],
+  ['live','Live Sessions','Stream with live chat','#live'],
+  ['card','Payment Gateway','Cards, plans & PayPal','#payment'],
+  ['bag','Shop','Books, merch & digital','#shop'],
+  ['share',"Let's Get Social",'All handles in one place','#social'],
+  ['mail','Contact Us','Inquiries to her inbox','#contact'],
+];
+const ico = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
+document.getElementById('featGrid').innerHTML = FEATURES.map(([i,t,d,h]) => `<a class="feat" href="${h}"><span>${ico(i)}</span><b>${t}</b><small>${d}</small></a>`).join('');
+document.getElementById('drawerGrid').innerHTML = FEATURES.map(([i,t,,h]) => `<a href="${h}"><span>${ico(i)}</span>${t}</a>`).join('');
+
+const toast = msg => { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600); };
+
+// Menu drawer
+const drawer = document.getElementById('drawer');
+document.getElementById('menuOpen').onclick = () => drawer.classList.add('open');
+document.getElementById('menuClose').onclick = () => drawer.classList.remove('open');
+drawer.addEventListener('click', e => { if (e.target.closest('a')) drawer.classList.remove('open'); });
+
+// Demo-only links
+document.querySelectorAll('.demo').forEach(el => el.addEventListener('click', e => { e.preventDefault(); toast('Demo preview: this will be fully working in the final build.'); }));
+
+// Single-select groups
+const selectGroup = (sel, cls = 'sel', cb) => document.querySelectorAll(sel).forEach(group => group.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.classList.contains('off')) return;
+  group.querySelectorAll('button').forEach(x => x.classList.remove(cls)); b.classList.add(cls); cb && cb(b);
+}));
+selectGroup('#sessions', 'active');
+selectGroup('#slots');
+selectGroup('#galTabs', 'on');
+selectGroup('#quiz');
+selectGroup('#planTog', 'sel', b => document.getElementById('payTotal').textContent = '$' + b.dataset.price);
+
+// Calendar (Nov 2026 starts on a Sunday)
+const cal = document.getElementById('calDays');
+cal.innerHTML = ['S','M','T','W','T','F','S'].map(d => `<span class="dn">${d}</span>`).join('') +
+  Array.from({length:30}, (_, i) => { const d = i + 1, dow = i % 7, av = d >= 9 && dow !== 0 && dow !== 6;
+    return `<button class="${av ? 'av' : 'off'}${d === 12 ? ' sel' : ''}">${d}</button>`; }).join('');
+selectGroup('#calDays');
+
+// Community likes
+document.querySelectorAll('.like').forEach(b => b.addEventListener('click', () => {
+  const n = b.querySelector('span'), on = b.classList.toggle('liked');
+  n.textContent = +n.textContent + (on ? 1 : -1);
+}));
+
+// AI chat (scripted demo replies)
+const chatBody = document.getElementById('chatBody');
+const replies = [
+  [/program|fit|which/i, 'Based on what you shared, the <b>Group Accelerator</b> is a great fit: weekly live coaching plus accountability. Want me to save you a spot in the next cohort?'],
+  [/book|call|session/i, 'Happy to help! I have openings this Thursday at 10:30 AM and Friday at 2:30 PM for a free Discovery Call. Which works better?'],
+  [/challenge|daily/i, "Today's challenge: send one message you've been avoiding, then celebrate it in the community. Small courage compounds! 💪"],
+];
+const say = (text, who) => { const m = document.createElement('div'); m.className = 'msg ' + who; m.innerHTML = text; chatBody.appendChild(m); chatBody.scrollTop = chatBody.scrollHeight; };
+const ask = q => {
+  if (!q.trim()) return;
+  say(q.replace(/&/g, '&amp;').replace(/</g, '&lt;'), 'me');
+  const hit = replies.find(([re]) => re.test(q));
+  setTimeout(() => say(hit ? hit[1] : "Great question. In the full version I'll answer using her actual courses, talks and frameworks, personalized to your goals.", 'bot'), 650);
+};
+document.getElementById('chips').addEventListener('click', e => { if (e.target.tagName === 'BUTTON') ask(e.target.textContent); });
+document.getElementById('chatForm').addEventListener('submit', e => { e.preventDefault(); const i = document.getElementById('chatInput'); ask(i.value); i.value = ''; });
+
+// Podcast waveform + play toggle
+const wave = document.getElementById('wave');
+wave.innerHTML = Array.from({length:60}, (_, i) => `<i class="${i < 19 ? 'p' : ''}" style="height:${Math.min(100, 20 + Math.round(Math.abs(Math.sin(i * 1.7) * 70 + Math.cos(i * .6) * 10)))}%"></i>`).join('');
+const playBtn = document.getElementById('playBtn');
+playBtn.onclick = () => { const p = playBtn.classList.toggle('on'); playBtn.innerHTML = p ? '<svg class="ic" style="width:20px;height:20px"><path d="M8 5v14M16 5v14" stroke-width="3"/></svg>' : '<svg class="ic" style="width:20px;height:20px"><use href="#i-play"/></svg>'; };
+
+// Shop cart
+let cart = 0;
+document.querySelectorAll('.add').forEach(b => b.addEventListener('click', () => {
+  if (b.classList.contains('done')) return;
+  document.getElementById('cartCount').textContent = ++cart;
+  b.classList.add('done'); b.innerHTML = ico('check');
+  toast('Added to cart');
+}));
+
+// Gallery
+document.querySelectorAll('.vid').forEach(v => v.addEventListener('click', () => toast('Her speaking & coaching videos will play here.')));
+
+// Contact form → existing API
+document.getElementById('contactForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('formMsg');
+  const data = Object.fromEntries(new FormData(e.target));
+  msg.textContent = 'Sending...';
+  try {
+    const res = await fetch('/api/inquiries', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const out = await res.json();
+    msg.textContent = out.ok ? 'Thanks! Your message was received.' : out.message;
+    if (out.ok) e.target.reset();
+  } catch { msg.textContent = 'Demo preview: message could not be sent right now.'; }
+});
+</script>
 </body>
 </html>
