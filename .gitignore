@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Database — contains subscriber emails, inquiries and visitor data. Never commit.
+database/*.db
+database/*.db-shm
+database/*.db-wal
+*.db.bak
+
+# Local backups and environment
+_backup-before-redesign/
+.env
+*.log

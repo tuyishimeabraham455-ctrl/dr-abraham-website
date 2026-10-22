@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Dr. Abraham</title>
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 16px;
+      background: #F3F4F6;
+      color: #1F2937;
+      line-height: 1.7;
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 250px;
+      background: #FFFFFF;
+      color: #1F2937;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      border-right: 1px solid #E5E7EB;
+    }
+    .sidebar-logo {
+      padding: 1.5rem 1.5rem 1.25rem;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .sidebar-logo h1 {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 1.3rem;
+      color: #0D1B3E;
+      font-weight: 700;
+    }
+    .sidebar-logo span { color: #0F5B4A; }
+    .sidebar-logo p { font-size: 0.75rem; color: #6B7280; margin-top: 0.2rem; }
+    .sidebar-nav { padding: 1rem 0; flex: 1; overflow-y: auto; }
+    .nav-section { padding: 0.5rem 1.5rem; font-size: 0.72rem; text-transform: uppercase;
+                   letter-spacing: 0.1em; color: #9CA3AF; margin-top: 1rem; font-weight: 700; }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: #4B5563;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.95rem;
+      border: none; background: none;
+      width: 100%; text-align: left;
+      font-family: 'Times New Roman', Times, serif;
+      font-weight: 600;
+    }
+    .nav-item:hover { background: #FFF5F8; color: #0F5B4A; }
+    .nav-item.active { background: #FFE0EF; color: #0F5B4A; border-left: 3px solid #0F5B4A; font-weight: 700; }
+    .nav-icon { width: 18px; text-align: center; font-style: normal; font-size: 1rem; }
+    .sidebar-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #F3F4F6;
+      font-size: 0.82rem;
+      color: #6B7280;
+    }
+    .sidebar-footer a { color: #0F5B4A; text-decoration: none; font-weight: 600; }
+    .sidebar-footer a:hover { text-decoration: underline; }
+
+    /* ── Main Content ── */
+    .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #E5E7EB;
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar h2 { font-size: 1.2rem; font-weight: 700; color: #1A1A2E; font-family: 'Times New Roman', Times, serif; }
+    .topbar-meta { font-size: 0.85rem; color: #6B7280; }
+    .topbar-actions { display: flex; gap: 0.75rem; align-items: center; }
+    .badge-live {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(16,185,129,0.1); color: #059669;
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      font-size: 0.78rem; font-weight: 600;
+    }
+    .badge-live::before { content: ''; width: 7px; height: 7px; border-radius: 50%;
+                          background: #10B981; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .content { padding: 2rem; flex: 1; }
+
+    /* ── Views ── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ── Stat Cards ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    .stat-card {
+      background: #fff; border-radius: 12px; padding: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--color, #E91E8C);
+    }
+    .stat-card-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em;
+                       color: #9CA3AF; margin-bottom: 0.5rem; }
+    .stat-card-value { font-size: 2.5rem; font-weight: 700; color: #1A1A2E;
+                       font-family: 'Times New Roman', Times, serif; line-height: 1; }
+    .stat-card-sub { font-size: 0.8rem; color: #6B7280; margin-top: 0.4rem; }
+
+    /* ── Tables ── */
+    .card {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .card-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #F3F4F6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-header h3 { font-size: 1rem; font-weight: 700; color: #1A1A2E; }
+    .card-body { padding: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead th { background: #F9FAFB; padding: 0.75rem 1.25rem; text-align: left;
+               font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+               color: #6B7280; font-weight: 600; border-bottom: 1px solid #E5E7EB; }
+    tbody tr { border-bottom: 1px solid #F3F4F6; transition: background 0.15s; }
+    tbody tr:hover { background: #FAFAFA; }
+    tbody tr:last-child { border-bottom: none; }
+    td { padding: 0.9rem 1.25rem; color: #374151; vertical-align: middle; }
+    .td-email { color: #E91E8C; font-weight: 500; }
+    .td-muted { color: #9CA3AF; font-size: 0.85rem; }
+
+    /* ── Status badges ── */
+    .status-badge {
+      display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .status-new      { background: rgba(59,130,246,0.12); color: #1D4ED8; }
+    .status-read     { background: rgba(107,114,128,0.12); color: #374151; }
+    .status-replied  { background: rgba(16,185,129,0.12); color: #059669; }
+    .status-closed   { background: rgba(239,68,68,0.1); color: #B91C1C; }
+    .status-active   { background: rgba(16,185,129,0.12); color: #059669; }
+    .status-pending  { background: rgba(245,158,11,0.12); color: #B45309; }
+    .status-published{ background: rgba(16,185,129,0.12); color: #059669; }
+    .status-draft    { background: rgba(107,114,128,0.12); color: #374151; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.55rem 1.1rem; border-radius: 6px;
+      font-size: 0.875rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; border: none;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .btn-primary { background: #E91E8C; color: #fff; }
+    .btn-primary:hover { background: #C2166F; }
+    .btn-ghost { background: transparent; color: #6B7280; border: 1px solid #E5E7EB; }
+    .btn-ghost:hover { background: #F3F4F6; color: #1A1A2E; }
+    .btn-danger { background: #EF4444; color: #fff; }
+    .btn-danger:hover { background: #B91C1C; }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+
+    /* ── Search / Filter row ── */
+    .filter-row { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+    .search-input {
+      flex: 1; min-width: 200px;
+      padding: 0.6rem 1rem; border: 1px solid #E5E7EB;
+      border-radius: 6px; font-size: 0.9rem; outline: none;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .search-input:focus { border-color: #E91E8C; }
+    select.filter-select {
+      padding: 0.6rem 1rem; border: 1px solid #E5E7EB; border-radius: 6px;
+      font-size: 0.875rem; outline: none; background: #fff; cursor: pointer;
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 3rem; color: #9CA3AF; }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .empty-state h4 { color: #374151; margin-bottom: 0.4rem; }
+
+    /* ── Loading ── */
+    .loading { text-align: center; padding: 2.5rem; color: #9CA3AF; font-size: 1rem; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: #FFFFFF; color: #1F2937;
+      padding: 0.875rem 1.5rem; border-radius: 8px;
+      font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      border: 1px solid #E5E7EB;
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.3s; z-index: 9999;
+      max-width: 360px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-left: 4px solid #10B981; }
+    #toast.error   { border-left: 4px solid #EF4444; }
+
+    /* ── Dashboard grid ── */
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+    /* ── Form modal area ── */
+    .form-panel {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .form-panel h3 { margin-bottom: 1.25rem; font-size: 1rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600;
+                        color: #374151; margin-bottom: 0.4rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.65rem 0.875rem;
+      border: 1px solid #D1D5DB; border-radius: 6px;
+      font-size: 0.9rem; outline: none;
+      font-family: 'Times New Roman', Times, serif;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #E91E8C; }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ── Post detail ── */
+    .post-content-preview {
+      background: #F9FAFB; border-radius: 8px; padding: 1rem;
+      border: 1px solid #E5E7EB; font-size: 0.9rem; color: #4B5563;
+      max-height: 200px; overflow-y: auto; white-space: pre-wrap;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .dash-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo" style="display:flex;align-items:center;gap:.85rem;">
+      <img src="../images/photo-portrait.jpg" alt="Dr. Abraham" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #0F5B4A;box-shadow:0 2px 8px rgba(15,91,74,.2);"/>
+      <div>
+        <h1 style="font-size:1.15rem;margin:0;">Dr. Abraham<span>.</span></h1>
+        <p style="margin:0;font-size:0.75rem;">Admin Dashboard</p>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      <button class="nav-item active" data-view="dashboard" onclick="switchView(this)">
+        <i class="nav-icon">&#9632;</i> Dashboard
+      </button>
+
+      <div class="nav-section">Content</div>
+      <button class="nav-item" data-view="posts" onclick="switchView(this)">
+        <i class="nav-icon">&#9670;</i> Blog Posts
+      </button>
+      <button class="nav-item" data-view="testimonials" onclick="switchView(this)">
+        <i class="nav-icon">&#9650;</i> Testimonials
+      </button>
+
+      <div class="nav-section">Leads</div>
+      <button class="nav-item" data-view="inquiries" onclick="switchView(this)">
+        <i class="nav-icon">&#9654;</i> Inquiries
+      </button>
+      <button class="nav-item" data-view="subscribers" onclick="switchView(this)">
+        <i class="nav-icon">&#9660;</i> Subscribers
+      </button>
+      <button class="nav-item" data-view="leads" onclick="switchView(this)">
+        <i class="nav-icon">&#9651;</i> Program Leads
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/" target="_blank">View Website</a> &nbsp;|&nbsp;
+      <a href="/api/stats" target="_blank">API</a>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="page-title">Dashboard</h2>
+        <div class="topbar-meta" id="page-meta">Overview of all activity</div>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge-live">Server Live</span>
+        <button class="btn btn-ghost btn-sm" onclick="refreshAll()">Refresh</button>
+        <div style="display:flex;align-items:center;gap:.6rem;padding-left:0.75rem;border-left:1px solid #E5E7EB;">
+          <img src="../images/photo-portrait.jpg" alt="Dr. Abraham" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:1.5px solid #0F5B4A;"/>
+          <span style="font-size:0.88rem;font-weight:700;color:#0D1B3E;">Dr. Abraham</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ====================================================
+           DASHBOARD VIEW
+      ==================================================== -->
+      <div class="view active" id="view-dashboard">
+        <div class="stat-grid" id="stat-grid">
+          <div class="stat-card" style="--color:#E91E8C">
+            <div class="stat-card-label">Active Subscribers</div>
+            <div class="stat-card-value" id="s-subscribers">--</div>
+            <div class="stat-card-sub">Email list</div>
+          </div>
+          <div class="stat-card" style="--color:#3B82F6">
+            <div class="stat-card-label">New Inquiries</div>
+            <div class="stat-card-value" id="s-inquiries">--</div>
+            <div class="stat-card-sub">Unread messages</div>
+          </div>
+          <div class="stat-card" style="--color:#F59E0B">
+            <div class="stat-card-label">Program Leads</div>
+            <div class="stat-card-value" id="s-leads">--</div>
+            <div class="stat-card-sub">Pending review</div>
+          </div>
+          <div class="stat-card" style="--color:#10B981">
+            <div class="stat-card-label">Page Views Today</div>
+            <div class="stat-card-value" id="s-views">--</div>
+            <div class="stat-card-sub" id="s-views-total">Total: --</div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <!-- Recent Inquiries -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Recent Inquiries</h3>
+              <button class="btn btn-ghost btn-sm" onclick="switchViewById('inquiries')">View All</button>
+            </div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>Name</th><th>Type</th><th>Date</th></tr></thead>
+                <tbody id="dash-inquiries"><tr><td colspan="3" class="loading">Loading...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Subscribers -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Recent Subscribers</h3>
+              <button class="btn btn-ghost btn-sm" onclick="switchViewById('subscribers')">View All</button>
+            </div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>Email</th><th>Source</th><th>Date</th></tr></thead>
+                <tbody id="dash-subscribers"><tr><td colspan="3" class="loading">Loading...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Posts -->
+        <div class="card">
+          <div class="card-header"><h3>Top Blog Posts by Views</h3></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Title</th><th>Slug</th><th>Views</th></tr></thead>
+              <tbody id="dash-posts"><tr><td colspan="3" class="loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+           INQUIRIES VIEW
+      ==================================================== -->
+      <div class="view" id="view-inquiries">
+        <div class="filter-row">
+          <input class="search-input" type="text" placeholder="Search inquiries..." id="search-inquiries" oninput="filterTable('inquiries-table', this.value)" />
+          <select class="filter-select" onchange="loadInquiries(this.value)">
+            <option value="">All Statuses</option>
+            <option value="new">New</option>
+            <option value="read">Read</option>
+            <option value="replied">Replied</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>All Inquiries</h3><span id="inquiries-count" style="color:#9CA3AF;font-size:.85rem;"></span></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="inquiries-table"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+           SUBSCRIBERS VIEW
+      ==================================================== -->
+      <div class="view" id="view-subscribers">
+        <div class="filter-row">
+          <input class="search-input" type="text" placeholder="Search by email..." id="search-subscribers" oninput="filterTable('subscribers-table', this.value)" />
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>All Subscribers</h3><span id="subscribers-count" style="color:#9CA3AF;font-size:.85rem;"></span></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Email</th><th>First Name</th><th>Source</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+              <tbody id="subscribers-table"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+           LEADS VIEW
+      ==================================================== -->
+      <div class="view" id="view-leads">
+        <div class="card">
+          <div class="card-header"><h3>Program Leads</h3><span id="leads-count" style="color:#9CA3AF;font-size:.85rem;"></span></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Program</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody id="leads-table"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+           POSTS VIEW
+      ==================================================== -->
+      <div class="view" id="view-posts">
+        <div class="filter-row">
+          <input class="search-input" type="text" placeholder="Search posts..." id="search-posts" oninput="filterTable('posts-table', this.value)" />
+          <button class="btn btn-primary" onclick="showNewPostForm()">+ New Post</button>
+        </div>
+
+        <!-- New Post Form (hidden by default) -->
+        <div class="form-panel" id="new-post-form" style="display:none;">
+          <h3>Create New Post</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Title *</label>
+              <input type="text" id="p-title" placeholder="Post title" oninput="autoSlug()" />
+            </div>
+            <div class="form-group">
+              <label>Slug *</label>
+              <input type="text" id="p-slug" placeholder="url-friendly-slug" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="p-category">
+                <option value="mindset">Mindset</option>
+                <option value="business">Business</option>
+                <option value="leadership">Leadership</option>
+                <option value="money">Money</option>
+                <option value="lifestyle">Lifestyle</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Read Time (minutes)</label>
+              <input type="number" id="p-readtime" value="5" min="1" max="60" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Excerpt</label>
+            <textarea id="p-excerpt" rows="2" placeholder="Short summary shown in blog listing..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Content</label>
+            <textarea id="p-content" rows="6" placeholder="Full article content..."></textarea>
+          </div>
+          <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+            <button class="btn btn-primary" onclick="createPost()">Save Post</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('new-post-form').style.display='none'">Cancel</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>All Blog Posts</h3><span id="posts-count" style="color:#9CA3AF;font-size:.85rem;"></span></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Title</th><th>Category</th><th>Views</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="posts-table"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+           TESTIMONIALS VIEW
+      ==================================================== -->
+      <div class="view" id="view-testimonials">
+        <div class="card">
+          <div class="card-header"><h3>All Testimonials</h3><span id="testimonials-count" style="color:#9CA3AF;font-size:.85rem;"></span></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Name</th><th>Role</th><th>Program</th><th>Result</th><th>Rating</th><th>Featured</th></tr></thead>
+              <tbody id="testimonials-table"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ── Utilities ────────────────────────────────────────────────
+const API = '/api';
+
+async function apiFetch(path, opts = {}) {
+  try {
+    const res = await fetch(API + path, {
+      headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+      ...opts
+    });
+    return await res.json();
+  } catch (e) {
+    return { ok: false, message: 'Network error. Is the server running?' };
+  }
+}
+
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  setTimeout(() => { el.className = ''; }, 3500);
+}
+
+function fmtDate(dt) {
+  if (!dt) return '--';
+  return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function statusBadge(s) {
+  return `<span class="status-badge status-${s}">${s}</span>`;
+}
+
+function catBadge(c) {
+  const colors = { mindset:'#8B5CF6', business:'#3B82F6', leadership:'#F59E0B', money:'#10B981', lifestyle:'#EC4899' };
+  return `<span style="background:${colors[c]||'#6B7280'}22;color:${colors[c]||'#6B7280'};padding:.15rem .55rem;border-radius:999px;font-size:.75rem;font-weight:700;">${c}</span>`;
+}
+
+// ── Navigation ────────────────────────────────────────────────
+const viewTitles = {
+  dashboard: ['Dashboard', 'Overview of all activity'],
+  inquiries: ['Inquiries', 'Contact and booking requests'],
+  subscribers: ['Subscribers', 'Email newsletter list'],
+  leads: ['Program Leads', 'S3 Academy and VIP Mastermind applications'],
+  posts: ['Blog Posts', 'Manage your content'],
+  testimonials: ['Testimonials', 'Client success stories'],
+};
+
+function switchView(btn) {
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const v = btn.dataset.view;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.getElementById('page-title').textContent = viewTitles[v][0];
+  document.getElementById('page-meta').textContent  = viewTitles[v][1];
+  loadView(v);
+}
+
+function switchViewById(v) {
+  const btn = document.querySelector(`[data-view="${v}"]`);
+  if (btn) switchView(btn);
+}
+
+// ── Load all views ────────────────────────────────────────────
+function loadView(v) {
+  if (v === 'dashboard')    loadDashboard();
+  if (v === 'inquiries')    loadInquiries();
+  if (v === 'subscribers')  loadSubscribers();
+  if (v === 'leads')        loadLeads();
+  if (v === 'posts')        loadPosts();
+  if (v === 'testimonials') loadTestimonials();
+}
+
+function refreshAll() { loadView(document.querySelector('.nav-item.active').dataset.view); toast('Refreshed.'); }
+
+// ── Filter table by search ────────────────────────────────────
+function filterTable(tableId, q) {
+  q = q.toLowerCase();
+  document.querySelectorAll(`#${tableId} tr`).forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────
+async function loadDashboard() {
+  const data = await apiFetch('/stats');
+  if (!data.ok) { toast(data.message, 'error'); return; }
+  const s = data.stats;
+  document.getElementById('s-subscribers').textContent = s.subscribers;
+  document.getElementById('s-inquiries').textContent   = s.inquiries;
+  document.getElementById('s-leads').textContent       = s.leads;
+  document.getElementById('s-views').textContent       = s.today_views;
+  document.getElementById('s-views-total').textContent = `Total: ${s.total_views.toLocaleString()}`;
+
+  // Recent inquiries
+  const iq = document.getElementById('dash-inquiries');
+  iq.innerHTML = data.recent_inquiries.length ? data.recent_inquiries.map(r =>
+    `<tr><td>${r.name}</td><td><span style="font-size:.8rem;color:#6B7280">${r.inquiry_type||'general'}</span></td><td class="td-muted">${fmtDate(r.created_at)}</td></tr>`
+  ).join('') : `<tr><td colspan="3"><div class="empty-state"><p>No inquiries yet.</p></div></td></tr>`;
+
+  // Recent subscribers
+  const sb = document.getElementById('dash-subscribers');
+  sb.innerHTML = data.recent_subscribers.length ? data.recent_subscribers.map(r =>
+    `<tr><td class="td-email">${r.email}</td><td><span style="font-size:.8rem;color:#6B7280">${r.source||'website'}</span></td><td class="td-muted">${fmtDate(r.created_at)}</td></tr>`
+  ).join('') : `<tr><td colspan="3"><div class="empty-state"><p>No subscribers yet.</p></div></td></tr>`;
+
+  // Top posts
+  const tp = document.getElementById('dash-posts');
+  tp.innerHTML = data.top_posts.length ? data.top_posts.map(r =>
+    `<tr><td>${r.title}</td><td class="td-muted">${r.slug}</td><td><strong>${r.views}</strong></td></tr>`
+  ).join('') : `<tr><td colspan="3"><div class="empty-state"><p>No posts yet.</p></div></td></tr>`;
+}
+
+// ── INQUIRIES ────────────────────────────────────────────────
+async function loadInquiries(status = '') {
+  const url = status ? `/inquiries?status=${status}` : '/inquiries';
+  const data = await apiFetch(url);
+  const tbody = document.getElementById('inquiries-table');
+  document.getElementById('inquiries-count').textContent = data.count ? `${data.count} total` : '';
+  if (!data.ok || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No inquiries found.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.data.map(r => `
+    <tr>
+      <td><strong>${r.name}</strong></td>
+      <td class="td-email">${r.email}</td>
+      <td>${r.inquiry_type || '--'}</td>
+      <td class="td-muted">${fmtDate(r.created_at)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>
+        <select onchange="updateInquiryStatus(${r.id}, this.value)" style="font-size:.8rem;padding:.2rem .4rem;border:1px solid #E5E7EB;border-radius:4px;font-family:'Times New Roman',serif;">
+          ${['new','read','replied','closed'].map(s => `<option${r.status===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function updateInquiryStatus(id, status) {
+  const res = await apiFetch(`/inquiries/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
+  toast(res.ok ? 'Status updated.' : res.message, res.ok ? 'success' : 'error');
+}
+
+// ── SUBSCRIBERS ──────────────────────────────────────────────
+async function loadSubscribers() {
+  const data = await apiFetch('/subscribers');
+  const tbody = document.getElementById('subscribers-table');
+  document.getElementById('subscribers-count').textContent = data.count ? `${data.count} total` : '';
+  if (!data.ok || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No subscribers yet. Share the newsletter signup!</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.data.map(r => `
+    <tr>
+      <td class="td-email">${r.email}</td>
+      <td>${r.first_name || '--'}</td>
+      <td>${r.source || 'website'}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td class="td-muted">${fmtDate(r.created_at)}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="unsubscribe(${r.id}, this)">Remove</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function unsubscribe(id, btn) {
+  if (!confirm('Mark this subscriber as unsubscribed?')) return;
+  const res = await apiFetch(`/subscribers/${id}`, { method: 'DELETE' });
+  if (res.ok) { btn.closest('tr').style.opacity = '0.4'; toast('Unsubscribed.'); }
+  else toast(res.message, 'error');
+}
+
+// ── PROGRAM LEADS ────────────────────────────────────────────
+async function loadLeads() {
+  const data = await apiFetch('/leads');
+  const tbody = document.getElementById('leads-table');
+  document.getElementById('leads-count').textContent = data.count ? `${data.count} total` : '';
+  if (!data.ok || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><p>No program leads yet.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.data.map(r => `
+    <tr>
+      <td><strong>${r.name}</strong></td>
+      <td class="td-email">${r.email}</td>
+      <td>${r.program}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td class="td-muted">${fmtDate(r.created_at)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── BLOG POSTS ───────────────────────────────────────────────
+async function loadPosts() {
+  const data = await apiFetch('/posts?limit=50');
+  const tbody = document.getElementById('posts-table');
+  document.getElementById('posts-count').textContent = data.count ? `${data.count} total` : '';
+  if (!data.ok || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No posts yet. Create your first post!</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.data.map(r => `
+    <tr>
+      <td><strong>${r.title}</strong></td>
+      <td>${catBadge(r.category)}</td>
+      <td>${r.views}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td class="td-muted">${fmtDate(r.created_at)}</td>
+      <td>
+        <button class="btn btn-danger btn-sm" onclick="deletePost(${r.id}, this)">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function autoSlug() {
+  const title = document.getElementById('p-title').value;
+  document.getElementById('p-slug').value = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function showNewPostForm() {
+  const f = document.getElementById('new-post-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+async function createPost() {
+  const body = {
+    title:    document.getElementById('p-title').value,
+    slug:     document.getElementById('p-slug').value,
+    excerpt:  document.getElementById('p-excerpt').value,
+    content:  document.getElementById('p-content').value,
+    category: document.getElementById('p-category').value,
+    read_time: document.getElementById('p-readtime').value,
+    status: 'published'
+  };
+  if (!body.title || !body.slug) { toast('Title and slug are required.', 'error'); return; }
+  const res = await apiFetch('/posts', { method: 'POST', body: JSON.stringify(body) });
+  if (res.ok) {
+    toast('Post created successfully!');
+    document.getElementById('new-post-form').style.display = 'none';
+    ['p-title','p-slug','p-excerpt','p-content'].forEach(id => document.getElementById(id).value = '');
+    loadPosts();
+  } else {
+    toast(res.message, 'error');
+  }
+}
+
+async function deletePost(id, btn) {
+  if (!confirm('Delete this post permanently?')) return;
+  const res = await apiFetch(`/posts/${id}`, { method: 'DELETE' });
+  if (res.ok) { btn.closest('tr').remove(); toast('Post deleted.'); }
+  else toast(res.message, 'error');
+}
+
+// ── TESTIMONIALS ─────────────────────────────────────────────
+async function loadTestimonials() {
+  const data = await apiFetch('/testimonials');
+  const tbody = document.getElementById('testimonials-table');
+  document.getElementById('testimonials-count').textContent = data.count ? `${data.count} total` : '';
+  if (!data.ok || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No testimonials yet.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.data.map(r => `
+    <tr>
+      <td><strong>${r.name}</strong></td>
+      <td class="td-muted">${r.role || '--'}</td>
+      <td>${r.program || '--'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem;">${r.result || '--'}</td>
+      <td>${r.rating}/5</td>
+      <td>${r.featured ? '<span class="status-badge status-active">Yes</span>' : '<span class="status-badge status-read">No</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+// ── Init ─────────────────────────────────────────────────────
+loadDashboard();
+</script>
+</body>
+</html>
