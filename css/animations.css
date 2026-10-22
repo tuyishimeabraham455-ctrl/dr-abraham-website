@@ -438,7 +438,7 @@
   box-shadow: var(--shadow-sm);
 }
 .count-value {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: 3rem;
   font-weight: 900;
   background: var(--gradient-primary);

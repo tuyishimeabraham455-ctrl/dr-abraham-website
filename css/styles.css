@@ -48,7 +48,7 @@
 html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-body, 'DM Sans', Arial, sans-serif);
   font-size: 16px;
   color: var(--gray-800);
   background: var(--white);
@@ -66,7 +66,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
    TYPOGRAPHY
 ============================================================ */
 h1, h2, h3, h4, h5 {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-weight: 700;
   line-height: 1.15;
   color: var(--navy);
@@ -138,7 +138,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   border: 2px solid transparent;
   white-space: nowrap;
   cursor: pointer;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .btn:hover { transform: translateY(-3px); }
 
@@ -189,7 +189,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   gap: 2rem;
 }
 .nav-logo {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: 1.55rem;
   font-weight: 700;
   color: var(--navy);
@@ -391,7 +391,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   flex-wrap: wrap;
 }
 .hero-stat-num {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: 2rem;
   font-weight: 700;
   color: var(--pink);
@@ -495,7 +495,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
 }
 .trust-logos { display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap; justify-content: center; }
 .trust-logo {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-weight: 700;
   font-size: 1rem;
   color: var(--gray-400);
@@ -509,6 +509,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
    CREDENTIAL CHIPS
 ============================================================ */
 .chips-row { display: flex; flex-wrap: wrap; gap: .65rem; margin: 1.5rem 0; }
+.page-hero .chips-row, .chips-row.center { justify-content: center; }
 .chip {
   display: inline-flex;
   align-items: center;
@@ -592,7 +593,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   font-weight: 700;
   color: var(--navy);
   line-height: 1;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .photo-accent-card .accent-lbl { font-size: .75rem; color: var(--gray-400); margin-top: .2rem; }
 
@@ -611,7 +612,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
 .about-content .section-tag { display: block; }
 .about-content p { margin-bottom: 1.2rem; }
 .about-signature {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: 2rem;
   font-style: italic;
   color: var(--pink);
@@ -810,7 +811,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   border-radius: var(--r-md);
   font-weight: 600; color: var(--gray-800);
   transition: var(--t) var(--ease);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: 1rem;
   background: var(--white);
   cursor: pointer;
@@ -860,7 +861,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 1rem; color: var(--white);
   flex-shrink: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   overflow: hidden;
 }
 .testi-name { font-weight: 700; color: var(--navy); font-size: .95rem; }
@@ -927,7 +928,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
 }
 .stat-item { text-align: center; }
 .stat-num {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: clamp(2.4rem,4vw,3.8rem);
   font-weight: 700;
   color: var(--white);
@@ -976,7 +977,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   font-size: 1rem;
   background: rgba(255,255,255,.95);
   color: var(--navy);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .email-form button {
   padding: 1rem 2rem;
@@ -988,7 +989,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   cursor: pointer;
   white-space: nowrap;
   transition: opacity var(--t) var(--ease);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .email-form button:hover { opacity: .9; }
 .lead-trust { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
@@ -1085,10 +1086,10 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   gap: .5rem; margin-bottom: 1.5rem;
   position: relative; z-index: 1;
 }
-.breadcrumb a   { font-size: .82rem; color: rgba(255,255,255,.55); }
+.breadcrumb a   { font-size: 1rem; color: rgba(255,255,255,.55); }
 .breadcrumb a:hover { color: var(--gold-light); }
-.breadcrumb sep { font-size: .82rem; color: rgba(255,255,255,.25); }
-.breadcrumb .current { font-size: .82rem; color: var(--gold-light); }
+.breadcrumb sep { font-size: 1rem; color: rgba(255,255,255,.25); }
+.breadcrumb .current { font-size: 1rem; color: var(--gold-light); }
 
 /* ============================================================
    FOOTER (Light Luxury International Aesthetic)
@@ -1107,7 +1108,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   margin-bottom: 3.5rem;
 }
 .footer-logo-text {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: 1.7rem; font-weight: 700;
   color: var(--navy);
   display: block; margin-bottom: 1rem;
@@ -1134,7 +1135,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   letter-spacing: .15em;
   color: var(--navy);
   margin-bottom: 1.5rem;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-weight: 700;
   position: relative;
   padding-bottom: .5rem;
@@ -1173,7 +1174,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   margin-bottom: .7rem;
   box-shadow: inset 0 1px 3px rgba(0,0,0,.04);
   transition: border-color var(--t) var(--ease);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .footer-newsletter-input::placeholder { color: var(--gray-400); }
 .footer-newsletter-input:focus { border-color: var(--pink); }
@@ -1185,7 +1186,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   border: none; border-radius: var(--r-sm);
   font-weight: 700; cursor: pointer;
   transition: transform var(--t) var(--ease), box-shadow var(--t) var(--ease);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   font-size: 1rem;
   box-shadow: var(--shadow-pink);
 }
@@ -1271,7 +1272,7 @@ p { line-height: 1.85; color: var(--gray-600); font-size: 16px; }
   background: var(--white);
   outline: none;
   transition: border-color var(--t) var(--ease), box-shadow var(--t) var(--ease);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .form-control:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(15,91,74,.1); }
 .form-control.error { border-color: #DC2626; }
@@ -1299,7 +1300,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   display: flex; align-items: center; justify-content: space-between;
   text-align: left; font-weight: 700; font-size: 1rem; color: var(--navy);
   cursor: pointer; background: none; border: none;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
   transition: color var(--t) var(--ease);
   gap: 1rem;
 }
@@ -1353,7 +1354,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 .tl-item { position: relative; padding-bottom: 2rem; }
 .tl-dot { position: absolute; left: -2.6rem; top: .3rem; width: 14px; height: 14px; border-radius: 50%; background: var(--pink); border: 3px solid var(--white); box-shadow: 0 0 0 3px rgba(15,91,74,.2); }
 .tl-year { font-size: .75rem; font-weight: 700; color: var(--pink); text-transform: uppercase; letter-spacing: .08em; }
-.tl-title { font-weight: 700; color: var(--navy); margin: .2rem 0; font-family: 'Times New Roman', Times, serif; }
+.tl-title { font-weight: 700; color: var(--navy); margin: .2rem 0; font-family: var(--mf-head, 'Archivo', Arial, sans-serif); }
 .tl-desc  { font-size: .875rem; color: var(--gray-500); }
 
 /* values */
@@ -1381,7 +1382,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   background: var(--gray-50); border-radius: var(--r-md);
   font-weight: 700; font-size: .95rem; color: var(--gray-400);
   transition: var(--t) var(--ease); border: 1px solid var(--gray-100);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .media-item:hover { background: var(--pink); color: var(--white); transform: scale(1.05); box-shadow: var(--shadow-pink); }
 
@@ -1418,7 +1419,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   border: 2px solid var(--gray-200);
   color: var(--gray-600); cursor: pointer;
   background: var(--white); transition: var(--t) var(--ease);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--mf-head, 'Archivo', Arial, sans-serif);
 }
 .filter-btn:hover, .filter-btn.active { background: var(--pink); border-color: var(--pink); color: var(--white); }
 .blog-search-wrap {
@@ -1429,8 +1430,8 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   transition: border-color var(--t) var(--ease);
 }
 .blog-search-wrap:focus-within { border-color: var(--pink); }
-.blog-search-input { flex: 1; padding: .875rem 1.5rem; border: none; outline: none; font-size: .95rem; font-family: 'Times New Roman', Times, serif; }
-.blog-search-btn { padding: .875rem 1.5rem; background: var(--pink); color: var(--white); border: none; cursor: pointer; font-weight: 600; transition: opacity var(--t) var(--ease); font-family: 'Times New Roman', Times, serif; font-size: 1rem; }
+.blog-search-input { flex: 1; padding: .875rem 1.5rem; border: none; outline: none; font-size: .95rem; font-family: var(--mf-head, 'Archivo', Arial, sans-serif); }
+.blog-search-btn { padding: .875rem 1.5rem; background: var(--pink); color: var(--white); border: none; cursor: pointer; font-weight: 600; transition: opacity var(--t) var(--ease); font-family: var(--mf-head, 'Archivo', Arial, sans-serif); font-size: 1rem; }
 .blog-search-btn:hover { opacity: .9; }
 
 /* ============================================================
@@ -1455,13 +1456,13 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 .prog-card-head > div > p { color: rgba(255,255,255,.7); }
 .price-box { text-align: right; flex-shrink: 0; }
 .price-from { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.5); }
-.price-amt { font-family: 'Times New Roman', Times, serif; font-size: 3rem; font-weight: 700; color: var(--gold-light); line-height: 1; }
+.price-amt { font-family: var(--mf-head, 'Archivo', Arial, sans-serif); font-size: 3rem; font-weight: 700; color: var(--gold-light); line-height: 1; }
 .price-period { font-size: .78rem; color: rgba(255,255,255,.5); }
 
 .prog-card-body { padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
 .module-row { display: flex; flex-direction: column; gap: .7rem; }
 .module-item { display: flex; align-items: flex-start; gap: .75rem; padding: .8rem; background: var(--gray-50); border-radius: var(--r-sm); }
-.module-num { width: 26px; height: 26px; background: var(--pink); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; flex-shrink: 0; font-family: 'Times New Roman', Times, serif; }
+.module-num { width: 26px; height: 26px; background: var(--pink); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; flex-shrink: 0; font-family: var(--mf-head, 'Archivo', Arial, sans-serif); }
 .module-txt { font-size: .875rem; color: var(--gray-700); }
 
 .includes-row { display: flex; flex-direction: column; gap: .55rem; }
@@ -2058,7 +2059,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 .blog-card:hover .blog-card-img img { transform: scale(1.07); }
 .blog-cat-tag {
   position: absolute;
-  bottom: .85rem; left: .85rem;
+  top: .85rem; left: .85rem; bottom: auto;
   z-index: 2;
 }
 

@@ -32,7 +32,7 @@
     }
     @media(max-width:960px){ .book-hero-grid { grid-template-columns:1fr; gap:3rem; } }
 
-    .breadcrumb { display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--gray-600); margin-bottom:1.5rem; }
+    .breadcrumb { display:flex; align-items:center; justify-content:flex-start; gap:.5rem; font-size: 1rem; color:var(--gray-600); margin-bottom:1.5rem; }
     .breadcrumb a { color:var(--gray-600); }
     .breadcrumb a:hover { color:var(--pink); }
     .breadcrumb span { color:var(--gray-400); }
@@ -41,7 +41,8 @@
     .book-hero-sub { font-size:1.15rem; color:#4A5568; margin-bottom:2rem; max-width:520px; line-height:1.85; }
 
     .nyt-badge {
-      display:inline-flex; align-items:center; gap:.75rem;
+      display:inline-flex; flex-direction:row; align-items:center; gap:.75rem;
+      position:static; width:auto; height:auto; text-align:left; border:0; animation:none;
       background:var(--grad-gold);
       border-radius:var(--r-full);
       padding:.6rem 1.4rem .6rem .8rem;
@@ -184,7 +185,7 @@
       display:flex; align-items:center; justify-content:center;
       box-shadow:var(--shadow-pink);
     }
-    .learn-col:nth-child(2) .learn-num { background:var(--grad-navy); box-shadow:var(--shadow-md); }
+    .learn-col:nth-child(2) .learn-num { background:var(--grad-ink); box-shadow:var(--shadow-md); }
     .learn-text { color:var(--gray-600); font-size:.97rem; line-height:1.7; }
     .learn-text strong { display:block; color:var(--navy); font-size:.95rem; margin-bottom:.2rem; }
 
@@ -420,7 +421,7 @@
             Kindle eBook
           </a>
         </div>
-        <p class="anim-up d4" style="color:rgba(255,255,255,.45);font-size:.82rem;margin-top:1.5rem;">Available in hardcover, paperback, Kindle, and audiobook. Also at your local bookstore.</p>
+        <p class="anim-up d4" style="color:var(--gray-600);font-size:.82rem;margin-top:1.5rem;">Available in hardcover, paperback, Kindle, and audiobook. Also at your local bookstore.</p>
       </div>
 
       <!-- Book 3D Visual -->

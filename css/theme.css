@@ -34,14 +34,15 @@
   --grad-gold: linear-gradient(135deg, #C98A1B 0%, #F2B544 100%);
   --grad-hero: linear-gradient(135deg, #F7F2E9 0%, #FFFFFF 55%, #F1F6F3 100%);
   --grad-navy: linear-gradient(135deg, #F7F2E9 0%, #FFFFFF 50%, #F1F6F3 100%);
+  --grad-ink: linear-gradient(135deg, #111A17 0%, #1E2C27 55%, #17775F 100%);
   --shadow-pink: 0 8px 32px rgba(15,91,74,.28);
   --shadow-gold: 0 8px 32px rgba(201,138,27,.3);
 }
 
 /* ---------- Base (applies site-wide when theme.css is loaded) ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; overflow-x: hidden; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+body { margin: 0; overflow-x: clip; }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 body {
@@ -492,8 +493,8 @@ body.mf-locked .mf-burger span { background: #fff; }
 .mf-ahero-media { position: relative; }
 .mf-ahero-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 18%; }
 .mf-ahero-media::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, var(--mf-ink) 0%, rgba(20,20,20,0) 35%); }
-.mf-crumb { font-size: .82rem; color: rgba(255,255,255,.55); margin-bottom: 1.6rem; }
-.mf-crumb a { color: rgba(255,255,255,.75); }
+.mf-crumb { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.7); margin-bottom: 1.6rem; }
+.mf-crumb a { color: rgba(255,255,255,.92); }
 .mf-crumb a:hover { color: #fff; }
 
 .mf-cred-bar { background: var(--mf-brand); color: #fff; }
@@ -871,3 +872,9 @@ body.mf-locked .mf-burger span { background: #fff; }
 }
 @media (max-width: 360px) { .mf-announce-tag { display: none; } }
 
+
+/* Small phones: keep the stats grid inside the viewport */
+@media (max-width: 480px) {
+  .mf-number { padding: 2rem .75rem; min-width: 0; }
+  .mf-number b { font-size: 2.2rem; }
+}
