@@ -8,6 +8,22 @@ const router  = express.Router();
 const db      = require('../database/db');
 
 // ── Helper: validate email ──────────────────────────────────
+// ── Admin auth: admin-only routes require the X-Admin-Token header ──
+const crypto = require('crypto');
+const requireAdmin = (req, res, next) => {
+  const expected = process.env.ADMIN_TOKEN;
+  if (!expected) {
+    // No token configured: allow locally, refuse in production
+    if (process.env.NODE_ENV !== 'production') return next();
+    return res.status(503).json({ ok: false, message: 'ADMIN_TOKEN is not configured on the server.' });
+  }
+  const given = String(req.get('x-admin-token') || '');
+  const a = crypto.createHash('sha256').update(given).digest();
+  const b = crypto.createHash('sha256').update(expected).digest();
+  if (!crypto.timingSafeEqual(a, b)) return res.status(401).json({ ok: false, message: 'Unauthorized.' });
+  next();
+};
+
 const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e).toLowerCase());
 
 // ── Log page view ───────────────────────────────────────────
@@ -50,7 +66,7 @@ router.post('/subscribers', (req, res) => {
 });
 
 // GET /api/subscribers  — list all (admin)
-router.get('/subscribers', (req, res) => {
+router.get('/subscribers', requireAdmin, (req, res) => {
   try {
     const rows = db.prepare(`SELECT id, email, first_name, source, tags, status, created_at
                              FROM subscribers ORDER BY created_at DESC`).all();
@@ -61,7 +77,7 @@ router.get('/subscribers', (req, res) => {
 });
 
 // DELETE /api/subscribers/:id  — unsubscribe
-router.delete('/subscribers/:id', (req, res) => {
+router.delete('/subscribers/:id', requireAdmin, (req, res) => {
   try {
     db.prepare(`UPDATE subscribers SET status='unsubscribed', updated_at=datetime('now') WHERE id=?`)
       .run(req.params.id);
@@ -98,7 +114,7 @@ router.post('/inquiries', (req, res) => {
 });
 
 // GET /api/inquiries  — list all
-router.get('/inquiries', (req, res) => {
+router.get('/inquiries', requireAdmin, (req, res) => {
   try {
     const { status } = req.query;
     const sql = status
@@ -112,7 +128,7 @@ router.get('/inquiries', (req, res) => {
 });
 
 // PATCH /api/inquiries/:id/status
-router.patch('/inquiries/:id/status', (req, res) => {
+router.patch('/inquiries/:id/status', requireAdmin, (req, res) => {
   const { status } = req.body;
   const allowed = ['new', 'read', 'replied', 'closed'];
   if (!allowed.includes(status)) return res.status(400).json({ ok: false, message: 'Invalid status.' });
@@ -161,7 +177,7 @@ router.get('/posts/:slug', (req, res) => {
 });
 
 // POST /api/posts  — create post
-router.post('/posts', (req, res) => {
+router.post('/posts', requireAdmin, (req, res) => {
   const { title, slug, excerpt, content, category, image_url, read_time, status } = req.body;
   if (!title || !slug) return res.status(400).json({ ok: false, message: 'Title and slug are required.' });
   try {
@@ -177,7 +193,7 @@ router.post('/posts', (req, res) => {
 });
 
 // PUT /api/posts/:id  — update post
-router.put('/posts/:id', (req, res) => {
+router.put('/posts/:id', requireAdmin, (req, res) => {
   const { title, slug, excerpt, content, category, image_url, read_time, status } = req.body;
   try {
     db.prepare(`UPDATE posts SET title=?, slug=?, excerpt=?, content=?, category=?, image_url=?,
@@ -190,7 +206,7 @@ router.put('/posts/:id', (req, res) => {
 });
 
 // DELETE /api/posts/:id
-router.delete('/posts/:id', (req, res) => {
+router.delete('/posts/:id', requireAdmin, (req, res) => {
   try {
     db.prepare(`DELETE FROM posts WHERE id=?`).run(req.params.id);
     res.json({ ok: true, message: 'Post deleted.' });
@@ -251,7 +267,7 @@ router.post('/leads', (req, res) => {
 });
 
 // GET /api/leads
-router.get('/leads', (req, res) => {
+router.get('/leads', requireAdmin, (req, res) => {
   try {
     const rows = db.prepare(`SELECT * FROM program_leads ORDER BY created_at DESC`).all();
     res.json({ ok: true, count: rows.length, data: rows });
@@ -264,7 +280,7 @@ router.get('/leads', (req, res) => {
 //  ANALYTICS / DASHBOARD STATS
 // ============================================================
 
-router.get('/stats', (req, res) => {
+router.get('/stats', requireAdmin, (req, res) => {
   try {
     const stats = {
       subscribers:  db.prepare(`SELECT COUNT(*) as n FROM subscribers WHERE status='active'`).get().n,

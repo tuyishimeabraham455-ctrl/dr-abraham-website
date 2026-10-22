@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: dr-abraham-website
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_TOKEN
+        generateValue: true
+    # The free plan's filesystem is wiped on every deploy/restart, so the SQLite
+    # data (subscribers, inquiries) won't persist. To keep it, switch to a paid
+    # plan and uncomment the disk + DB_PATH below.
+    # disk:
+    #   name: data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    #  - key: DB_PATH
+    #    value: /var/data/site.db

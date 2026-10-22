@@ -8,10 +8,11 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure the database directory exists
-const dbDir = path.join(__dirname);
+// DB_PATH can point at a persistent disk in production (e.g. /var/data/site.db)
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'maya_sterling.db');
+const dbDir = path.dirname(DB_PATH);
 if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
 
-const DB_PATH = path.join(__dirname, 'maya_sterling.db');
 const db = new Database(DB_PATH);
 
 // Enable WAL mode for better performance

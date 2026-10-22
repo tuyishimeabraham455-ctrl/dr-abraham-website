@@ -522,12 +522,25 @@
 // ── Utilities ────────────────────────────────────────────────
 const API = '/api';
 
-async function apiFetch(path, opts = {}) {
+function adminToken(reset = false) {
+  let t = reset ? null : sessionStorage.getItem('adminToken');
+  if (!t) {
+    t = prompt('Admin token:') || '';
+    sessionStorage.setItem('adminToken', t);
+  }
+  return t;
+}
+
+async function apiFetch(path, opts = {}, retried = false) {
   try {
     const res = await fetch(API + path, {
-      headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
-      ...opts
+      ...opts,
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken(), ...(opts.headers || {}) }
     });
+    if (res.status === 401 && !retried) {
+      adminToken(true);
+      return apiFetch(path, opts, true);
+    }
     return await res.json();
   } catch (e) {
     return { ok: false, message: 'Network error. Is the server running?' };
