@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Yolanda Butler | Make It Great</title>
+<title>The Business of You | Yolanda Butler</title>
 <meta name="robots" content="noindex, nofollow"/>
 <meta name="description" content="Concept demo for Yolanda Butler: financial well-being and small business coaching platform."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -11,9 +11,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --ink:#111A17; --ink-2:#1E2C27; --green:#17775F; --deep:#0F4A3C; --mint:#E4F1EC;
-  --gold:#E9A23B; --gold-2:#F6C56B; --cream:#F7F2E9; --paper:#FFFFFF; --line:#E6E0D4;
-  --muted:#5D6B66; --soft:#8A9691; --rose:#E86F5C; --sky:#4A90C2; --plum:#7A5BA6;
+  --ink:#15120E; --ink-2:#2B251D; --green:#8C6420; --deep:#221C15; --mint:#F1E6CC;
+  --gold:#D4A84B; --gold-2:#E8C77E; --cream:#F4EDE0; --paper:#FFFDF9; --line:#E6DAC4;
+  --muted:#6B6155; --soft:#9A8E7D; --rose:#B8562F; --sky:#7A6A55; --plum:#3D3328;
   --head:'Archivo',Arial,sans-serif; --body:'DM Sans',Arial,sans-serif; --disp:'Fraunces',Georgia,serif;
   --r:18px; --shadow:0 18px 50px rgba(17,26,23,.10); --shadow-sm:0 4px 16px rgba(17,26,23,.07);
 }
@@ -33,19 +33,19 @@ h2 em,h1 em{font-family:var(--disp);font-style:italic;font-weight:500;color:var(
 .lead{color:var(--muted);font-size:1.08rem;max-width:620px}
 .sec-head{margin-bottom:48px}
 .sec-head.center{text-align:center}.sec-head.center .lead{margin-inline:auto}
-.btn{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--head);font-weight:800;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;padding:1rem 1.6rem;border-radius:999px;border:2px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:.55rem;font-family:var(--head);font-weight:800;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;padding:1rem 1.6rem;border-radius:999px;border:2px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn-gold{background:var(--gold);color:var(--ink);box-shadow:0 10px 26px rgba(233,162,59,.35)}
 .btn-dark{background:var(--ink);color:#fff}
-.btn-ghost{border-color:currentColor}
+.btn-ghost{border-color:currentColor;background:transparent}
 .btn-sm{padding:.65rem 1.1rem;font-size:.7rem}
 .card{background:var(--paper);border-radius:var(--r);box-shadow:var(--shadow-sm);border:1px solid var(--line)}
 .ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tag{display:inline-block;font-family:var(--head);font-weight:700;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .65rem;border-radius:999px;background:var(--mint);color:var(--deep)}
-.tag.gold{background:#FCEFD9;color:#9A6413}.tag.rose{background:#FBE5E1;color:#A8402F}.tag.live{background:var(--rose);color:#fff}
+.tag.gold{background:#F5E7C8;color:#7A5618}.tag.rose{background:#F2E2D2;color:#8A4B26}.tag.live{background:var(--rose);color:#fff}
 .avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0}
-.a1{background:linear-gradient(135deg,var(--green),var(--deep))}.a2{background:linear-gradient(135deg,var(--gold),#C97D16)}
-.a3{background:linear-gradient(135deg,var(--plum),#4E3478)}.a4{background:linear-gradient(135deg,var(--sky),#2B5F86)}.a5{background:linear-gradient(135deg,var(--rose),#B4473A)}
+.a1{background:linear-gradient(135deg,var(--green),var(--deep))}.a2{background:linear-gradient(135deg,var(--gold),#A67C2E)}
+.a3{background:linear-gradient(135deg,var(--plum),#2A241C)}.a4{background:linear-gradient(135deg,var(--sky),#4A4035)}.a5{background:linear-gradient(135deg,var(--rose),#8A3F22)}
 .grid{display:grid;gap:24px}
 .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
 .dark{background:var(--ink);color:#fff}.dark .lead{color:rgba(255,255,255,.7)}.dark .eyebrow{color:var(--gold-2)}.dark h2 em{color:var(--gold-2)}
@@ -61,7 +61,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:1rem}
 .logo{font-family:var(--head);font-weight:900;font-size:1.3rem;letter-spacing:-.03em;display:flex;align-items:center;gap:.55rem}
 .logo-mark{width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--gold);display:grid;place-items:center;font-size:.95rem}
-.nav-links{display:flex;gap:1.6rem;font-family:var(--head);font-weight:700;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:1.15rem;white-space:nowrap;font-family:var(--head);font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
 .nav-links a:hover{color:var(--green)}
 .nav-right{display:flex;align-items:center;gap:.7rem}
 .menu-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
@@ -74,7 +74,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .drawer-grid span{width:34px;height:34px;border-radius:10px;background:rgba(233,162,59,.18);color:var(--gold-2);display:grid;place-items:center}
 
 /* Hero */
-.hero{padding:80px 0 90px;background:radial-gradient(1000px 500px at 85% 10%,#E4F1EC 0,transparent 60%),radial-gradient(800px 400px at 0% 100%,#FCEFD9 0,transparent 60%),var(--cream)}
+.hero{padding:80px 0 90px;background:radial-gradient(1000px 500px at 85% 10%,#F1E6CC 0,transparent 60%),radial-gradient(800px 400px at 0% 100%,#F5E7C8 0,transparent 60%),var(--cream)}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
 .hero h1{font-size:clamp(2.6rem,6vw,4.6rem);margin:1rem 0 1.3rem}
 .hero .lead{font-size:1.15rem;margin-bottom:2rem}
@@ -105,7 +105,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 
 /* About */
 .about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center}
-.about-art{aspect-ratio:4/5;border-radius:28px;background:linear-gradient(150deg,#FCEFD9,#F3D9A6 50%,var(--gold));position:relative;overflow:hidden;display:grid;place-items:center}
+.about-art{aspect-ratio:4/5;border-radius:28px;background:linear-gradient(150deg,#F5E7C8,#F3D9A6 50%,var(--gold));position:relative;overflow:hidden;display:grid;place-items:center}
 .photo{position:absolute;top:50%;left:50%;translate:-50% -50%;height:78%;width:auto;max-width:88%;aspect-ratio:1;border-radius:50%;object-fit:cover;border:6px solid var(--gold-2);box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .about-art .photo{height:auto;width:80%;max-width:none;border-color:#fff;box-shadow:0 24px 60px rgba(120,70,0,.25)}
 .about-art .portrait-mono{color:var(--ink);font-size:6rem}
@@ -126,7 +126,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .muted{color:var(--muted)}
 .checks{list-style:none;display:grid;gap:.55rem;font-size:.92rem}
 .checks li{display:flex;gap:.6rem;align-items:flex-start}
-.checks li::before{content:"";width:18px;height:18px;flex-shrink:0;margin-top:3px;border-radius:50%;background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317775F' stroke-width='3'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/11px no-repeat}
+.checks li::before{content:"";width:18px;height:18px;flex-shrink:0;margin-top:3px;border-radius:50%;background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C6420' stroke-width='3'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/11px no-repeat}
 .prog .btn{margin-top:auto;justify-content:center}
 
 /* Booking */
@@ -145,7 +145,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .cal-days button{aspect-ratio:1;border-radius:10px;border:0;background:transparent;cursor:pointer}
 .cal-days button.av{background:var(--cream);font-weight:700}
 .cal-days button.sel{background:var(--green);color:#fff}
-.cal-days button.off{color:#C5CBC8;cursor:default}
+.cal-days button.off{color:#CFC6B6;cursor:default}
 .slots{display:flex;flex-wrap:wrap;gap:8px;margin:1.2rem 0}
 .slots button{padding:.55rem .9rem;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:.85rem;cursor:pointer}
 .slots button.sel{border-color:var(--green);background:var(--green);color:#fff}
@@ -205,7 +205,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .dash-nav .logo{font-size:1rem;margin-bottom:1.2rem;padding:0 .5rem}
 .dash-nav a{display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;border-radius:10px;font-size:.88rem;color:rgba(255,255,255,.7)}
 .dash-nav a.on{background:rgba(255,255,255,.1);color:#fff}
-.dash-main{padding:1.6rem;display:grid;gap:18px;background:#FBFAF7;min-width:0}
+.dash-main{padding:1.6rem;display:grid;gap:18px;background:#FAF6EE;min-width:0}
 .dash-top{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
 .dash-top h3{font-size:1.3rem}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -267,8 +267,8 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .vid small{font-size:.75rem;opacity:.8}
 .vid .dur{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.5);padding:.15rem .5rem;border-radius:6px;font-size:.72rem}
 .v1{grid-column:span 2;grid-row:span 2;background:linear-gradient(135deg,var(--deep),var(--green))}
-.v2{background:linear-gradient(135deg,var(--plum),#3B2860)}.v3{background:linear-gradient(135deg,#C97D16,var(--gold))}
-.v4{background:linear-gradient(135deg,var(--sky),#22496A)}.v5{background:linear-gradient(135deg,var(--rose),#8E3428)}
+.v2{background:linear-gradient(135deg,var(--plum),#1F1A14)}.v3{background:linear-gradient(135deg,#A67C2E,var(--gold))}
+.v4{background:linear-gradient(135deg,var(--sky),#2E271F)}.v5{background:linear-gradient(135deg,var(--rose),#6B3018)}
 .gal-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .gal-tabs button{padding:.55rem 1rem;border-radius:999px;border:1px solid var(--line);background:#fff;font-family:var(--head);font-weight:700;font-size:.78rem;cursor:pointer}
 .gal-tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -298,7 +298,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 
 /* Live */
 .live-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:0;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-.stage{background:linear-gradient(135deg,#0B1411,var(--deep));min-height:400px;position:relative;display:grid;place-items:center;color:#fff}
+.stage{background:linear-gradient(135deg,#0D0B09,var(--deep));min-height:400px;position:relative;display:grid;place-items:center;color:#fff}
 .stage-top{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center}
 .viewers{background:rgba(0,0,0,.4);padding:.3rem .7rem;border-radius:999px;font-size:.8rem;display:flex;align-items:center;gap:.4rem}
 .stage-center{text-align:center;padding:0 16px}
@@ -314,7 +314,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .lc-body div{display:flex;gap:.6rem}
 .lc-body .avatar{width:30px;height:30px;font-size:.65rem}
 .lc-body b{font-family:var(--head);font-size:.8rem;margin-right:.3rem}
-.lc-q{background:#FCEFD9;border-radius:10px;padding:.6rem .7rem}
+.lc-q{background:#F5E7C8;border-radius:10px;padding:.6rem .7rem}
 .lc-input{padding:.8rem 1.2rem;border-top:1px solid var(--line)}
 .lc-input input{width:100%;border:1px solid var(--line);border-radius:999px;padding:.6rem .9rem;background:var(--cream)}
 
@@ -366,8 +366,8 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdro
 .soc svg{width:30px;height:30px}
 .soc b{font-family:var(--head);font-size:.95rem}
 .soc small{opacity:.85;font-size:.78rem}
-.s-ig{background:linear-gradient(135deg,#F58529,#DD2A7B 50%,#8134AF)}.s-li{background:#0A66C2}.s-yt{background:#E62117}
-.s-tt{background:#111}.s-fb{background:#1877F2}.s-x{background:#2B2B2B}
+.soc{background:var(--ink);border:1px solid var(--ink)}.soc svg{color:var(--gold-2)}
+.soc:hover{background:var(--deep);border-color:var(--gold)}
 
 /* Contact */
 .contact-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px}
@@ -390,9 +390,122 @@ footer a:hover{color:var(--gold-2)}
 .toast{position:fixed;bottom:24px;left:50%;translate:-50% 140px;background:var(--ink);color:#fff;padding:.85rem 1.3rem;border-radius:999px;font-size:.9rem;z-index:80;transition:translate .35s;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
 .toast.show{translate:-50% 0}
 
+/* Logo text */
+.logo-txt{display:flex;flex-direction:column;line-height:1.05;font-size:1.08rem;white-space:nowrap}
+.logo-txt small{font-family:var(--body);font-weight:500;font-size:.72rem;letter-spacing:0;color:var(--muted);margin-top:.15rem}
+footer .logo-txt small{color:rgba(255,255,255,.55)}
+
+/* Nav dropdown */
+.nav-dd{position:relative;padding:1.5rem 0;margin:-1.5rem 0}
+.nav-dd>a::after{content:"▾";margin-left:.35rem;font-size:.75em}
+.dd-menu{position:absolute;top:100%;left:50%;translate:-50% 8px;width:310px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:.5rem;display:grid;gap:2px;opacity:0;visibility:hidden;transition:opacity .2s,translate .2s,visibility .2s;text-transform:none;letter-spacing:0}
+.nav-dd:hover .dd-menu,.nav-dd:focus-within .dd-menu{opacity:1;visibility:visible;translate:-50% 0}
+.dd-menu a{display:flex;gap:.75rem;padding:.6rem .7rem;border-radius:10px;align-items:center}
+.dd-menu a:hover{background:var(--cream);color:inherit}
+.dd-menu span{width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--gold-2);display:grid;place-items:center;flex-shrink:0}
+.dd-menu span .ic{width:18px;height:18px}
+.dd-menu b{display:block;font-family:var(--head);font-size:.82rem;font-weight:800}
+.dd-menu small{font-family:var(--body);font-weight:400;font-size:.76rem;color:var(--muted)}
+.drawer-group{margin-top:28px}
+.drawer-group h4{font-family:var(--head);color:var(--gold-2);letter-spacing:.14em;text-transform:uppercase;font-size:.78rem;margin-bottom:12px}
+
+/* Dashboard (coach view) */
+.seg{display:inline-flex;background:var(--cream);border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{border:0;background:none;padding:.5rem 1rem;border-radius:999px;font-family:var(--head);font-weight:700;font-size:.75rem;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--ink);color:#fff}
+.dpanel{display:none;gap:18px}
+.dpanel.on{display:grid}
+.chart-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--head)}
+.view-all{font-size:.8rem;font-weight:700;color:var(--green)}
+.bars.rev{gap:8px}
+.bars.rev div span{position:absolute;top:-1.4rem;left:50%;translate:-50% 0;font-size:.62rem;font-weight:700;white-space:nowrap;color:var(--muted);opacity:0;transition:opacity .2s}
+.bars.rev div:hover span,.bars.rev div.hi span{opacity:1}
+.bars.rev div.hi{background:var(--gold)}
+.bars.rev div:not(.hi){background:var(--ink-2)}
+.bars.rev div:not(.hi):hover{background:var(--green)}
+.bars.rev+.bars-x{gap:8px}
+.crow{display:grid;grid-template-columns:auto 1.3fr 1fr auto;gap:1rem;align-items:center;padding:.8rem 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.crow:last-child{border:0}
+.crow b{font-family:var(--head);display:block}.crow small{color:var(--muted);font-size:.78rem}
+.cgoal .track{margin-bottom:.25rem}
+
+/* Webinars */
+.web-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.web{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .25s}
+.web:hover{transform:translateY(-4px)}
+.web.free{border-color:var(--gold);box-shadow:0 24px 60px rgba(212,168,75,.15)}
+.web-screen{aspect-ratio:16/9;background:radial-gradient(circle at 70% 20%,rgba(212,168,75,.35),transparent 55%),linear-gradient(135deg,#2B251D,#0D0B09);position:relative;display:grid;place-items:center;padding:2.4rem 1.4rem;text-align:center}
+.web-screen .t{font-family:var(--disp);font-style:italic;font-size:1.55rem;color:var(--gold-2);line-height:1.15}
+.web-screen .tag{position:absolute;top:12px;left:12px}
+.web-screen .when{position:absolute;bottom:12px;left:14px;right:14px;display:flex;justify-content:space-between;font-size:.74rem;color:rgba(255,255,255,.65);font-family:var(--head);font-weight:700;letter-spacing:.04em}
+.web-body{padding:1.4rem;display:flex;flex-direction:column;gap:.75rem;flex:1}
+.web-body h3{font-size:1.15rem}
+.web-body p{color:rgba(255,255,255,.7);font-size:.92rem;flex:1}
+.web-meta{display:flex;gap:.5rem 1rem;flex-wrap:wrap;font-size:.82rem;color:rgba(255,255,255,.8)}
+.web-meta span{display:flex;align-items:center;gap:.35rem}
+.web-meta .ic{width:15px;height:15px;color:var(--gold-2)}
+.web .btn{justify-content:center;margin-top:.3rem}
+.web .btn.done{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.replay-bar{margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1.2rem 1.4rem;border-radius:16px;background:rgba(212,168,75,.1);border:1px solid rgba(212,168,75,.3)}
+.replay-bar b{font-family:var(--head);display:block;color:var(--gold-2)}
+.replay-bar span{color:rgba(255,255,255,.75);font-size:.9rem}
+
+/* Build Your Modules */
+.mod-feats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.mod-feat{padding:1.1rem;border-radius:16px;background:var(--cream);border:1px solid var(--line);display:flex;gap:.8rem;align-items:flex-start;scroll-margin-top:100px;transition:border-color .2s,transform .2s}
+.mod-feat:hover{border-color:var(--gold);transform:translateY(-2px)}
+.mod-feat span{width:40px;height:40px;border-radius:12px;background:var(--ink);color:var(--gold-2);display:grid;place-items:center;flex-shrink:0}
+.mod-feat b{font-family:var(--head);font-size:.9rem;display:block;line-height:1.25;margin-bottom:.2rem}
+.mod-feat small{color:var(--muted);font-size:.8rem}
+.studio{display:grid;grid-template-columns:370px 1fr;gap:24px;align-items:start;scroll-margin-top:90px}
+.builder{padding:1.4rem;display:grid;gap:1.4rem}
+.step h4{font-size:.88rem;display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.step h4 i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--gold-2);display:grid;place-items:center;font-size:.7rem}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{width:40px;height:40px;border-radius:12px;border:2px solid transparent;cursor:pointer;background:linear-gradient(135deg,var(--c1) 50%,var(--c2) 50%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .15s}
+.sw:hover{transform:scale(1.08)}
+.sw.sel{border-color:var(--ink);box-shadow:inset 0 0 0 2px #fff}
+.sw-custom{width:40px;height:40px;border-radius:12px;border:1.5px dashed var(--soft);position:relative;overflow:hidden;cursor:pointer;display:grid;place-items:center;color:var(--muted)}
+.sw-custom input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.topics{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.7rem}
+.topic{display:inline-flex;align-items:center;gap:.3rem;padding:.38rem .45rem .38rem .75rem;border-radius:999px;background:var(--cream);border:1px solid var(--line);font-size:.82rem;animation:pop .3s both}
+.topic button{border:0;background:none;cursor:pointer;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.topic button:hover{background:var(--line);color:var(--ink)}
+.addrow{display:flex;gap:6px}
+.addrow input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;background:#fff}
+.btn-line{padding:.55rem .85rem;border-radius:999px;border:1.5px solid var(--ink);background:#fff;font-family:var(--head);font-weight:800;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:inline-flex;gap:.35rem;align-items:center;white-space:nowrap}
+.btn-line:hover{background:var(--ink);color:#fff}
+.logo-row{display:flex;gap:12px;align-items:center}
+.logo-prev{width:60px;height:60px;border-radius:14px;border:1px dashed var(--soft);display:grid;place-items:center;overflow:hidden;flex-shrink:0;background:#fff;container-type:inline-size;padding:5px}
+.logo-prev img,.s-logo img{width:100%;height:100%;object-fit:contain}
+.mini-btns{display:flex;gap:6px;flex-wrap:wrap}
+.mono{width:100%;height:100%;display:grid;place-items:center;font-family:var(--disp);font-style:italic;font-weight:700;font-size:40cqw;background:var(--sp);color:var(--sa);line-height:1}
+.mono.s1{border-radius:50%}.mono.s2{border-radius:22%}.mono.s3{border-radius:50%;background:transparent;box-shadow:inset 0 0 0 3px var(--sp);color:var(--sp)}
+.preview{display:grid;gap:14px;min-width:0}
+.slide{aspect-ratio:16/9;border-radius:16px;background:var(--sb);position:relative;overflow:hidden;box-shadow:var(--shadow);padding:6% 9% 9%;display:flex;flex-direction:column;justify-content:center;color:var(--sp);border:1px solid var(--line);transition:background .3s;container-type:inline-size}
+.slide::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3%;background:var(--sa);transition:background .3s}
+.slide .s-logo{position:absolute;top:6%;right:5%;width:10%;aspect-ratio:1;container-type:inline-size}
+.slide .s-kicker{font-family:var(--head);font-weight:800;font-size:1.7cqw;letter-spacing:.16em;text-transform:uppercase;color:var(--sa)}
+.slide h3{font-size:5.4cqw;margin:.4em 0 .6em;color:var(--sp);max-width:85%}
+.slide ul{list-style:none;display:grid;gap:.6em;font-size:2.2cqw}
+.slide li::before{content:"";display:inline-block;width:.55em;height:.55em;border-radius:2px;background:var(--sa);margin-right:.7em}
+.slide .s-foot{position:absolute;left:0;right:0;bottom:0;height:9%;background:var(--sp);display:flex;align-items:center;justify-content:space-between;padding:0 5% 0 6%;font-family:var(--head);font-weight:700;font-size:1.6cqw;color:var(--sa);transition:background .3s}
+.prev-head{display:flex;justify-content:space-between;align-items:center}
+.prev-head b{font-family:var(--head)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+.thumb{aspect-ratio:16/9;border-radius:8px;background:var(--sb);border:2px solid var(--line);cursor:pointer;position:relative;overflow:hidden;padding:7% 10% 7% 13%;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;animation:pop .35s both}
+.thumb::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5%;background:var(--sa)}
+.thumb b{font-family:var(--head);font-size:.62rem;color:var(--sp);line-height:1.2}
+.thumb small{font-size:.48rem;color:var(--sa);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.thumb i{position:absolute;bottom:3px;right:6px;font-style:normal;font-size:.55rem;color:var(--soft)}
+.thumb.sel{border-color:var(--ink)}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.96)}}
+
 /* Responsive */
-@media (max-width:1100px){
+@media (max-width:1240px){
   .nav-links{display:none}
+}
+@media (max-width:1100px){
   .com-grid{grid-template-columns:1fr 280px}.com-side{display:none}
   .social-grid{grid-template-columns:repeat(3,1fr)}
 }
@@ -425,6 +538,17 @@ footer a:hover{color:var(--gold-2)}
   .nav-right .btn{display:none}
   .foot-grid{grid-template-columns:1fr}
   .portrait-mono{font-size:5rem}
+}
+@media (max-width:900px){
+  .web-grid{grid-template-columns:1fr}
+  .studio{grid-template-columns:1fr}
+  .mod-feats{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:600px){
+  .mod-feats{grid-template-columns:1fr}
+  .crow{grid-template-columns:auto 1fr auto}.cgoal{display:none}
+  .seg button{padding:.45rem .7rem}
+  .logo-txt{font-size:1rem}.logo-txt small{font-size:.66rem}
 }
 </style>
 </head>
@@ -476,6 +600,10 @@ footer a:hover{color:var(--gold-2)}
     <symbol id="i-yt" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9v6l5-3z" fill="currentColor"/></symbol>
     <symbol id="i-tt" viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.5 2.5 4.5 5 5"/></symbol>
     <symbol id="i-fb" viewBox="0 0 24 24"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h2z"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7.2" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+    <symbol id="i-slides" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8M7 8h6M7 11h10"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></symbol>
     <symbol id="i-xx" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></symbol>
   </defs>
 </svg>
@@ -484,10 +612,19 @@ footer a:hover{color:var(--gold-2)}
 
 <header>
   <div class="wrap nav">
-    <a href="#home" class="logo"><span class="logo-mark">YB</span>Yolanda Butler</a>
+    <a href="#home" class="logo"><span class="logo-mark">YB</span><span class="logo-txt">The Business of You<small>with Yolanda Butler</small></span></a>
     <nav class="nav-links">
-      <a href="#about">About</a><a href="#programs">Coaching</a><a href="#community">Community</a>
-      <a href="#ai">AI Coach</a><a href="#events">Events</a><a href="#shop">Shop</a><a href="#contact">Contact</a>
+      <a href="#about">About</a><a href="#programs">Coaching</a><a href="#webinars">Webinars</a>
+      <div class="nav-dd">
+        <a href="#modules">Build Modules</a>
+        <div class="dd-menu">
+          <a href="#mod-colors"><span><svg class="ic"><use href="#i-palette"/></svg></span><div><b>Brand colors</b><small>Build modules in your colors</small></div></a>
+          <a href="#mod-topics"><span><svg class="ic"><use href="#i-list"/></svg></span><div><b>Module topics</b><small>Outline lessons in seconds</small></div></a>
+          <a href="#mod-logo"><span><svg class="ic"><use href="#i-spark"/></svg></span><div><b>Brand logo</b><small>Upload yours or auto-generate</small></div></a>
+          <a href="#mod-slides"><span><svg class="ic"><use href="#i-slides"/></svg></span><div><b>Auto-build slides</b><small>A full deck from your topics</small></div></a>
+        </div>
+      </div>
+      <a href="#community">Community</a><a href="#ai">AI Coach</a><a href="#contact">Contact</a>
     </nav>
     <div class="nav-right">
       <a href="#shop" class="cart" aria-label="Cart"><svg class="ic"><use href="#i-bag"/></svg><i id="cartCount">0</i></a>
@@ -500,7 +637,7 @@ footer a:hover{color:var(--gold-2)}
 <div class="drawer" id="drawer">
   <div class="wrap">
     <div class="drawer-top">
-      <span class="logo" style="color:#fff"><span class="logo-mark">M</span>All Features</span>
+      <span class="logo" style="color:#fff"><span class="logo-mark">YB</span>All Features</span>
       <button class="menu-btn" id="menuClose" aria-label="Close menu" style="background:transparent;border-color:rgba(255,255,255,.2);color:#fff"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="drawer-grid" id="drawerGrid"></div>
@@ -512,7 +649,7 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap hero-grid">
     <div>
       <span class="eyebrow">Financial Well-Being Coach · Speaker · Small Business Advisor</span>
-      <h1>Build wealth. Build business. <em>Make it great.</em></h1>
+      <h1>Invest in <em>the Business of You.</em></h1>
       <p class="lead">I help entrepreneurs, families, non-profits and ministries grow with financial confidence, practical business strategy and the right connections.</p>
       <div class="hero-ctas">
         <a href="#programs" class="btn btn-dark">Work With Me <svg class="ic" style="width:16px;height:16px"><use href="#i-arrow"/></svg></a>
@@ -539,7 +676,7 @@ footer a:hover{color:var(--gold-2)}
     <div class="sec-head center">
       <span class="eyebrow">One Platform</span>
       <h2>Everything your brand needs, <em>in one home.</em></h2>
-      <p class="lead">Seventeen features built to attract, convert, serve and keep clients for the long run.</p>
+      <p class="lead">Nineteen features built to attract, convert, serve and keep clients for the long run.</p>
     </div>
     <div class="feat-grid" id="featGrid"></div>
   </div>
@@ -551,7 +688,7 @@ footer a:hover{color:var(--gold-2)}
     <div class="about-art"><span class="portrait-mono">YB</span><img class="photo" src="images/yolanda.jpg" alt="Yolanda Butler" onerror="this.remove()"/></div>
     <div>
       <span class="eyebrow">About</span>
-      <h2>Hi, I'm Yolanda. <em>Let's make it great.</em></h2>
+      <h2>Hi, I'm Yolanda. <em>Let's build the Business of You.</em></h2>
       <p class="lead" style="margin-bottom:1rem">I've been an entrepreneur for over 30 years, so I know the road because I've walked it. I ran Christian Family Preschool in Oakland for 13 years, grew a consignment business, and have spent the years since helping others build theirs.</p>
       <p class="muted">I trained women entrepreneurs at Women's Initiative for Self Employment, advised owners at the Contra Costa SBDC, and over 13+ years at Operation HOPE have grown from Small Business Coordinator to VP Community Relations to Financial Well-Being Coach. I studied Business Administration at Cal State East Bay, where I was president of the Black Business Association. Today I bring keynotes, workshops and one-on-one coaching to businesses, non-profits and ministries.</p>
       <div class="pillars">
@@ -595,6 +732,97 @@ footer a:hover{color:var(--gold-2)}
         <p class="muted">Personal strategy for financing, growth and access to markets.</p>
         <ul class="checks"><li>Bi-weekly private calls</li><li>Funding &amp; lender readiness</li><li>Introductions to her network</li><li>VIP event seats</li></ul>
         <a href="#booking" class="btn btn-ghost">Apply Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEBINARS -->
+<section id="webinars" class="dark">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Webinars</span>
+      <h2>Learn live <em>with Yolanda.</em></h2>
+      <p class="lead">Free and premium webinars with live Q&amp;A, replays and worksheets. Register in one click and get reminders by email and text.</p>
+    </div>
+    <div class="web-grid">
+      <div class="web free">
+        <div class="web-screen"><span class="tag gold">Free webinar</span><span class="t">The Business of You</span><div class="when"><span>● Live</span><span>60 min</span></div></div>
+        <div class="web-body">
+          <h3>The Business of You</h3>
+          <p>Treat yourself like your most important business: your brand, your money and your next move, mapped out in one hour.</p>
+          <div class="web-meta"><span><svg class="ic"><use href="#i-cal"/></svg>Thu, Nov 20 · 6:00 PM PT</span><span><svg class="ic"><use href="#i-ticket"/></svg>Free</span></div>
+          <button class="btn btn-gold reg">Save My Free Seat</button>
+        </div>
+      </div>
+      <div class="web">
+        <div class="web-screen"><span class="tag">Live webinar</span><span class="t">Build on Two Lanes</span><div class="when"><span>Self &amp; Career</span><span>75 min</span></div></div>
+        <div class="web-body">
+          <h3>Build on Two Lanes: Self &amp; Career</h3>
+          <p>Grow personally and professionally at the same time, so your career supports your life instead of consuming it.</p>
+          <div class="web-meta"><span><svg class="ic"><use href="#i-cal"/></svg>Tue, Dec 2 · 6:00 PM PT</span><span><svg class="ic"><use href="#i-ticket"/></svg>$27 · Replay included</span></div>
+          <button class="btn btn-ghost reg">Register</button>
+        </div>
+      </div>
+      <div class="web">
+        <div class="web-screen"><span class="tag">Live webinar</span><span class="t">Overcoming the Job Hostage Syndrome</span><div class="when"><span>Break free</span><span>75 min</span></div></div>
+        <div class="web-body">
+          <h3>Overcoming the Job Hostage Syndrome</h3>
+          <p>Stuck in a job that pays the bills but drains your purpose? Build a realistic plan and the confidence to make your move.</p>
+          <div class="web-meta"><span><svg class="ic"><use href="#i-cal"/></svg>Thu, Dec 11 · 6:00 PM PT</span><span><svg class="ic"><use href="#i-ticket"/></svg>$27 · Replay included</span></div>
+          <button class="btn btn-ghost reg">Register</button>
+        </div>
+      </div>
+    </div>
+    <div class="replay-bar"><div><b>Replay library</b><span>Every past webinar, worksheet and Q&amp;A, free for members.</span></div><a href="#" class="btn btn-gold btn-sm demo">Browse Replays</a></div>
+  </div>
+</section>
+
+<!-- BUILD YOUR MODULES -->
+<section id="modules" class="white">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Build Your Modules</span>
+      <h2>Create branded courses <em>in minutes.</em></h2>
+      <p class="lead">Pick brand colors, list your topics, upload a logo (or let AI make one) and auto-build a full slide deck. Try it below.</p>
+    </div>
+    <div class="mod-feats">
+      <a class="mod-feat" id="mod-colors" href="#studio"><span><svg class="ic"><use href="#i-palette"/></svg></span><div><b>Build modules with brand colors</b><small>Every slide and lesson matches your brand.</small></div></a>
+      <a class="mod-feat" id="mod-topics" href="#studio"><span><svg class="ic"><use href="#i-list"/></svg></span><div><b>Module topics</b><small>Add, remove and reorder lessons.</small></div></a>
+      <a class="mod-feat" id="mod-logo" href="#studio"><span><svg class="ic"><use href="#i-spark"/></svg></span><div><b>Upload brand logo or auto-generate</b><small>Use your logo or create one instantly.</small></div></a>
+      <a class="mod-feat" id="mod-slides" href="#studio"><span><svg class="ic"><use href="#i-slides"/></svg></span><div><b>Auto-build slides</b><small>One click turns topics into a deck.</small></div></a>
+    </div>
+    <div class="studio" id="studio">
+      <div class="card builder">
+        <div class="step">
+          <h4><i>1</i>Brand colors</h4>
+          <div class="swatches" id="swatches"></div>
+        </div>
+        <div class="step">
+          <h4><i>2</i>Module topics</h4>
+          <div class="topics" id="topics"></div>
+          <form class="addrow" id="topicForm"><input id="topicInput" placeholder="Add a topic, e.g. Building Credit" maxlength="40"/><button class="btn-line" aria-label="Add topic"><svg class="ic" style="width:14px;height:14px"><use href="#i-plus"/></svg>Add</button></form>
+        </div>
+        <div class="step">
+          <h4><i>3</i>Brand logo</h4>
+          <div class="field" style="margin-bottom:.7rem"><label>Business name</label><input id="bizName" value="The Business of You" maxlength="40"/></div>
+          <div class="logo-row">
+            <div class="logo-prev" id="logoPrev"></div>
+            <div class="mini-btns">
+              <label class="btn-line"><svg class="ic" style="width:14px;height:14px"><use href="#i-upload"/></svg>Upload<input type="file" accept="image/*" id="logoFile" hidden/></label>
+              <button class="btn-line" id="logoGen" type="button"><svg class="ic" style="width:14px;height:14px"><use href="#i-spark"/></svg>Auto-generate</button>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <h4><i>4</i>Slides</h4>
+          <button class="btn btn-dark" id="buildSlides" style="width:100%;justify-content:center"><svg class="ic" style="width:16px;height:16px"><use href="#i-slides"/></svg>Auto-Build Slides</button>
+        </div>
+      </div>
+      <div class="preview">
+        <div class="slide" id="slide"></div>
+        <div class="prev-head"><b>Your deck</b><small class="muted" id="slideCount"></small></div>
+        <div class="thumbs" id="thumbs"></div>
       </div>
     </div>
   </div>
@@ -706,21 +934,51 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap">
     <div class="sec-head center">
       <span class="eyebrow">Dashboard</span>
-      <h2>Every client gets <em>their own space.</em></h2>
-      <p class="lead">Courses, sessions, goals, purchases and messages in one login. Yolanda gets an admin view of revenue, members and engagement.</p>
+      <h2>Run your business <em>at a glance.</em></h2>
+      <p class="lead">Yolanda sees clients, goals and revenue in real time, and every client gets a private portal for courses, sessions and goals.</p>
     </div>
     <div class="card dash">
       <div class="dash-nav">
-        <span class="logo" style="color:#fff"><span class="logo-mark">M</span>My Portal</span>
+        <span class="logo" style="color:#fff"><span class="logo-mark">YB</span>Dashboard</span>
         <a href="#" class="on demo"><svg class="ic"><use href="#i-grid"/></svg>Overview</a>
-        <a href="#" class="demo"><svg class="ic"><use href="#i-book"/></svg>My Courses</a>
-        <a href="#" class="demo"><svg class="ic"><use href="#i-cal"/></svg>Sessions</a>
-        <a href="#" class="demo"><svg class="ic"><use href="#i-target"/></svg>Goals</a>
-        <a href="#" class="demo"><svg class="ic"><use href="#i-card"/></svg>Billing</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-users"/></svg>Clients</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-card"/></svg>Revenue</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-slides"/></svg>Modules</a>
+        <a href="#" class="demo"><svg class="ic"><use href="#i-video"/></svg>Webinars</a>
         <a href="#" class="demo"><svg class="ic"><use href="#i-chat"/></svg>Messages</a>
       </div>
       <div class="dash-main">
-        <div class="dash-top"><h3>Welcome back, Amara 👋</h3><span class="tag gold">🔥 12-day streak</span></div>
+        <div class="dash-top"><h3 id="dashTitle">Good morning, Yolanda 👋</h3><div class="seg" id="dashTabs"><button class="on" data-p="coach">Coach view</button><button data-p="client">Client view</button></div></div>
+        <div class="dpanel on" id="p-coach">
+          <div class="kpis">
+            <div class="card kpi"><small>Number of clients</small><b>148</b><i>+12 this month</i></div>
+            <div class="card kpi"><small>Goals achieved</small><b>76%</b><div class="track" style="margin:.4rem 0 .35rem"><i style="width:76%"></i></div><i>Target: 80%</i></div>
+            <div class="card kpi"><small>Revenue to date</small><b>$184,250</b><i>Since Jan 2026</i></div>
+            <div class="card kpi"><small>Revenue this month</small><b>$18,640</b><i>On pace for $25.4K</i></div>
+          </div>
+          <div class="dash-row">
+            <div class="card chart">
+              <div class="chart-head"><b>Monthly revenue</b><span class="muted">2026</span></div>
+              <div class="bars rev"><div style="height:65%" title="Jan: $14.2K"><span>$14.2K</span></div><div style="height:69%" title="Feb: $15.1K"><span>$15.1K</span></div><div style="height:76%" title="Mar: $16.8K"><span>$16.8K</span></div><div style="height:79%" title="Apr: $17.4K"><span>$17.4K</span></div><div style="height:86%" title="May: $18.9K"><span>$18.9K</span></div><div style="height:89%" title="Jun: $19.6K"><span>$19.6K</span></div><div style="height:92%" title="Jul: $20.3K"><span>$20.3K</span></div><div style="height:100%" title="Aug: $21.9K"><span>$21.9K</span></div><div style="height:97%" title="Sep: $21.4K"><span>$21.4K</span></div><div class="hi" style="height:85%" title="Oct: $18.6K"><span>$18.6K</span></div></div>
+              <div class="bars-x"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span></div>
+            </div>
+            <div class="card chart">
+              <b style="font-family:var(--head)">Client goals</b>
+              <div class="prog-item"><div><span>Business plan completed</span><span>82%</span></div><div class="track"><i style="width:82%"></i></div></div>
+              <div class="prog-item"><div><span>Credit score goal met</span><span>71%</span></div><div class="track"><i style="width:71%"></i></div></div>
+              <div class="prog-item"><div><span>Funding secured</span><span>64%</span></div><div class="track"><i style="width:64%"></i></div></div>
+              <div class="prog-item"><div><span>Revenue goal hit</span><span>58%</span></div><div class="track"><i style="width:58%"></i></div></div>
+            </div>
+          </div>
+          <div class="card chart">
+            <div class="chart-head"><b>Recent clients</b><a href="#" class="demo view-all">View all</a></div>
+            <div class="crow"><span class="avatar a2" style="width:36px;height:36px;font-size:.72rem">AR</span><div><b>Amara R.</b><small>Small Business Launch Lab</small></div><div class="cgoal"><div class="track"><i style="width:80%"></i></div><small>80% of goals</small></div><span class="tag">On track</span></div>
+            <div class="crow"><span class="avatar a3" style="width:36px;height:36px;font-size:.72rem">DK</span><div><b>David K.</b><small>1:1 Business &amp; Money Coaching</small></div><div class="cgoal"><div class="track"><i style="width:100%"></i></div><small>100% of goals</small></div><span class="tag gold">Goal met</span></div>
+            <div class="crow"><span class="avatar a5" style="width:36px;height:36px;font-size:.72rem">SL</span><div><b>Sofia L.</b><small>Money Foundations</small></div><div class="cgoal"><div class="track"><i style="width:45%"></i></div><small>45% of goals</small></div><span class="tag rose">Check in</span></div>
+          </div>
+        </div>
+        <div class="dpanel" id="p-client">
+          <div class="dash-top"><b style="font-family:var(--head)">Amara's portal</b><span class="tag gold">🔥 12-day streak</span></div>
         <div class="kpis">
           <div class="card kpi"><small>Course progress</small><b>68%</b><i>+12% this week</i></div>
           <div class="card kpi"><small>Sessions done</small><b>7 / 12</b><i>Next: Thu</i></div>
@@ -745,6 +1003,7 @@ footer a:hover{color:var(--gold-2)}
           <div class="prog-item"><div><span>Finish my business plan</span><span>80%</span></div><div class="track"><i style="width:80%"></i></div></div>
           <div class="prog-item"><div><span>Raise credit score to 720</span><span>50%</span></div><div class="track"><i style="width:50%"></i></div></div>
         </div>
+        </div>
       </div>
     </div>
   </div>
@@ -755,11 +1014,11 @@ footer a:hover{color:var(--gold-2)}
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Podcast</span>
-      <h2>The <em>Make It Great</em> Show</h2><p style="font-family:var(--head);font-weight:700;margin:-.4rem 0 .8rem">with Yolanda Butler</p>
+      <h2>The Business of You <em>Podcast</em></h2><p style="font-family:var(--head);font-weight:700;margin:-.4rem 0 .8rem">with Yolanda Butler</p>
       <p class="lead">Every episode playable on-site with show notes, transcripts and links, plus one-tap subscribe on every platform.</p>
     </div>
     <div class="card player">
-      <div class="cover">Make It Great Show</div>
+      <div class="cover">The Business of You</div>
       <div>
         <span class="tag">Latest episode · Ep. 48</span>
         <h3 style="font-size:1.4rem;margin-top:.6rem">Know Your Worth: Pricing Your Business for Profit</h3>
@@ -836,9 +1095,9 @@ footer a:hover{color:var(--gold-2)}
         <a href="#" class="demo">Get my results <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a>
       </div>
       <div class="card res"><span style="background:var(--mint);color:var(--green)"><svg class="ic"><use href="#i-book"/></svg></span><h3>Business Plan Starter Kit</h3><p>Fill-in templates to write a plan lenders take seriously.</p><a href="#" class="demo">Download <svg class="ic" style="width:14px;height:14px"><use href="#i-down"/></svg></a></div>
-      <div class="card res"><span style="background:#FCEFD9;color:#9A6413"><svg class="ic"><use href="#i-video"/></svg></span><h3>Free Masterclass</h3><p>Credit &amp; Capital: 45 minutes on financing your small business.</p><a href="#" class="demo">Watch now <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
-      <div class="card res"><span style="background:#EEE7F6;color:var(--plum)"><svg class="ic"><use href="#i-cal"/></svg></span><h3>30-Day Money Reset</h3><p>Daily budgeting and credit prompts by email and in the community.</p><a href="#" class="demo">Join free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
-      <div class="card res"><span style="background:#E3EEF7;color:var(--sky)"><svg class="ic"><use href="#i-mail"/></svg></span><h3>Each One Reach One</h3><p>Weekly newsletter: resources, funding news and opportunities.</p><a href="#" class="demo">Subscribe <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:#F5E7C8;color:#7A5618"><svg class="ic"><use href="#i-video"/></svg></span><h3>Free Masterclass</h3><p>Credit &amp; Capital: 45 minutes on financing your small business.</p><a href="#" class="demo">Watch now <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:#EDE4D3;color:var(--plum)"><svg class="ic"><use href="#i-cal"/></svg></span><h3>30-Day Money Reset</h3><p>Daily budgeting and credit prompts by email and in the community.</p><a href="#" class="demo">Join free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+      <div class="card res"><span style="background:#E9E0CF;color:var(--sky)"><svg class="ic"><use href="#i-mail"/></svg></span><h3>Each One Reach One</h3><p>Weekly newsletter: resources, funding news and opportunities.</p><a href="#" class="demo">Subscribe <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
     </div>
   </div>
 </section>
@@ -852,7 +1111,7 @@ footer a:hover{color:var(--gold-2)}
       <p class="lead">In-person and virtual events with ticketing, reminders and check-in built in.</p>
     </div>
     <div class="grid" style="gap:14px">
-      <div class="card event"><div class="e-date"><b>06</b><small>Dec</small></div><div><span class="tag gold">In person · VIP available</span><h3>Make It Great Small Business Summit</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Oakland, CA</span><span><svg class="ic"><use href="#i-clock"/></svg>9:00 AM - 5:00 PM</span><span><svg class="ic"><use href="#i-ticket"/></svg>48 seats left</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Get Tickets</a></div>
+      <div class="card event"><div class="e-date"><b>06</b><small>Dec</small></div><div><span class="tag gold">In person · VIP available</span><h3>The Business of You Summit</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Oakland, CA</span><span><svg class="ic"><use href="#i-clock"/></svg>9:00 AM - 5:00 PM</span><span><svg class="ic"><use href="#i-ticket"/></svg>48 seats left</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Get Tickets</a></div>
       <div class="card event"><div class="e-date"><b>18</b><small>Jan</small></div><div><span class="tag">Virtual</span><h3>Credit &amp; Capital Workshop</h3><div class="e-meta"><span><svg class="ic"><use href="#i-video"/></svg>Online</span><span><svg class="ic"><use href="#i-clock"/></svg>6:00 PM PT</span><span><svg class="ic"><use href="#i-ticket"/></svg>Free for members</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Register</a></div>
       <div class="card event"><div class="e-date"><b>22</b><small>Feb</small></div><div><span class="tag rose">Brunch · Limited seats</span><h3>Women in Business Brunch</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Antioch, CA</span><span><svg class="ic"><use href="#i-clock"/></svg>11:00 AM PT</span><span><svg class="ic"><use href="#i-ticket"/></svg>40 seats</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Reserve</a></div>
     </div>
@@ -925,10 +1184,10 @@ footer a:hover{color:var(--gold-2)}
       <p class="lead">Physical and digital products with inventory, shipping and instant downloads.</p>
     </div>
     <div class="grid g4">
-      <div class="card prod"><div class="prod-img" style="background:#FCEFD9"><span class="tag gold">Coming soon</span><div class="mock-book" style="background:linear-gradient(160deg,var(--deep),var(--ink))">Make It Great</div></div><div class="prod-body"><b>Make It Great Business Workbook</b><small>Paperback · Signed</small><div class="prod-foot"><strong>$24</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:#F5E7C8"><span class="tag gold">Coming soon</span><div class="mock-book" style="background:linear-gradient(160deg,var(--deep),var(--ink))">The Business of You</div></div><div class="prod-body"><b>The Business of You Workbook</b><small>Paperback · Signed</small><div class="prod-foot"><strong>$24</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
       <div class="card prod"><div class="prod-img" style="background:var(--mint)"><span class="tag">Digital</span><div class="mock-card" style="background:linear-gradient(135deg,var(--green),var(--deep))">MONEY<br/>PLANNER</div></div><div class="prod-body"><b>Budget &amp; Credit Planner</b><small>PDF · Instant download</small><div class="prod-foot"><strong>$19</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
-      <div class="card prod"><div class="prod-img" style="background:#EEE7F6"><div class="mock-shirt" style="background:var(--ink)">MAKE IT<br/>GREAT</div></div><div class="prod-body"><b>Signature Tee</b><small>Unisex · 5 colors</small><div class="prod-foot"><strong>$32</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
-      <div class="card prod"><div class="prod-img" style="background:#E3EEF7"><span class="tag rose">New</span><div class="mock-mug">YB</div></div><div class="prod-body"><b>Know Your Worth Mug</b><small>Ceramic · 14 oz</small><div class="prod-foot"><strong>$18</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:#EDE4D3"><div class="mock-shirt" style="background:var(--ink)">MAKE IT<br/>GREAT</div></div><div class="prod-body"><b>Signature Tee</b><small>Unisex · 5 colors</small><div class="prod-foot"><strong>$32</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
+      <div class="card prod"><div class="prod-img" style="background:#E9E0CF"><span class="tag rose">New</span><div class="mock-mug">YB</div></div><div class="prod-body"><b>Know Your Worth Mug</b><small>Ceramic · 14 oz</small><div class="prod-foot"><strong>$18</strong><button class="add" aria-label="Add to cart"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg></button></div></div></div>
     </div>
   </div>
 </section>
@@ -942,12 +1201,12 @@ footer a:hover{color:var(--gold-2)}
       <p class="lead">All of Yolanda's handles in one place, with her latest posts.</p>
     </div>
     <div class="social-grid">
-      <a href="#" class="soc s-ig demo"><svg class="ic"><use href="#i-ig"/></svg><b>Instagram</b><small>@makeitgreat</small></a>
+      <a href="#" class="soc s-ig demo"><svg class="ic"><use href="#i-ig"/></svg><b>Instagram</b><small>@thebusinessofyou</small></a>
       <a href="#" class="soc s-li demo"><svg class="ic"><use href="#i-li"/></svg><b>LinkedIn</b><small>/in/yobutlermakeitgreat</small></a>
-      <a href="#" class="soc s-yt demo"><svg class="ic"><use href="#i-yt"/></svg><b>YouTube</b><small>@makeitgreat</small></a>
-      <a href="#" class="soc s-tt demo"><svg class="ic"><use href="#i-tt"/></svg><b>TikTok</b><small>@makeitgreat</small></a>
-      <a href="#" class="soc s-fb demo"><svg class="ic"><use href="#i-fb"/></svg><b>Facebook</b><small>/makeitgreat</small></a>
-      <a href="#" class="soc s-x demo"><svg class="ic"><use href="#i-xx"/></svg><b>X</b><small>@makeitgreat</small></a>
+      <a href="#" class="soc s-yt demo"><svg class="ic"><use href="#i-yt"/></svg><b>YouTube</b><small>@thebusinessofyou</small></a>
+      <a href="#" class="soc s-tt demo"><svg class="ic"><use href="#i-tt"/></svg><b>TikTok</b><small>@thebusinessofyou</small></a>
+      <a href="#" class="soc s-fb demo"><svg class="ic"><use href="#i-fb"/></svg><b>Facebook</b><small>/thebusinessofyou</small></a>
+      <a href="#" class="soc s-x demo"><svg class="ic"><use href="#i-xx"/></svg><b>X</b><small>@thebusinessofyou</small></a>
     </div>
   </div>
 </section>
@@ -978,7 +1237,7 @@ footer a:hover{color:var(--gold-2)}
 <footer>
   <div class="wrap">
     <div class="foot-grid">
-      <div><span class="logo"><span class="logo-mark">YB</span>Yolanda Butler</span><p>Financial well-being and small business coaching for entrepreneurs, families, non-profits and ministries.</p></div>
+      <div><span class="logo"><span class="logo-mark">YB</span><span class="logo-txt">The Business of You<small>with Yolanda Butler</small></span></span><p>Financial well-being and small business coaching for entrepreneurs, families, non-profits and ministries.</p></div>
       <div><h4>Grow</h4><ul><li><a href="#programs">Coaching</a></li><li><a href="#resources">Free Resources</a></li><li><a href="#ai">AI Coach</a></li><li><a href="#podcast">Podcast</a></li></ul></div>
       <div><h4>Connect</h4><ul><li><a href="#community">Community</a></li><li><a href="#events">Events</a></li><li><a href="#live">Live Sessions</a></li><li><a href="#social">Social</a></li></ul></div>
       <div><h4>More</h4><ul><li><a href="#shop">Shop</a></li><li><a href="#philanthropy">Philanthropy</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#contact">Contact</a></li></ul></div>
@@ -994,6 +1253,8 @@ const FEATURES = [
   ['home','Home','A bold first impression','#home'],
   ['user','About','Yolanda\'s story','#about'],
   ['target','Coaching & Programs','Courses, groups & 1:1','#programs'],
+  ['video','Webinars','Free & premium live trainings','#webinars'],
+  ['slides','Build Your Modules','Branded courses & slides','#modules'],
   ['cal','Bookings','Self-serve scheduling','#booking'],
   ['users','Community','Private social network','#community'],
   ['spark','Custom AI','Yolanda AI, 24/7','#ai'],
@@ -1011,7 +1272,10 @@ const FEATURES = [
 ];
 const ico = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
 document.getElementById('featGrid').innerHTML = FEATURES.map(([i,t,d,h]) => `<a class="feat" href="${h}"><span>${ico(i)}</span><b>${t}</b><small>${d}</small></a>`).join('');
-document.getElementById('drawerGrid').innerHTML = FEATURES.map(([i,t,,h]) => `<a href="${h}"><span>${ico(i)}</span>${t}</a>`).join('');
+const MODULE_TOOLS = [['palette','Build modules with brand colors','#mod-colors'],['list','Module topics','#mod-topics'],['spark','Upload brand logo or auto-generate','#mod-logo'],['slides','Auto-build slides','#mod-slides']];
+document.getElementById('drawerGrid').outerHTML =
+  `<div class="drawer-grid">${FEATURES.filter(f => f[3] !== '#modules').map(([i,t,,h]) => `<a href="${h}"><span>${ico(i)}</span>${t}</a>`).join('')}</div>` +
+  `<div class="drawer-group"><h4>Build Your Modules</h4><div class="drawer-grid">${MODULE_TOOLS.map(([i,t,h]) => `<a href="${h}"><span>${ico(i)}</span>${t}</a>`).join('')}</div></div>`;
 
 const toast = msg => { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600); };
 
@@ -1083,6 +1347,95 @@ document.querySelectorAll('.add').forEach(b => b.addEventListener('click', () =>
 
 // Gallery
 document.querySelectorAll('.vid').forEach(v => v.addEventListener('click', () => toast("Yolanda's speaking & coaching videos will play here.")));
+
+// Dashboard: coach / client view
+document.getElementById('dashTabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#dashTabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.dpanel').forEach(p => p.classList.toggle('on', p.id === 'p-' + b.dataset.p));
+  document.getElementById('dashTitle').textContent = b.dataset.p === 'coach' ? 'Good morning, Yolanda 👋' : 'Client portal preview';
+});
+
+// Webinar registration
+document.querySelectorAll('.reg').forEach(b => b.addEventListener('click', () => {
+  if (b.classList.contains('done')) return;
+  b.classList.add('done'); b.textContent = "You're registered ✓";
+  toast('Registered! A calendar invite and reminders are on the way.');
+}));
+
+// Build Your Modules studio
+const PALETTES = [
+  ['Gold & Black', '#15120E', '#D4A84B', '#F4EDE0'],
+  ['Beige & Gold', '#8C6420', '#D4A84B', '#FBF6EC'],
+  ['Navy & Gold', '#1D2B4A', '#E0B354', '#F4F1EA'],
+  ['Plum & Rose', '#4B2142', '#E59CA8', '#FAF1F3'],
+  ['Emerald', '#0F4A3C', '#E9A23B', '#EEF5F1'],
+];
+const studio = document.getElementById('studio');
+const st = { pal: PALETTES[0].slice(1), topics: ['Know Your Worth', 'Credit & Capital', 'Pricing for Profit', 'Building Your Brand'], logo: null, monoStyle: 1, cur: 0, slides: [] };
+const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const setPal = ([p, a, b]) => { st.pal = [p, a, b]; studio.style.setProperty('--sp', p); studio.style.setProperty('--sa', a); studio.style.setProperty('--sb', b); };
+const initials = () => (document.getElementById('bizName').value.trim() || 'My Brand').split(/\s+/).filter(w => !/^(the|of|and|a)$/i.test(w)).map(w => w[0]).join('').slice(0, 3).toUpperCase() || 'MB';
+const logoHTML = () => st.logo ? `<img src="${st.logo}" alt="Brand logo"/>` : `<div class="mono s${st.monoStyle}">${initials()}</div>`;
+
+const sw = document.getElementById('swatches');
+sw.innerHTML = PALETTES.map(([n, p, a], i) => `<button class="sw${i ? '' : ' sel'}" title="${n}" aria-label="${n}" style="--c1:${p};--c2:${a}" data-i="${i}"></button>`).join('') +
+  `<label class="sw-custom" title="Custom color"><svg class="ic" style="width:18px;height:18px"><use href="#i-plus"/></svg><input type="color" id="customColor" value="#15120E"/></label>`;
+sw.addEventListener('click', e => {
+  const b = e.target.closest('.sw'); if (!b) return;
+  sw.querySelectorAll('.sw').forEach(x => x.classList.toggle('sel', x === b));
+  setPal(PALETTES[b.dataset.i].slice(1)); renderSlides(false);
+});
+document.getElementById('customColor').addEventListener('input', e => {
+  sw.querySelectorAll('.sw').forEach(x => x.classList.remove('sel'));
+  setPal([e.target.value, st.pal[1], st.pal[2]]); renderSlides(false);
+});
+
+const topicsEl = document.getElementById('topics');
+const renderTopics = () => topicsEl.innerHTML = st.topics.map((t, i) => `<span class="topic">${esc(t)}<button type="button" data-i="${i}" aria-label="Remove ${esc(t)}"><svg class="ic" style="width:12px;height:12px"><use href="#i-x"/></svg></button></span>`).join('');
+topicsEl.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st.topics.splice(+b.dataset.i, 1); renderTopics(); });
+document.getElementById('topicForm').addEventListener('submit', e => {
+  e.preventDefault(); const inp = document.getElementById('topicInput'), v = inp.value.trim();
+  if (!v) return; if (st.topics.length >= 8) return toast('Up to 8 topics per module in this preview.');
+  st.topics.push(v); inp.value = ''; renderTopics();
+});
+
+const logoPrev = document.getElementById('logoPrev');
+const renderLogo = () => { logoPrev.innerHTML = logoHTML(); document.querySelectorAll('.s-logo').forEach(l => l.innerHTML = logoHTML()); };
+document.getElementById('logoFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader(); r.onload = () => { st.logo = r.result; renderLogo(); toast('Logo uploaded.'); }; r.readAsDataURL(f);
+});
+document.getElementById('logoGen').addEventListener('click', () => { st.logo = null; st.monoStyle = st.monoStyle % 3 + 1; renderLogo(); toast('New logo generated. Click again for another style.'); });
+document.getElementById('bizName').addEventListener('input', () => { renderLogo(); renderSlides(false); });
+
+const slideEl = document.getElementById('slide'), thumbs = document.getElementById('thumbs');
+const buildDeck = () => {
+  const name = document.getElementById('bizName').value.trim() || 'My Brand';
+  return [
+    { k: 'Module 1', t: name, b: ['Course overview', `${st.topics.length} lessons`, 'Worksheets & action steps'] },
+    ...st.topics.map((t, i) => ({ k: `Lesson ${i + 1}`, t, b: [`Why ${t.toLowerCase()} matters`, 'Key strategies & real examples', 'Your action step this week'] })),
+    { k: 'Wrap-up', t: 'Your Action Plan', b: ['Review your wins', 'Set your next 30-day goal', 'Book your coaching session'] },
+  ];
+};
+const showSlide = i => {
+  st.cur = i; const sl = st.slides[i]; if (!sl) return;
+  const name = document.getElementById('bizName').value.trim() || 'My Brand';
+  slideEl.innerHTML = `<div class="s-logo">${logoHTML()}</div><span class="s-kicker">${esc(sl.k)}</span><h3>${esc(sl.t)}</h3><ul>${sl.b.map(x => `<li>${esc(x)}</li>`).join('')}</ul><div class="s-foot"><span>${esc(name)}</span><span>${i + 1} / ${st.slides.length}</span></div>`;
+  thumbs.querySelectorAll('.thumb').forEach((t, j) => t.classList.toggle('sel', j === i));
+};
+const renderSlides = (animate = true) => {
+  st.slides = buildDeck();
+  thumbs.innerHTML = st.slides.map((sl, i) => `<button class="thumb" style="animation-delay:${animate ? i * 70 : 0}ms" data-i="${i}"><small>${esc(sl.k)}</small><b>${esc(sl.t)}</b><i>${i + 1}</i></button>`).join('');
+  document.getElementById('slideCount').textContent = `${st.slides.length} slides`;
+  showSlide(Math.min(st.cur, st.slides.length - 1));
+};
+thumbs.addEventListener('click', e => { const t = e.target.closest('.thumb'); if (t) showSlide(+t.dataset.i); });
+document.getElementById('buildSlides').addEventListener('click', () => {
+  if (!st.topics.length) return toast('Add at least one topic first.');
+  st.cur = 0; renderSlides(true); toast(`Built ${st.slides.length} slides in your brand colors.`);
+});
+setPal(st.pal); renderTopics(); renderLogo(); renderSlides(false);
 
 // Contact form → existing API
 document.getElementById('contactForm').addEventListener('submit', async e => {
