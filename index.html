@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Yolanda Butler | Make It Great</title>
+<meta name="robots" content="noindex, nofollow"/>
 <meta name="description" content="Concept demo for Yolanda Butler: financial well-being and small business coaching platform."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -51,8 +52,11 @@ h2 em,h1 em{font-family:var(--disp);font-style:italic;font-weight:500;color:var(
 .white{background:var(--paper)}
 
 /* Demo ribbon + header */
-.ribbon{background:var(--deep);color:#fff;font-size:.82rem;text-align:center;padding:.55rem 16px}
-.ribbon b{font-family:var(--head);letter-spacing:.12em;font-size:.68rem;background:var(--gold);color:var(--ink);padding:.15rem .55rem;border-radius:999px;margin-right:.5rem}
+.ribbon{background:linear-gradient(90deg,var(--ink),var(--deep) 50%,var(--ink));color:rgba(255,255,255,.9);font-size:.85rem;padding:.6rem 16px;display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;text-align:center}
+.ribbon b{font-family:var(--head);font-weight:800;letter-spacing:.14em;font-size:.66rem;background:var(--gold);color:var(--ink);padding:.2rem .6rem;border-radius:999px}
+.ribbon a{font-family:var(--head);font-weight:800;font-size:.78rem;color:var(--gold-2);display:inline-flex;align-items:center;gap:.3rem;transition:gap .2s}
+.ribbon a:hover{gap:.55rem}
+@media (max-width:600px){.ribbon span{display:none}}
 header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:1rem}
 .logo{font-family:var(--head);font-weight:900;font-size:1.3rem;letter-spacing:-.03em;display:flex;align-items:center;gap:.55rem}
@@ -476,7 +480,7 @@ footer a:hover{color:var(--gold-2)}
   </defs>
 </svg>
 
-<div class="ribbon"><b>CONCEPT DEMO</b>Prepared for Yolanda Butler. Not an official site; sample content for review.</div>
+<div class="ribbon"><b>FREE MASTERCLASS</b><span>Credit &amp; Capital: how to fund your small business.</span><a href="#resources">Watch free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
 
 <header>
   <div class="wrap nav">
