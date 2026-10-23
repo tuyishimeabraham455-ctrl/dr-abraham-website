@@ -55,12 +55,13 @@ h2 em,h1 em{font-family:var(--disp);font-style:italic;font-weight:500;color:var(
 .ribbon a:hover{gap:.55rem}
 @media (max-width:600px){.ribbon span{display:none}}
 header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:1rem}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:.8rem}
 .logo{font-family:var(--head);font-weight:900;font-size:1.3rem;letter-spacing:-.03em;display:flex;align-items:center;gap:.55rem}
 .logo-mark{width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--gold);display:grid;place-items:center;font-size:14px}
-.nav-links{display:flex;align-items:center;gap:1.15rem;white-space:nowrap;font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:.95rem;white-space:nowrap;font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase}
 .nav-links a:hover{color:var(--green)}
-.nav-right{display:flex;align-items:center;gap:.7rem}
+.nav-right{display:flex;align-items:center;gap:.55rem}
+.nav-left{display:flex;align-items:center;gap:.8rem}
 .menu-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
 .drawer{position:fixed;inset:0;z-index:60;background:var(--ink);color:#fff;padding:24px 16px;overflow:auto;transform:translateY(-100%);transition:transform .4s}
 .drawer.open{transform:none}
@@ -568,7 +569,7 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
 .badge.earned{opacity:1;background:var(--ink);color:var(--gold-2)}
 
 /* Responsive */
-@media (max-width:1240px){
+@media (max-width:1280px){
   .nav-links{display:none}
 }
 @media (max-width:1100px){
@@ -682,7 +683,10 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
 
 <header>
   <div class="wrap nav">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuOpen" aria-label="Open menu"><svg class="ic"><use href="#i-menu"/></svg></button>
     <a href="#home" class="logo"><span class="logo-mark">YB</span><span class="logo-txt">The Business of You<small>with Yolanda Butler</small></span></a>
+    </div>
     <nav class="nav-links">
       <a href="#about">About</a><a href="#programs">Coaching</a><a href="#webinars">Webinars</a>
       <div class="nav-dd">
@@ -699,7 +703,6 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
     <div class="nav-right">
       <a href="#shop" class="cart" aria-label="Cart"><svg class="ic"><use href="#i-bag"/></svg><i id="cartCount">0</i></a>
       <a href="#booking" class="btn btn-gold btn-sm">Book a Call</a>
-      <button class="menu-btn" id="menuOpen" aria-label="Open menu"><svg class="ic"><use href="#i-menu"/></svg></button>
     </div>
   </div>
 </header>
