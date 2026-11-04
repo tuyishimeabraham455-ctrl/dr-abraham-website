@@ -32,7 +32,45 @@
       store.set(out.token); e.target.reset(); boot();
     } catch { msg.textContent = 'The portal runs on the live server. It is not available on this preview.'; msg.className = 'form-msg err'; }
   });
-  function signOut() { const t = store.get(); if (t) fetch('/api/members/logout', { method: 'POST', headers: { Authorization: 'Bearer ' + t } }).catch(() => {}); store.set(null); me = null; app.hidden = true; loginBox.hidden = false; history.replaceState(null, '', location.pathname); }
+  // Create account
+  const signupForm = $('#pSignupForm');
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = $('#pSignupMsg'), f = e.target;
+    if (f.password.value !== f.password2.value) { msg.textContent = 'The two passwords don\'t match.'; msg.className = 'form-msg err'; f.password2.focus(); return; }
+    msg.textContent = 'Creating your account…'; msg.className = 'form-msg';
+    try {
+      const res = await fetch('/api/members/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: f.name.value, email: f.email.value, password: f.password.value, website: f.website.value }) });
+      const out = await res.json();
+      if (!out.ok) {
+        msg.textContent = out.message; msg.className = 'form-msg err';
+        if (res.status === 409) { $('#pEmail').value = f.email.value; }
+        return;
+      }
+      store.set(out.token); f.reset(); history.replaceState(null, '', location.pathname + '#home'); boot();
+    } catch { msg.textContent = 'Accounts can be created on the live server. It is not available on this preview.'; msg.className = 'form-msg err'; }
+  });
+
+  // Sign in / Create account tabs (#signup opens the second one)
+  const showAuth = (which) => {
+    const up = which === 'signup';
+    $('#pLoginForm').hidden = up; signupForm.hidden = !up;
+    $('#tabSignin').setAttribute('aria-selected', String(!up)); $('#tabSignup').setAttribute('aria-selected', String(up));
+    $('#pAuthTitle').textContent = up ? 'Create your account' : 'Welcome back';
+    const first = up ? $('#sName') : $('#pEmail');
+    if (!loginBox.hidden) setTimeout(() => first.focus(), 30);
+  };
+  $('#tabSignin').addEventListener('click', () => showAuth('signin'));
+  $('#tabSignup').addEventListener('click', () => showAuth('signup'));
+  document.querySelectorAll('[data-auth]').forEach((b) => b.addEventListener('click', () => showAuth(b.dataset.auth)));
+  if (/^#(signup|register|join)$/.test(location.hash)) showAuth('signup');
+  document.querySelectorAll('.pw-show').forEach((b) => b.addEventListener('click', () => {
+    const input = b.previousElementSibling, show = input.type === 'password';
+    input.type = show ? 'text' : 'password'; b.textContent = show ? 'Hide' : 'Show';
+    b.setAttribute('aria-pressed', String(show)); b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  }));
+
+  function signOut() { const t = store.get(); if (t) fetch('/api/members/logout', { method: 'POST', headers: { Authorization: 'Bearer ' + t } }).catch(() => {}); store.set(null); me = null; app.hidden = true; loginBox.hidden = false; history.replaceState(null, '', location.pathname); showAuth('signin'); }
   $('#pLogout').addEventListener('click', signOut);
 
   /* ---------- Shell ---------- */

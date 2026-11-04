@@ -345,6 +345,36 @@ router.post('/members/login', (req, res) => {
   res.json({ ok: true, token, member: members.publicMember(member) });
 });
 
+// POST /api/members/register  — anyone can create a member account and is signed in.
+// New accounts are always role 'member'; admins get an inbox note.
+const signups = new Map();
+router.post('/members/register', (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+  const now = Date.now();
+  const recent = (signups.get(ip) || []).filter((t) => now - t < 60 * 60 * 1000);
+  if (recent.length >= 5) return res.status(429).json({ ok: false, message: 'Too many sign-ups from this connection. Please try again later.' });
+  const { name, email, password, website } = req.body || {};
+  if (website) return res.status(400).json({ ok: false, message: 'Please try again.' }); // honeypot
+  const cleanName = String(name || '').trim().slice(0, 120), cleanEmail = String(email || '').toLowerCase().trim().slice(0, 160);
+  if (!cleanName) return res.status(400).json({ ok: false, message: 'Please add your name.' });
+  if (!isValidEmail(cleanEmail)) return res.status(400).json({ ok: false, message: 'Please add a valid email address.' });
+  if (String(password || '').length < 10) return res.status(400).json({ ok: false, message: 'Choose a password of at least 10 characters.' });
+  let id;
+  try {
+    id = db.prepare(`INSERT INTO members (name, email, password, role) VALUES (?, ?, ?, 'member')`).run(cleanName, cleanEmail, members.hashPassword(String(password))).lastInsertRowid;
+  } catch (err) {
+    if (/UNIQUE/.test(err.message)) return res.status(409).json({ ok: false, message: 'An account with that email already exists. Please sign in instead.' });
+    return res.status(500).json({ ok: false, message: 'Something went wrong. Please try again.' });
+  }
+  recent.push(now); signups.set(ip, recent);
+  const note = db.prepare(`INSERT INTO messages (from_id, to_id, subject, body) VALUES (?, ?, ?, ?)`);
+  for (const a of db.prepare(`SELECT id FROM members WHERE role = 'admin' AND status = 'active'`).all()) {
+    note.run(id, a.id, `New member: ${cleanName}`, `${cleanName} <${cleanEmail}> just created an account. You can add their programs or change their role under People.`);
+  }
+  const member = db.prepare(`SELECT * FROM members WHERE id = ?`).get(id);
+  res.status(201).json({ ok: true, token: members.startSession(id), member: members.publicMember(member), message: 'Welcome! Your account is ready.' });
+});
+
 // GET /api/members/me
 router.get('/members/me', (req, res) => {
   const member = members.memberFromRequest(req);

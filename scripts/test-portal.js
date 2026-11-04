@@ -147,6 +147,18 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     check('coach answers with Claude', asked.body.ok && asked.body.answer.includes('hot leads'));
     check('coach request: model, live data, valid history', seen.model === 'claude-opus-5-5' && seen.system.includes('<business_data') && seen.system.includes('Record your signature story') && seen.messages.map((x) => x.role).join() === 'user,assistant,user');
     delete process.env.ANTHROPIC_API_KEY;
+
+    // Self sign-up
+    const reg = await call('POST', '/members/register', null, { name: 'Self Starter', email: 'Self@Example.com', password: 'long-enough-pw', role: 'admin' });
+    check('anyone can create an account and is signed in', reg.status === 201 && reg.body.token && reg.body.member.email === 'self@example.com');
+    check('sign-up always makes a member (role ignored)', reg.body.member.role === 'member');
+    check('new account can open the portal', (await call('GET', '/portal/me', reg.body.token)).status === 200);
+    check('new account cannot open staff pages', (await call('GET', '/portal/overview', reg.body.token)).status === 403);
+    check('duplicate sign-up email -> 409', (await call('POST', '/members/register', null, { name: 'Again', email: 'self@example.com', password: 'long-enough-pw' })).status === 409);
+    check('short password rejected', (await call('POST', '/members/register', null, { name: 'Short', email: 'short@example.com', password: 'short' })).status === 400);
+    check('bot honeypot rejected', (await call('POST', '/members/register', null, { name: 'Bot', email: 'bot@example.com', password: 'long-enough-pw', website: 'spam.example' })).status === 400);
+    check('new member can sign in with their password', (await login('self@example.com', 'long-enough-pw')).ok);
+    check('admins told about the new member', (await call('GET', '/portal/messages', A)).body.data.some((x) => x.subject === 'New member: Self Starter'));
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

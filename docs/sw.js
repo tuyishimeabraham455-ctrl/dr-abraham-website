@@ -1,5 +1,5 @@
-/* Service worker: offline support for the installed app. Version 20261104195756 */
-const CACHE = 'yo-20261104195756';
+/* Service worker: offline support for the installed app. Version 20261104211728 */
+const CACHE = 'yo-20261104211728';
 const PRECACHE = ["","offline/","book/","speaking/","agent-yo/","portal/","assets/css/yo.css","assets/js/yo.js","assets/app/icon-192.png","images/yolanda.jpg"];
 const base = new URL('./', self.location).href;
 self.addEventListener('install', (e) => {

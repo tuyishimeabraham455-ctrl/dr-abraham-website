@@ -178,7 +178,7 @@ ${sprite()}
 <div class="mnav" id="mnav" hidden>
   <nav aria-label="Mobile">${site.nav.map((n) => `<a href="${href(n.href)}">${esc(n.label)}</a>`).join('')}
     <a href="${href('book/')}" class="btn btn-gold">Book Yo</a>
-    <a href="${href('search/')}">Search</a><a href="${href('events/')}">Events</a><a href="${href('blog/')}">Insights</a><a href="${href('contact/')}">Contact</a>
+    <a href="${href('portal/')}">Sign in</a><a href="${href('portal/#signup')}">Create account</a><a href="${href('search/')}">Search</a><a href="${href('events/')}">Events</a><a href="${href('blog/')}">Insights</a><a href="${href('contact/')}">Contact</a>
     <button type="button" class="btn mnav-install js-install" hidden>${icon('install')}Install the app</button>
   </nav>
 </div>
@@ -196,7 +196,7 @@ ${body}
         <div class="social">${site.social.map((s) => `<a href="${esc(s.url)}" aria-label="${esc(s.name)}" rel="noopener" target="_blank">${icon(s.icon)}</a>`).join('')}</div>
       </div>
       <div class="ftr-col"><h3>Work with Yo</h3>
-        <a href="${href('book/')}">Book Yo</a><a href="${href('speaking/')}">Speaking</a><a href="${href('press/')}">Press kit</a><a href="${href('contact/')}">Contact</a>
+        <a href="${href('book/')}">Book Yo</a><a href="${href('speaking/')}">Speaking</a><a href="${href('press/')}">Press kit</a><a href="${href('contact/')}">Contact</a><a href="${href('portal/')}">Sign in</a>
       </div>
       <div class="ftr-col"><h3>Learn</h3>
         <a href="${href('podcast/')}">Podcast &amp; Show</a><a href="${href('learn/')}">Training</a><a href="${href('blog/')}">Insights</a><a href="${href('events/')}">Events</a><a href="${href('search/')}">Search</a>
