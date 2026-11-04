@@ -69,6 +69,9 @@ const ICONS = {
   file: '<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 13h6M9 17h6"/>',
   link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   star: '<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
+  home: '<path d="M3 11l9-7 9 7M5 9.5V20h5v-6h4v6h5V9.5"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  install: '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
 };
 
 // ---------- Helpers for inner pages ----------
@@ -129,7 +132,7 @@ function page({ path = '', depth = 0, title, description, body, schema = [], act
 <head>
 <meta charset="utf-8"/>
 <script>document.documentElement.className="js"</script>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}"/>
 <link rel="canonical" href="${canonical}"/>${noindex ? '\n<meta name="robots" content="noindex, follow"/>' : ''}
@@ -142,6 +145,12 @@ function page({ path = '', depth = 0, title, description, body, schema = [], act
 <meta property="og:image" content="${og}"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <link rel="icon" href="${favicon}"/>
+<link rel="manifest" href="${href('manifest.webmanifest')}" crossorigin="use-credentials"/>
+<link rel="apple-touch-icon" href="${href('assets/app/apple-touch-icon.png')}"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Yo"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap"/>
 <link rel="stylesheet" href="${href('assets/css/yo.css')}"/>
@@ -169,6 +178,8 @@ ${sprite()}
 <div class="mnav" id="mnav" hidden>
   <nav aria-label="Mobile">${site.nav.map((n) => `<a href="${href(n.href)}">${esc(n.label)}</a>`).join('')}
     <a href="${href('book/')}" class="btn btn-gold">Book Yo</a>
+    <a href="${href('search/')}">Search</a><a href="${href('events/')}">Events</a><a href="${href('blog/')}">Insights</a><a href="${href('contact/')}">Contact</a>
+    <button type="button" class="btn mnav-install js-install" hidden>${icon('install')}Install the app</button>
   </nav>
 </div>
 
@@ -206,6 +217,14 @@ ${body}
   </div>
 </footer>
 
+<!-- App tab bar (phones) -->
+<nav class="tabbar" aria-label="App">
+  ${[['home', 'Home', '', path === '' || path === 'index.html'], ['mic', 'Speaking', 'speaking/', path.startsWith('speaking')], ['cal', 'Book', 'book/', path.startsWith('book')]]
+    .map(([ic, label, to, on]) => `<a href="${href(to)}"${on ? ' aria-current="page"' : ''}>${icon(ic)}<span>${label}</span></a>`).join('')}
+  <button type="button" class="tab-yo js-agent-open" aria-label="Ask Agent Yo"><span class="tab-yo-ava">Yo</span><span>Ask Yo</span></button>
+  <a href="${href('portal/')}"${path.startsWith('portal') ? ' aria-current="page"' : ''}>${icon('user')}<span>Portal</span></a>
+</nav>
+
 <!-- Agent Yo: persistent launcher -->
 <div class="agent" id="agent">
   <div class="agent-bubble" id="agentBubble" hidden>
@@ -238,6 +257,7 @@ ${body}
 </div>
 
 <script src="${href('assets/js/yo.js')}" defer></script>
+<script src="${href('assets/js/app.js')}" defer></script>
 ${scripts.map((sc) => `<script src="${href(sc)}" defer></script>`).join('\n')}
 </body>
 </html>

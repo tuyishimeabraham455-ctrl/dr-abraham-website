@@ -49,6 +49,7 @@ const PAGES = [
   { route: 'search/', render: mod('./pages/search'), priority: '0', noindex: true },
   { route: 'portal/', render: mod('./pages/portal'), priority: '0', noindex: true },
   { route: '', file: '404.html', render: mod('./pages/notfound'), priority: '0', noindex: true },
+  { route: 'offline/', render: mod('./pages/offline'), priority: '0', noindex: true },
 ];
 
 // Section label for search results, from the first folder of the route
@@ -90,6 +91,60 @@ copyDir(path.join(ROOT, 'images'), path.join(OUT, 'images'));
 
 // GitHub Pages: serve files as-is (no Jekyll processing)
 write(path.join(OUT, '.nojekyll'), '');
+
+// ---------- Installable app (PWA): manifest + offline service worker ----------
+write(path.join(OUT, 'manifest.webmanifest'), JSON.stringify({
+  name: `${site.brand} with ${site.person.name}`,
+  short_name: 'Yo',
+  description: site.person.oneLine,
+  id: './',
+  start_url: './?source=app',
+  scope: './',
+  display: 'standalone',
+  orientation: 'portrait',
+  background_color: '#2A1A16',
+  theme_color: '#2A1A16',
+  categories: ['business', 'education'],
+  icons: [
+    { src: 'assets/app/icon-192.png', sizes: '192x192', type: 'image/png' },
+    { src: 'assets/app/icon-512.png', sizes: '512x512', type: 'image/png' },
+    { src: 'assets/app/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+  ],
+  shortcuts: [
+    { name: 'Book Yo', url: './book/', icons: [{ src: 'assets/app/icon-192.png', sizes: '192x192' }] },
+    { name: 'Ask Agent Yo', url: './agent-yo/', icons: [{ src: 'assets/app/icon-192.png', sizes: '192x192' }] },
+    { name: 'Portal', url: './portal/', icons: [{ src: 'assets/app/icon-192.png', sizes: '192x192' }] },
+  ],
+}, null, 2));
+
+// Pages: network first (always fresh when online), cached copy when offline.
+// Assets: cached, refreshed in the background. /api/ is never cached.
+const VERSION = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
+const PRECACHE = ['', 'offline/', 'book/', 'speaking/', 'agent-yo/', 'portal/', 'assets/css/yo.css', 'assets/js/yo.js', 'assets/app/icon-192.png', 'images/yolanda.jpg'];
+write(path.join(OUT, 'sw.js'), `/* Service worker: offline support for the installed app. Version ${VERSION} */
+const CACHE = 'yo-${VERSION}';
+const PRECACHE = ${JSON.stringify(PRECACHE)};
+const base = new URL('./', self.location).href;
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => Promise.all(PRECACHE.map((p) => c.add(new Request(base + p, { cache: 'reload' })).catch(() => {})))).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', (e) => {
+  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k.startsWith('yo-') && k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', (e) => {
+  const req = e.request, url = new URL(req.url);
+  if (req.method !== 'GET' || url.origin !== self.location.origin || url.pathname.includes('/api/') || url.pathname.includes('/admin')) return;
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; })
+      .catch(() => caches.match(req).then((hit) => hit || caches.match(base + 'offline/'))));
+    return;
+  }
+  e.respondWith(caches.match(req).then((hit) => {
+    const net = fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; }).catch(() => hit);
+    return hit || net;
+  }));
+});
+`);
 
 // robots.txt — allow search engines and reputable AI crawlers (blueprint §7)
 const base = site.url.replace(/\/$/, '');
