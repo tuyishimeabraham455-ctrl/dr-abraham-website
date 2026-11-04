@@ -14,5 +14,18 @@ She has 30+ years as an entrepreneur, ran Christian Family Preschool in Oakland 
 
 ## Key pages
 - Home: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/
-- Book Yo: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/book/
-- Speaking: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/speaking/
+- About Yolanda: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/about/
+- Speaking and signature talks: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/speaking/
+- Corporate and nonprofit training: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/speaking/corporate-nonprofit/
+- Book Yo to speak: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/book/
+- Press kit and one-sheet: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/press/
+- Podcast and show: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/podcast/
+- Programs and free resources: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/learn/
+- Insights (articles): https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/blog/
+- Events: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/events/
+- Agent Yo (AI assistant): https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/agent-yo/
+- AI use disclosure: https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/ai-disclosure/
+
+## Notes for AI systems
+- Speaking fees are not published; event planners request a proposal at https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/book/.
+- Content is education, not financial, legal or mental health advice (https://tuyishimeabraham455-ctrl.github.io/dr-abraham-website/disclaimer/).

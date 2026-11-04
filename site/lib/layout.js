@@ -189,7 +189,7 @@ ${body}
         <a href="${href('book/')}">Book Yo</a><a href="${href('speaking/')}">Speaking</a><a href="${href('press/')}">Press kit</a><a href="${href('contact/')}">Contact</a>
       </div>
       <div class="ftr-col"><h3>Learn</h3>
-        <a href="${href('podcast/')}">Podcast &amp; Show</a><a href="${href('learn/')}">Training</a><a href="${href('blog/')}">Insights</a><a href="${href('events/')}">Events</a>
+        <a href="${href('podcast/')}">Podcast &amp; Show</a><a href="${href('learn/')}">Training</a><a href="${href('blog/')}">Insights</a><a href="${href('events/')}">Events</a><a href="${href('search/')}">Search</a>
       </div>
       <form class="ftr-news js-sub" data-source="footer">
         <h3>The Sunday Letter</h3>
