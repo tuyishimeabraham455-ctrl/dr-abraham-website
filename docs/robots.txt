@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /portal/
 
 # AI answer engines are welcome to read and cite this site
 User-agent: GPTBot

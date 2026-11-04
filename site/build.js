@@ -41,6 +41,7 @@ const PAGES = [
   { route: 'blog/', render: () => require('./pages/blog').index(), priority: '0.7' },
   ...posts.map((p) => ({ route: `blog/${p.slug}/`, render: () => require('./pages/blog').post(p.slug), priority: '0.7' })),
   { route: 'events/', render: mod('./pages/events'), priority: '0.6' },
+  { route: 'portal/', render: mod('./pages/portal'), priority: '0', noindex: true },
 ];
 
 const rmrf = (p) => fs.rmSync(p, { recursive: true, force: true });
@@ -71,7 +72,7 @@ write(path.join(OUT, '.nojekyll'), '');
 // robots.txt — allow search engines and reputable AI crawlers (blueprint §7)
 const base = site.url.replace(/\/$/, '');
 write(path.join(OUT, 'robots.txt'), [
-  'User-agent: *', 'Allow: /', 'Disallow: /admin', 'Disallow: /api/', '',
+  'User-agent: *', 'Allow: /', 'Disallow: /admin', 'Disallow: /api/', 'Disallow: /portal/', '',
   '# AI answer engines are welcome to read and cite this site',
   ...['GPTBot', 'OAI-SearchBot', 'ClaudeBot', 'Claude-SearchBot', 'PerplexityBot', 'Google-Extended', 'Applebot-Extended'].flatMap((b) => [`User-agent: ${b}`, 'Allow: /', '']),
   `Sitemap: ${base}/sitemap.xml`, '',
@@ -81,7 +82,7 @@ write(path.join(OUT, 'robots.txt'), [
 const today = new Date().toISOString().slice(0, 10);
 write(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${PAGES.map((p) => `  <url><loc>${base}/${p.route}</loc><lastmod>${today}</lastmod><priority>${p.priority}</priority></url>`).join('\n')}
+${PAGES.filter((p) => !p.noindex).map((p) => `  <url><loc>${base}/${p.route}</loc><lastmod>${today}</lastmod><priority>${p.priority}</priority></url>`).join('\n')}
 </urlset>
 `);
 

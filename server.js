@@ -39,6 +39,7 @@ app.use((req, res, next) => {
 app.use('/api', require('./routes/api'));
 app.use('/api', require('./routes/booking'));
 app.use('/api', require('./routes/agent'));
+app.use('/api', require('./routes/portal'));
 
 // ── Admin dashboard ──────────────────────────────────────────
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin', 'index.html')));

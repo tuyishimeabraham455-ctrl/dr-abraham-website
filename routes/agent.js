@@ -245,12 +245,12 @@ router.post('/agent/forget', (req, res) => {
 });
 
 // ---------------- Admin analytics ----------------
-router.get('/agent/analytics', requireAdmin, (req, res) => {
+function agentAnalytics() {
   const one = (sql) => db.prepare(sql).get();
   const total = one(`SELECT COUNT(*) n FROM agent_sessions WHERE turns > 0`).n;
   const leads = one(`SELECT COUNT(*) n FROM agent_sessions WHERE lead_id IS NOT NULL`).n;
   const dropoff = one(`SELECT COUNT(*) n FROM agent_sessions WHERE turns = 1`).n;
-  res.json({
+  return {
     ok: true,
     sessions: total,
     leads,
@@ -261,21 +261,22 @@ router.get('/agent/analytics', requireAdmin, (req, res) => {
     top_questions: db.prepare(`SELECT lower(first_message) question, COUNT(*) n FROM agent_sessions WHERE first_message != '' GROUP BY 1 ORDER BY n DESC LIMIT 10`).all(),
     pages: db.prepare(`SELECT COALESCE(NULLIF(page, ''), '/') page, COUNT(*) n FROM agent_sessions WHERE turns > 0 GROUP BY 1 ORDER BY n DESC LIMIT 10`).all(),
     content_gaps: db.prepare(`SELECT question, topic, created_at FROM agent_gaps ORDER BY id DESC LIMIT 25`).all(),
-  });
-});
+  };
+}
+router.get('/agent/analytics', requireAdmin, (req, res) => res.json(agentAnalytics()));
 
-router.get('/agent/sessions', requireAdmin, (req, res) => {
+function agentTranscripts() {
   const rows = db.prepare(`SELECT id, page, mode, turns, lead_id, locked, messages, created_at, updated_at FROM agent_sessions WHERE turns > 0 ORDER BY updated_at DESC LIMIT 50`).all();
-  res.json({
-    ok: true,
-    data: rows.map(({ messages, ...r }) => ({
-      ...r,
-      transcript: JSON.parse(messages || '[]').filter((m) => m.role !== 'system').map((m) => ({ role: m.role, text: textOf(m.content) })).filter((m) => m.text),
-    })),
-  });
-});
+  return rows.map(({ messages, ...r }) => ({
+    ...r,
+    transcript: JSON.parse(messages || '[]').filter((m) => m.role !== 'system').map((m) => ({ role: m.role, text: textOf(m.content) })).filter((m) => m.text),
+  }));
+}
+router.get('/agent/sessions', requireAdmin, (req, res) => res.json({ ok: true, data: agentTranscripts() }));
 
 module.exports = router;
+module.exports.agentAnalytics = agentAnalytics;
+module.exports.agentTranscripts = agentTranscripts;
 
 // Test hook: swap in a stand-in client (used by scripts/test-agent.js; never in production)
 module.exports._setClient = (c) => { client = c; };

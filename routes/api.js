@@ -296,22 +296,9 @@ router.post('/track', (req, res) => {
 });
 
 // ============================================================
-//  MEMBERS — student portal (login, session, profile)
+//  MEMBERS — login, session, profile (portal accounts)
 // ============================================================
-
-const hashPassword = (password) => {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
-  return `${salt}:${hash}`;
-};
-const checkPassword = (password, stored) => {
-  const [salt, hash] = String(stored).split(':');
-  if (!salt || !hash) return false;
-  const a = Buffer.from(hash, 'hex');
-  const b = crypto.scryptSync(password, salt, 64);
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
-};
-const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex');
+const members = require('../lib/members');
 
 // Simple in-memory rate limit for login: 10 attempts / 15 min per IP
 const loginAttempts = new Map();
@@ -323,24 +310,15 @@ const tooManyAttempts = (ip) => {
   return rec.length > 10;
 };
 
-const memberFromRequest = (req) => {
-  const token = String(req.get('authorization') || '').replace(/^Bearer\s+/i, '');
-  if (!token) return null;
-  return db.prepare(`
-    SELECT m.id, m.name, m.email, m.programs, m.status
-    FROM member_sessions s JOIN members m ON m.id = s.member_id
-    WHERE s.token_hash = ? AND s.expires_at > datetime('now') AND m.status = 'active'
-  `).get(sha256(token)) || null;
-};
-
-// POST /api/members  — create a student account (admin)
+// POST /api/members  — create an account (admin token; used to create the first admin)
 router.post('/members', requireAdmin, (req, res) => {
-  const { name, email, password, programs } = req.body;
+  const { name, email, password, programs, role } = req.body;
   if (!name || !email || !isValidEmail(email)) return res.status(400).json({ ok: false, message: 'Name and a valid email are required.' });
   if (!password || String(password).length < 8) return res.status(400).json({ ok: false, message: 'Password must be at least 8 characters.' });
+  const r = members.ROLES.includes(role) ? role : 'member';
   try {
-    db.prepare(`INSERT INTO members (name, email, password, programs) VALUES (?, ?, ?, ?)`)
-      .run(name.trim(), email.toLowerCase().trim(), hashPassword(String(password)), programs || '');
+    db.prepare(`INSERT INTO members (name, email, password, programs, role) VALUES (?, ?, ?, ?, ?)`)
+      .run(name.trim(), email.toLowerCase().trim(), members.hashPassword(password), programs || '', r);
     res.status(201).json({ ok: true, message: 'Member created.' });
   } catch (err) {
     if (/UNIQUE/.test(err.message)) return res.status(409).json({ ok: false, message: 'A member with that email already exists.' });
@@ -348,9 +326,9 @@ router.post('/members', requireAdmin, (req, res) => {
   }
 });
 
-// GET /api/members  — list student accounts (admin)
+// GET /api/members  — list accounts (admin token)
 router.get('/members', requireAdmin, (req, res) => {
-  const rows = db.prepare(`SELECT id, name, email, programs, status, created_at FROM members ORDER BY created_at DESC`).all();
+  const rows = db.prepare(`SELECT id, name, email, programs, status, COALESCE(role, 'member') role, created_at FROM members ORDER BY created_at DESC`).all();
   res.json({ ok: true, count: rows.length, data: rows });
 });
 
@@ -360,27 +338,24 @@ router.post('/members/login', (req, res) => {
   if (tooManyAttempts(ip)) return res.status(429).json({ ok: false, message: 'Too many attempts. Please wait 15 minutes and try again.' });
   const { email, password } = req.body;
   const member = email && db.prepare(`SELECT * FROM members WHERE email = ? AND status = 'active'`).get(String(email).toLowerCase().trim());
-  if (!member || !password || !checkPassword(String(password), member.password)) {
+  if (!member || !password || !members.checkPassword(password, member.password)) {
     return res.status(401).json({ ok: false, message: 'Incorrect email or password.' });
   }
-  const token = crypto.randomBytes(32).toString('hex');
-  db.prepare(`INSERT INTO member_sessions (token_hash, member_id, expires_at) VALUES (?, ?, datetime('now', '+14 days'))`)
-    .run(sha256(token), member.id);
-  db.prepare(`DELETE FROM member_sessions WHERE expires_at <= datetime('now')`).run();
-  res.json({ ok: true, token, member: { name: member.name, email: member.email, programs: member.programs } });
+  const token = members.startSession(member.id);
+  res.json({ ok: true, token, member: members.publicMember(member) });
 });
 
 // GET /api/members/me
 router.get('/members/me', (req, res) => {
-  const member = memberFromRequest(req);
+  const member = members.memberFromRequest(req);
   if (!member) return res.status(401).json({ ok: false, message: 'Please log in.' });
-  res.json({ ok: true, member: { name: member.name, email: member.email, programs: member.programs } });
+  res.json({ ok: true, member: members.publicMember(member) });
 });
 
 // POST /api/members/logout
 router.post('/members/logout', (req, res) => {
-  const token = String(req.get('authorization') || '').replace(/^Bearer\s+/i, '');
-  if (token) db.prepare(`DELETE FROM member_sessions WHERE token_hash = ?`).run(sha256(token));
+  const token = members.tokenFrom(req);
+  if (token) db.prepare(`DELETE FROM member_sessions WHERE token_hash = ?`).run(members.sha256(token));
   res.json({ ok: true });
 });
 

@@ -10,7 +10,8 @@
     "build": "node site/build.js",
     "start": "node server.js",
     "dev": "node site/build.js && node server.js",
-    "test": "node scripts/test-agent.js"
+    "test": "node scripts/test-agent.js && node scripts/test-portal.js",
+    "create-user": "node scripts/create-user.js"
   },
   "keywords": [],
   "author": "",

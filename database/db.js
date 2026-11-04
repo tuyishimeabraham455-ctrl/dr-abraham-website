@@ -292,6 +292,49 @@ db.exec(`
   );
 `);
 
+// ============================================================
+//  PORTAL — internal email, community, resources
+// ============================================================
+db.exec(`
+  CREATE TABLE IF NOT EXISTS messages (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    thread_id   INTEGER,                     -- id of the first message in the thread
+    from_id     INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    to_id       INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    subject     TEXT    NOT NULL,
+    body        TEXT    NOT NULL,
+    read_at     DATETIME,
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_messages_to ON messages(to_id, read_at);
+
+  CREATE TABLE IF NOT EXISTS community_posts (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    member_id   INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    body        TEXT    NOT NULL,
+    pinned      INTEGER DEFAULT 0,
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS community_comments (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id     INTEGER NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,
+    member_id   INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    body        TEXT    NOT NULL,
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS portal_resources (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    title       TEXT    NOT NULL,
+    description TEXT    DEFAULT '',
+    url         TEXT    NOT NULL,
+    kind        TEXT    DEFAULT 'Link',      -- Workbook | Template | Recording | Link
+    audience    TEXT    DEFAULT 'all',       -- all | member | team
+    created_by  INTEGER REFERENCES members(id) ON DELETE SET NULL,
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+`);
+
 // Add columns to older tables without losing data
 const addColumn = (table, column, type) => {
   const cols = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
