@@ -10,9 +10,4 @@ exports.testimonials = [
   { quote: 'Warm, practical and funny. Our audience asked for her back before the event was over.', name: 'Event Chair', role: "Women's leadership conference", sample: true },
 ];
 
-// Podcast is in development (blueprint: builds toward a talk show). Episode titles are previews.
-exports.episodes = [
-  { n: 1, title: 'Is Your Business Idea a Real Problem?', topic: 'Business', guest: 'Solo', minutes: 32, sample: true },
-  { n: 2, title: 'Business Credit Without the Fear', topic: 'Financial wellness', guest: 'With a lender', minutes: 41, sample: true },
-  { n: 3, title: 'From Preschool Owner to Business Coach', topic: 'Story', guest: 'Yo\'s story', minutes: 38, sample: true },
-];
+// Podcast episodes live in content/podcast.js

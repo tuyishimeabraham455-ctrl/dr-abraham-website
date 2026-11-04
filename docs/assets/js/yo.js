@@ -86,7 +86,6 @@
     if (!toastEl) { toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role', 'status'); document.body.appendChild(toastEl); }
     toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastEl._t); toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 3600);
   };
-  $$('.js-ep').forEach((b) => b.addEventListener('click', () => toast('Episode previews arrive at launch. Join the launch list on the podcast page.')));
 
   /* ---------- Find your talk quiz ---------- */
   const TALKS = {
@@ -148,7 +147,14 @@
     say(msg, 'Adding you…');
     try {
       const out = await postJSON('/api/subscribers', { email, source: form.dataset.source || 'website' });
-      say(msg, out.ok ? (form.dataset.source === 'workbook' ? "You're on the list! We'll email your workbook the moment it's released." : "You're on the list. See you Sunday.") : out.message, !!out.ok);
+      const THANKS = {
+        workbook: "You're on the list! We'll email your workbook the moment it's released.",
+        'show-waitlist': "You're on the waitlist! We'll email launch dates and taping invitations.",
+        'community-waitlist': "You're on the community waitlist! We'll email you when doors open.",
+        'cohort-waitlist': "You're on the cohort waitlist! We'll email you before enrollment opens.",
+        resource: "Thank you! Your download is ready below.",
+      };
+      say(msg, out.ok ? (form.dataset.success || THANKS[form.dataset.source] || "You're on the list. See you Sunday.") : out.message, !!out.ok);
       if (out.ok) { form.reset(); track('subscribe_' + (form.dataset.source || 'website')); }
     } catch { say(msg, OFFLINE); }
   }));

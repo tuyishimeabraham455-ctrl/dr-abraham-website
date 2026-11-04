@@ -3,7 +3,8 @@
 // ============================================================
 const site = require('../content/site');
 const { framework, talks, eventTypes } = require('../content/talks');
-const { testimonials, episodes } = require('../content/proof');
+const { testimonials } = require('../content/proof');
+const { episodes } = require('../content/podcast');
 const { page, esc, icon, abs, ids } = require('../lib/layout');
 const { quiz, talkCard } = require('../lib/partials');
 
@@ -155,9 +156,9 @@ module.exports = () => {
       <div class="hero-ctas reveal"><a class="btn btn-gold magnetic" href="podcast/">Explore the show</a><a class="btn btn-ghost magnetic" href="podcast/be-a-guest/">Be a guest</a></div>
     </div>
     <ul class="ep-list">
-      ${episodes.map((e, i) => `<li class="ep reveal" style="--d:${i * 90}ms">
-        <button type="button" class="ep-play js-ep" aria-label="Preview: ${esc(e.title)}">${icon('play')}</button>
-        <div><p class="ep-meta">Episode ${e.n} · ${esc(e.topic)} · ${e.minutes} min ${sampleTag(e)}</p><h3>${esc(e.title)}</h3><p class="ep-guest">${esc(e.guest)}</p></div>
+      ${episodes.slice(0, 3).map((e, i) => `<li class="ep reveal" style="--d:${i * 90}ms">
+        <a class="ep-play" href="podcast/${e.slug}/" aria-label="Episode ${e.n}: ${esc(e.title)}">${icon('play')}</a>
+        <div><p class="ep-meta">Episode ${e.n} · ${esc(e.topic)} · ${e.minutes} min ${sampleTag(e)}</p><h3><a href="podcast/${e.slug}/">${esc(e.title)}</a></h3><p class="ep-guest">${esc(e.guest)}</p></div>
       </li>`).join('')}
     </ul>
   </div>

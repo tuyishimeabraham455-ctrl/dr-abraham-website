@@ -11,6 +11,7 @@ const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'docs');
 
 const { talks } = require('./content/talks');
+const { episodes } = require('./content/podcast');
 
 // Every page: route (folder path), a render function returning HTML, sitemap priority
 const mod = (m, ...args) => () => { delete require.cache[require.resolve(m)]; return require(m)(...args); };
@@ -26,6 +27,11 @@ const PAGES = [
   { route: 'press/one-sheet/', render: mod('./pages/onesheet'), priority: '0.6' },
   { route: 'contact/', render: mod('./pages/contact'), priority: '0.6' },
   { route: 'agent-yo/', render: mod('./pages/agentyo'), priority: '0.7' },
+  { route: 'podcast/', render: mod('./pages/podcast'), priority: '0.8' },
+  ...episodes.map((e) => ({ route: `podcast/${e.slug}/`, render: mod('./pages/episode', e.slug), priority: e.sample ? '0.4' : '0.7' })),
+  { route: 'podcast/be-a-guest/', render: () => require('./pages/showpages').guest(), priority: '0.6' },
+  { route: 'podcast/the-show/', render: () => require('./pages/showpages').show(), priority: '0.6' },
+  { route: 'podcast/sponsor/', render: () => require('./pages/showpages').sponsor(), priority: '0.6' },
 ];
 
 const rmrf = (p) => fs.rmSync(p, { recursive: true, force: true });
