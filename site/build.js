@@ -41,6 +41,7 @@ const PAGES = [
   { route: 'blog/', render: () => require('./pages/blog').index(), priority: '0.7' },
   ...posts.map((p) => ({ route: `blog/${p.slug}/`, render: () => require('./pages/blog').post(p.slug), priority: '0.7' })),
   { route: 'events/', render: mod('./pages/events'), priority: '0.6' },
+  { route: 'watch/', render: mod('./pages/watch'), priority: '0.7' },
   { route: 'privacy/', render: () => require('./pages/legal').privacy(), priority: '0.3' },
   { route: 'terms/', render: () => require('./pages/legal').terms(), priority: '0.3' },
   { route: 'ai-disclosure/', render: () => require('./pages/legal').aiDisclosure(), priority: '0.4' },
@@ -53,7 +54,7 @@ const PAGES = [
 ];
 
 // Section label for search results, from the first folder of the route
-const SECTIONS = { '': 'Home', about: 'About', speaking: 'Speaking', book: 'Book Yo', press: 'Press', contact: 'Contact', 'agent-yo': 'Agent Yo', podcast: 'Podcast', learn: 'Learn', blog: 'Insights', events: 'Events' };
+const SECTIONS = { watch: 'Watch', '': 'Home', about: 'About', speaking: 'Speaking', book: 'Book Yo', press: 'Press', contact: 'Contact', 'agent-yo': 'Agent Yo', podcast: 'Podcast', learn: 'Learn', blog: 'Insights', events: 'Events' };
 const decode = (s) => s.replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#x27;/g, "'").replace(/&amp;/g, '&');
 const searchEntry = (p, html) => {
   const title = decode((html.match(/<title>([^<]*)<\/title>/) || [])[1] || '').split(' | ')[0];
@@ -186,6 +187,7 @@ She has ${site.facts.yearsEntrepreneur} years as an entrepreneur, ran Christian 
 - Book Yo to speak: ${base}/book/
 - Press kit and one-sheet: ${base}/press/
 - Podcast and show: ${base}/podcast/
+- Watch the show (videos): ${base}/watch/
 - Programs and free resources: ${base}/learn/
 - Insights (articles): ${base}/blog/
 - Events: ${base}/events/

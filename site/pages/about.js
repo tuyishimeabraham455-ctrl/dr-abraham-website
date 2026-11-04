@@ -117,11 +117,20 @@ ${pageHero({
   </div>
 </section>
 
+<!-- Video and photos from the admin's media library (shown when there are any) -->
+<section class="sec media-block" data-media-on="about" aria-labelledby="aboutMediaTitle" hidden>
+  <div class="wrap">
+    <p class="eyebrow reveal">On stage &amp; behind the scenes</p>
+    <h2 class="h2" id="aboutMediaTitle">See Yo <em>in action.</em></h2>
+    <div class="media-slot"></div>
+  </div>
+</section>
+
 ${ctaBand(r, { title: 'Bring Yo <em>to your stage.</em>', lead: 'Keynotes, workshops and panels for businesses, nonprofits and ministries.', primary: ['Book Yo', 'book/'], secondary: ['See her talks', 'speaking/'] })}
 `;
 
   return page({
-    path: 'about/', depth, active: 'about/',
+    path: 'about/', depth, active: 'about/', scripts: ['assets/js/media.js'],
     title: 'About Yolanda "Yo" Butler | The Business of You',
     description: 'The story of Yolanda "Yo" Butler: 30+ years as an entrepreneur, 13+ years at Operation HOPE, and the philosophy behind The Business of You.',
     body,

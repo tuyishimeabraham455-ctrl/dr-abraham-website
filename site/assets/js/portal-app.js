@@ -77,7 +77,7 @@
   const TABS = [
     ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
-    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
+    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['media', 'Admin · Media', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
   ];
   const A_LABEL = { todo: 'To do', in_progress: 'In progress', submitted: 'Submitted', needs_changes: 'Needs changes', done: 'Done' };
   const today = () => new Date().toISOString().slice(0, 10);
@@ -365,6 +365,119 @@
           } else if (b.dataset.act === 'delete') {
             if (!confirm(`Delete ${name}'s account for good? Their messages are deleted too. This can't be undone.`)) return;
             const o = await api(`/portal/users/${uid}`, { method: 'DELETE' }); flash(um, o.message, o.ok); if (o.ok) row.remove();
+          }
+        }));
+      });
+    },
+    async media(v) {
+      const out = await api('/portal/media');
+      const videos = out.data.filter((x) => x.kind === 'video'), photos = out.data.filter((x) => x.kind === 'photo');
+      const places = (it) => ['watch', 'about'].map((p) => `<label class="p-place"><input type="checkbox" data-place="${p}"${it.show_on.includes(p) ? ' checked' : ''}/> ${p === 'watch' ? 'Watch page' : 'About page'}</label>`).join('');
+      const thumb = (it) => (it.thumb ? `<img src="${h(it.thumb)}" alt="" loading="lazy"/>` : '<span>▶</span>');
+      v.innerHTML = `<p class="fine">Videos and photos you add here appear on the <a href="/watch/" target="_blank" rel="noopener">Watch page</a> and the <a href="/about/" target="_blank" rel="noopener">About page</a>. To change words or photos on any page, open the page while signed in and press <b>Edit this page</b>.</p>
+        <div class="p-grid2">
+          <form class="p-card" id="vf"><h2 id="vfTitle">Add a video</h2><input type="hidden" name="editId"/>
+            <div class="field"><label for="vt">Title</label><input id="vt" name="title" required maxlength="160" placeholder="e.g. Credit, Capital & Confidence: keynote highlights"/></div>
+            <div class="field"><label for="vd">Description</label><textarea id="vd" name="description" rows="3" maxlength="2000"></textarea></div>
+            <div class="row2"><div class="field"><label for="vc">Category</label><input id="vc" name="category" maxlength="60" list="vcats" placeholder="e.g. Keynotes, Interviews, Lessons"/><datalist id="vcats">${[...new Set(videos.map((x) => x.category).filter(Boolean))].map((c) => `<option value="${h(c)}">`).join('')}</datalist></div>
+              <div class="field"><label for="vl">Video link</label><input id="vl" name="src" placeholder="YouTube, Vimeo or .mp4 link"/></div></div>
+            <div class="p-row"><label class="btn btn-ghost-dark btn-sm p-file">Or upload a video<input type="file" data-up="videos" accept="video/mp4,video/webm" hidden/></label><label class="btn btn-ghost-dark btn-sm p-file">Cover photo (optional)<input type="file" data-up="thumb" accept="image/jpeg,image/png,image/webp" hidden/></label></div>
+            <input type="hidden" name="thumb"/>
+            <div class="p-progress" hidden><span></span></div>
+            <p class="fine" id="vfFiles"></p>
+            <div class="p-row"><span>Show on:</span>${places({ show_on: ['watch'] })}<label class="p-place"><input type="checkbox" name="featured"/> Featured</label></div>
+            <div class="p-row"><button class="btn btn-dark btn-sm" id="vfSave">Add video</button><button type="button" class="linkish" id="vfCancel" hidden>Cancel editing</button><span class="form-msg" aria-live="polite"></span></div>
+          </form>
+          <form class="p-card" id="phf"><h2>Add photos</h2>
+            <p class="fine">Choose one or more photos (JPG, PNG or WebP, up to 12 MB each). Add a caption if you like.</p>
+            <div class="field"><label for="phc">Caption (optional)</label><input id="phc" name="title" maxlength="160" placeholder="e.g. Women in Business Summit 2026"/></div>
+            <div class="p-row"><span>Show on:</span>${places({ show_on: ['watch', 'about'] })}</div>
+            <div class="p-row"><label class="btn btn-dark btn-sm p-file">Choose photos<input type="file" id="phFiles" accept="image/jpeg,image/png,image/webp" multiple hidden/></label><span class="form-msg" aria-live="polite"></span></div>
+            <div class="p-progress" hidden><span></span></div>
+          </form>
+        </div>
+        <section class="p-card"><h2>Videos (${videos.length})</h2>${videos.length ? `<div class="p-lib">${videos.map((it, i) => `<article class="p-li" data-id="${it.id}">
+            <div class="p-li-thumb">${thumb(it)}${it.featured ? '<span class="p-pill submitted">Featured</span>' : ''}</div>
+            <div class="p-li-body"><b>${h(it.title)}</b><small>${h(it.category || 'No category')} · ${h(it.video ? (it.video.kind === 'file' ? (it.raw_src.startsWith('/uploads/') ? 'Uploaded file' : 'Video link') : it.video.kind === 'youtube' ? 'YouTube' : 'Vimeo') : 'Link not playable')}</small>
+              <div class="p-row">${places(it)}</div>
+              <div class="p-row"><button type="button" class="linkish" data-do="edit">Edit</button>${it.featured ? '' : '<button type="button" class="linkish" data-do="feature">Make featured</button>'}${i ? '<button type="button" class="linkish" data-do="up">Move up</button>' : ''}${i < videos.length - 1 ? '<button type="button" class="linkish" data-do="down">Move down</button>' : ''}<button type="button" class="linkish danger" data-do="delete">Delete</button></div></div>
+          </article>`).join('')}</div>` : '<p class="p-empty">No videos yet. Add your first one above.</p>'}</section>
+        <section class="p-card"><h2>Photos (${photos.length})</h2>${photos.length ? `<div class="p-phlib">${photos.map((it, i) => `<article class="p-li p-li-ph" data-id="${it.id}">
+            <img src="${h(it.src)}" alt="" loading="lazy"/>
+            <label class="sr" for="cap${it.id}">Caption</label><input id="cap${it.id}" data-cap value="${h(it.title)}" placeholder="Caption" maxlength="160"/>
+            <div class="p-row">${places(it)}</div>
+            <div class="p-row">${i ? '<button type="button" class="linkish" data-do="up">←</button>' : ''}${i < photos.length - 1 ? '<button type="button" class="linkish" data-do="down">→</button>' : ''}<button type="button" class="linkish danger" data-do="delete">Delete</button></div>
+          </article>`).join('')}</div>` : '<p class="p-empty">No photos yet.</p>'}</section>`;
+
+      // ---- Add / edit a video ----
+      const vf = $('#vf'), vmsg = vf.querySelector('.form-msg'), vbar = vf.querySelector('.p-progress');
+      let uploadedVideo = '';
+      const showFiles = () => { $('#vfFiles').textContent = [uploadedVideo && 'Video file ready', vf.thumb.value && 'Cover photo ready'].filter(Boolean).join(' · '); };
+      vf.querySelectorAll('[data-up]').forEach((inp) => inp.addEventListener('change', async () => {
+        const file = inp.files[0]; if (!file) return;
+        vbar.hidden = false; flash(vmsg, 'Uploading…');
+        const o = await sendFile(`/portal/uploads?kind=${inp.dataset.up === 'videos' ? 'videos' : 'photos'}`, file, (p) => { vbar.firstElementChild.style.width = Math.round(p * 100) + '%'; vmsg.textContent = `Uploading… ${Math.round(p * 100)}%`; });
+        vbar.hidden = true;
+        if (!o.ok) { flash(vmsg, o.message, false); return; }
+        if (inp.dataset.up === 'videos') { uploadedVideo = o.url; vf.src.value = ''; } else vf.thumb.value = o.url;
+        flash(vmsg, 'Uploaded.'); showFiles();
+      }));
+      const resetForm = () => { vf.reset(); vf.editId.value = ''; vf.thumb.value = ''; uploadedVideo = ''; $('#vfTitle').textContent = 'Add a video'; $('#vfSave').textContent = 'Add video'; $('#vfCancel').hidden = true; showFiles(); vf.querySelector('[data-place="watch"]').checked = true; };
+      $('#vfCancel').addEventListener('click', resetForm);
+      vf.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = { kind: 'video', title: vf.title.value, description: vf.description.value, category: vf.category.value, featured: vf.featured.checked, thumb: vf.thumb.value,
+          show_on: [...vf.querySelectorAll('[data-place]:checked')].map((c) => c.dataset.place) };
+        const src = uploadedVideo || vf.src.value.trim();
+        if (src) body.src = src; else if (!vf.editId.value) { flash(vmsg, 'Paste a video link or upload a video.', false); return; }
+        flash(vmsg, 'Saving…');
+        const o = vf.editId.value ? await api(`/portal/media/${vf.editId.value}`, { method: 'PATCH', body }) : await api('/portal/media', { method: 'POST', body });
+        flash(vmsg, o.message, o.ok); if (o.ok) setTimeout(route, 600);
+      });
+
+      // ---- Add photos ----
+      const phf = $('#phf'), pmsg = phf.querySelector('.form-msg'), pbar = phf.querySelector('.p-progress');
+      $('#phFiles').addEventListener('change', async (e) => {
+        const files = [...e.target.files]; if (!files.length) return;
+        const show_on = [...phf.querySelectorAll('[data-place]:checked')].map((c) => c.dataset.place);
+        pbar.hidden = false; let done = 0;
+        for (const file of files) {
+          flash(pmsg, `Uploading ${done + 1} of ${files.length}…`);
+          const up = await sendFile('/portal/uploads?kind=photos', file, (p) => { pbar.firstElementChild.style.width = Math.round(((done + p) / files.length) * 100) + '%'; });
+          if (!up.ok) { flash(pmsg, `${file.name}: ${up.message}`, false); continue; }
+          await api('/portal/media', { method: 'POST', body: { kind: 'photo', src: up.url, title: phf.title.value, show_on } });
+          done++;
+        }
+        pbar.hidden = true; flash(pmsg, `${done} photo${done === 1 ? '' : 's'} added.`, done > 0); if (done) setTimeout(route, 700);
+      });
+
+      // ---- Library actions ----
+      const reorder = async (list, idx, dir) => {
+        const ids = list.map((x) => x.id); const j = idx + dir;
+        [ids[idx], ids[j]] = [ids[j], ids[idx]];
+        await Promise.all(ids.map((mid, k) => api(`/portal/media/${mid}`, { method: 'PATCH', body: { sort: k } })));
+        route();
+      };
+      v.querySelectorAll('.p-li').forEach((row) => {
+        const mid = Number(row.dataset.id), it = out.data.find((x) => x.id === mid), list = it.kind === 'video' ? videos : photos, idx = list.indexOf(it);
+        row.querySelectorAll('[data-place]').forEach((c) => c.addEventListener('change', async () => {
+          const o = await api(`/portal/media/${mid}`, { method: 'PATCH', body: { show_on: [...row.querySelectorAll('[data-place]:checked')].map((x) => x.dataset.place) } });
+          if (!o.ok) { alert(o.message); route(); }
+        }));
+        const cap = row.querySelector('[data-cap]');
+        if (cap) cap.addEventListener('change', async () => { const o = await api(`/portal/media/${mid}`, { method: 'PATCH', body: { title: cap.value } }); cap.classList.toggle('saved', !!o.ok); setTimeout(() => cap.classList.remove('saved'), 1200); });
+        row.querySelectorAll('[data-do]').forEach((b) => b.addEventListener('click', async () => {
+          const act = b.dataset.do;
+          if (act === 'delete') { if (confirm('Delete this from the website?')) { await api(`/portal/media/${mid}`, { method: 'DELETE' }); route(); } }
+          else if (act === 'feature') { await api(`/portal/media/${mid}`, { method: 'PATCH', body: { featured: true } }); route(); }
+          else if (act === 'up' || act === 'down') reorder(list, idx, act === 'up' ? -1 : 1);
+          else if (act === 'edit') {
+            resetForm(); vf.editId.value = mid; vf.title.value = it.title; vf.description.value = it.description; vf.category.value = it.category;
+            vf.src.value = it.raw_src.startsWith('/uploads/') ? '' : it.raw_src; vf.thumb.value = it.raw_thumb || ''; vf.featured.checked = it.featured;
+            vf.querySelectorAll('[data-place]').forEach((c) => { c.checked = it.show_on.includes(c.dataset.place); });
+            $('#vfTitle').textContent = 'Edit video'; $('#vfSave').textContent = 'Save changes'; $('#vfCancel').hidden = false;
+            $('#vfFiles').textContent = it.raw_src.startsWith('/uploads/') ? 'Using the uploaded video file. Paste a link or upload to replace it.' : '';
+            vf.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         }));
       });

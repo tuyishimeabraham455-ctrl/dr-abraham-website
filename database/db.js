@@ -350,6 +350,32 @@ db.exec(`
   );
   CREATE INDEX IF NOT EXISTS idx_assignments_to ON assignments(assigned_to, status);
 
+  -- Media library: videos for the Watch show and photos for galleries (admin-managed)
+  CREATE TABLE IF NOT EXISTS media_items (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    kind         TEXT    NOT NULL,             -- video | photo
+    title        TEXT    DEFAULT '',
+    description  TEXT    DEFAULT '',
+    category     TEXT    DEFAULT '',
+    src          TEXT    NOT NULL,             -- /uploads/... or a link (YouTube, Vimeo, .mp4)
+    src_type     TEXT    DEFAULT '',           -- 'file' when a link was confirmed as a video by its host
+    thumb        TEXT    DEFAULT '',           -- cover photo for a video
+    show_on      TEXT    DEFAULT 'watch',      -- comma list: watch, about
+    featured     INTEGER DEFAULT 0,
+    sort         INTEGER DEFAULT 0,
+    created_at   DATETIME DEFAULT (datetime('now'))
+  );
+
+  -- Page edits made by the admin on the live site (text and photos)
+  CREATE TABLE IF NOT EXISTS site_content (
+    path        TEXT NOT NULL,                 -- page path, e.g. /about/
+    key         TEXT NOT NULL,                 -- which element on the page
+    kind        TEXT NOT NULL,                 -- text | image
+    value       TEXT NOT NULL,
+    updated_at  DATETIME DEFAULT (datetime('now')),
+    PRIMARY KEY (path, key)
+  );
+
   -- Site settings the admin controls from the portal (background videos, announcement bar)
   CREATE TABLE IF NOT EXISTS site_settings (
     key         TEXT PRIMARY KEY,

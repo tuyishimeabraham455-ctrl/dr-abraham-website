@@ -258,6 +258,7 @@ ${body}
 
 <script src="${href('assets/js/yo.js')}" defer></script>
 <script src="${href('assets/js/app.js')}" defer></script>
+<script src="${href('assets/js/editor.js')}" defer></script>
 ${scripts.map((sc) => `<script src="${href(sc)}" defer></script>`).join('\n')}
 </body>
 </html>

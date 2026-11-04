@@ -56,6 +56,7 @@ module.exports = {
     { label: 'About', href: 'about/' },
     { label: 'Speaking', href: 'speaking/' },
     { label: 'Podcast & Show', href: 'podcast/' },
+    { label: 'Watch', href: 'watch/' },
     { label: 'Learn', href: 'learn/' },
     { label: 'Press', href: 'press/' },
   ],

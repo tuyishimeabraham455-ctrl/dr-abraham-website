@@ -41,6 +41,7 @@ app.use('/api', require('./routes/booking'));
 app.use('/api', require('./routes/agent'));
 app.use('/api', require('./routes/portal'));
 app.use('/api', require('./routes/coach'));
+app.use('/api', require('./routes/media'));
 
 // ── Uploaded files (profile pictures, background videos) ─────
 const { UPLOAD_DIR } = require('./lib/uploads');

@@ -22,6 +22,7 @@ app.use('/api', require('../routes/api'));
 app.use('/api', require('../routes/portal'));
 const coachRoutes = require('../routes/coach');
 app.use('/api', coachRoutes);
+app.use('/api', require('../routes/media'));
 const server = app.listen(0);
 const base = `http://127.0.0.1:${server.address().port}/api`;
 const call = async (method, p, token, body) => {
@@ -200,6 +201,45 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     const pub = (await call('GET', '/settings')).body;
     check('website reads video, strength and announcement', pub.hero_video.kind === 'file' && pub.video_strength === 60 && pub.announce.text === 'Live in Oakland, March 12');
     check('unsafe announcement link rejected', (await call('PUT', '/portal/settings', A, { announce_link: 'javascript:alert(1)' })).status === 400);
+
+    // Media library (Watch page, About page)
+    const JPG = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(64)]);
+    const ph = await upload('/portal/uploads?kind=photos', A, JPG, 'image/jpeg');
+    check('admin uploads a photo', ph.status === 201 && /^\/uploads\/photos\/[a-f0-9]{24}\.jpg$/.test(ph.body.url));
+    check('members cannot upload to the library', (await upload('/portal/uploads?kind=photos', M1, JPG, 'image/jpeg')).status === 403);
+    const addPh = await call('POST', '/portal/media', A, { kind: 'photo', src: ph.body.url, title: 'On stage in Oakland', show_on: ['about', 'watch'] });
+    check('admin adds a photo to the gallery', addPh.status === 201);
+    const addV = await call('POST', '/portal/media', A, { kind: 'video', title: 'Keynote highlights', category: 'Keynotes', src: 'https://youtu.be/dQw4w9WgXcQ', featured: true, show_on: ['watch', 'about'] });
+    check('admin adds a featured YouTube video', addV.status === 201);
+    await call('POST', '/portal/media', A, { kind: 'video', title: 'Interview', category: 'Interviews', src: 'https://vimeo.com/76979871', show_on: ['watch'] });
+    check('a video without a title is refused', (await call('POST', '/portal/media', A, { kind: 'video', src: 'https://youtu.be/dQw4w9WgXcQ' })).status === 400);
+    check('an unplayable link is refused', (await call('POST', '/portal/media', A, { kind: 'video', title: 'x', src: 'hello' })).status === 400);
+    check('members cannot add media', (await call('POST', '/portal/media', M1, { kind: 'photo', src: ph.body.url })).status === 403);
+    const watchList = (await call('GET', '/media?on=watch')).body.data;
+    check('Watch page gets videos and photos, featured first', watchList.length === 3 && watchList[0].featured && watchList[0].video.kind === 'youtube' && watchList[0].thumb.includes('ytimg'));
+    const aboutList = (await call('GET', '/media?on=about')).body.data;
+    check('About page only gets items placed there', aboutList.length === 2 && !aboutList.some((x) => x.title === 'Interview'));
+    const vid2 = (await call('GET', '/portal/media', A)).body.data.find((x) => x.title === 'Interview');
+    await call('PATCH', `/portal/media/${vid2.id}`, A, { featured: true });
+    check('making a video featured replaces the old featured one', (await call('GET', '/media?on=watch')).body.data.filter((x) => x.featured).map((x) => x.title).join() === 'Interview');
+    const phItem = (await call('GET', '/portal/media', A)).body.data.find((x) => x.kind === 'photo');
+    await call('DELETE', `/portal/media/${phItem.id}`, A);
+    check('deleting a photo removes the file', await new Promise((r) => setTimeout(() => r(!fs.existsSync(path.join(tmp, 'uploads', 'photos', path.basename(ph.body.url)))), 200)));
+
+    // Live page editing
+    const ed = await call('PUT', '/portal/content', A, { path: '/about/', items: [
+      { key: 't:h1:abc~1', kind: 'text', value: 'Hello <em class="x" onclick="evil()">world</em><script>alert(1)</script><img src=x onerror=alert(1)>' },
+      { key: 'i:xyz~1', kind: 'image', value: '/uploads/photos/0123456789abcdef01234567.jpg' },
+    ] });
+    check('admin saves page edits', ed.body.ok && ed.body.saved === 2);
+    const content = (await call('GET', '/content?path=/about/')).body.data;
+    check('edited text keeps italics but loses scripts and attributes', content['t:h1:abc~1'].value === 'Hello <em>world</em>');
+    check('replaced photo is saved', content['i:xyz~1'].value.startsWith('/uploads/photos/'));
+    check('unsafe photo link refused', (await call('PUT', '/portal/content', A, { path: '/about/', items: [{ key: 'i:z~1', kind: 'image', value: 'javascript:alert(1)' }] })).status === 400);
+    check('members cannot edit pages', (await call('PUT', '/portal/content', M1, { path: '/about/', items: [{ key: 'k', kind: 'text', value: 'x' }] })).status === 403);
+    check('other pages are untouched', Object.keys((await call('GET', '/content?path=/speaking/')).body.data).length === 0);
+    await call('PUT', '/portal/content', A, { path: '/about/', reset: true });
+    check('reset puts the page back to original', Object.keys((await call('GET', '/content?path=/about/')).body.data).length === 0);
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {
