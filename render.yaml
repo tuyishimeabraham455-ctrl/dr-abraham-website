@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: dr-abraham-website
+    name: business-of-you
     runtime: node
     plan: free
-    buildCommand: npm ci
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /
     envVars:

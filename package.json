@@ -1,14 +1,15 @@
 {
-  "name": "dr-abraham",
+  "name": "business-of-you",
   "version": "1.0.0",
-  "description": "Dr. Abraham website",
+  "description": "Yo | The Business of You \u2014 website, Agent Yo and dashboard",
   "main": "server.js",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
+    "build": "node site/build.js",
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node site/build.js && node server.js"
   },
   "keywords": [],
   "author": "",

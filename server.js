@@ -1,7 +1,7 @@
 // ============================================================
-//  DR. ABRAHAM — Express Server
-//  File: server.js
-//  Run: node server.js
+//  Yo | The Business of You — Express server
+//  Run: node site/build.js && node server.js
+//  Serves the built site (docs/), the REST API and the admin dashboard.
 // ============================================================
 
 const express  = require('express');
@@ -11,11 +11,22 @@ const fs       = require('fs');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+const SITE = path.join(__dirname, 'docs');
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '100kb' }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+
+// Basic security headers
+app.use((req, res, next) => {
+  res.set({
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'X-Frame-Options': 'SAMEORIGIN',
+  });
+  next();
+});
 
 // ── Request logger ───────────────────────────────────────────
 app.use((req, res, next) => {
@@ -24,34 +35,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// ── Serve static files (CSS, JS, images) ────────────────────
-app.use(express.static(path.join(__dirname), {
-  index: false,   // we handle index manually
-  extensions: ['html']
-}));
-
 // ── REST API ─────────────────────────────────────────────────
-const apiRouter = require('./routes/api');
-app.use('/api', apiRouter);
+app.use('/api', require('./routes/api'));
 
 // ── Admin dashboard ──────────────────────────────────────────
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'index.html'));
-});
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin', 'index.html')));
 
-// ── HTML page routes ─────────────────────────────────────────
-// Single-page demo: every feature lives on index.html; old URLs jump to their section
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-const sections = { about: 'about', programs: 'programs', book: 'shop', blog: 'resources', contact: 'contact' };
-Object.entries(sections).forEach(([route, anchor]) => {
-  app.get(['/' + route, '/' + route + '.html'], (req, res) => res.redirect(301, '/#' + anchor));
-});
+// ── Previous one-page concept demo, kept for reference ──────
+app.get('/concept-demo', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-// Also serve .html extensions via static middleware above
+// ── The website: only the built docs/ folder is public ──────
+// (Never serve the project root: it holds the database and source.)
+if (!fs.existsSync(path.join(SITE, 'index.html'))) {
+  console.warn('  ! docs/ is empty. Run "node site/build.js" first.');
+}
+app.use(express.static(SITE, { extensions: ['html'], maxAge: '1h' }));
 
-// ── 404 fallback ─────────────────────────────────────────────
+// ── 404 ──────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, 'index.html'));
+  const notFound = path.join(SITE, '404.html');
+  res.status(404).sendFile(fs.existsSync(notFound) ? notFound : path.join(SITE, 'index.html'));
 });
 
 // ── Error handler ────────────────────────────────────────────
@@ -64,11 +67,10 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log('');
   console.log('  =================================================');
-  console.log('   MAKE IT GREAT — Concept Demo Server');
+  console.log('   Yo | The Business of You');
   console.log('  =================================================');
-  console.log(`   Local:    http://localhost:${PORT}`);
+  console.log(`   Site:     http://localhost:${PORT}`);
   console.log(`   Admin:    http://localhost:${PORT}/admin`);
-  console.log(`   API:      http://localhost:${PORT}/api/stats`);
   console.log('  =================================================');
   console.log('');
 });
