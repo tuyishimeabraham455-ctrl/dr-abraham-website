@@ -179,6 +179,110 @@
   }
   track();
 
+  /* ---------- Talk filters (Speaking hub) ---------- */
+  const filters = $('#talkFilters');
+  if (filters) {
+    const sel = { aud: '', fmt: '' };
+    const cards = $$('.filterable .talk'), count = $('#filterCount'), empty = $('#filterEmpty');
+    const apply = () => {
+      let shown = 0;
+      cards.forEach((c) => {
+        const ok = (!sel.aud || c.dataset.aud.split('|').includes(sel.aud)) && (!sel.fmt || c.dataset.fmt.split('|').includes(sel.fmt));
+        c.classList.toggle('is-hidden', !ok); if (ok) { shown++; c.classList.add('in'); }
+      });
+      count.textContent = `Showing ${shown} of ${cards.length} talks`;
+      empty.hidden = shown > 0;
+    };
+    filters.addEventListener('click', (e) => {
+      const b = e.target.closest('.chip'); if (!b) return;
+      sel[b.dataset.filter] = b.dataset.value;
+      $$(`.chip[data-filter="${b.dataset.filter}"]`, filters).forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+      apply();
+    });
+    apply();
+  }
+
+  /* ---------- Accessible tabs (bios, corporate/nonprofit) ---------- */
+  $$('[role="tablist"]').forEach((list) => {
+    const tabs = $$('[role="tab"]', list);
+    const select = (t) => {
+      tabs.forEach((x) => { const on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; const p = document.getElementById(x.getAttribute('aria-controls')); if (p) p.hidden = !on; });
+      t.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); select(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]); }
+      });
+    });
+  });
+
+  /* ---------- Bio copy / download ---------- */
+  const bioBox = $('[data-bios]');
+  if (bioBox) {
+    const current = () => $('.bio-panel:not([hidden])', bioBox);
+    const msg = $('.form-msg', bioBox);
+    $('.js-copy-bio', bioBox).addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(current().innerText.trim()); say(msg, 'Bio copied.', true); }
+      catch { say(msg, 'Select the text and copy it manually.', false); }
+    });
+    $('.js-dl-bio', bioBox).addEventListener('click', () => {
+      const len = current().id.replace('bio-', '');
+      const blob = new Blob([current().innerText.trim() + '\n'], { type: 'text/plain' });
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `yolanda-butler-bio-${len}.txt` });
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+  }
+
+  /* ---------- Package buttons pre-select the proposal form ---------- */
+  $$('[data-package]').forEach((b) => b.addEventListener('click', () => { const s = $('#pPkg'); if (s) s.value = b.dataset.package; }));
+
+  /* ---------- Generic inquiry forms (.js-form) → /api/inquiries ----------
+     Known columns go straight in; any other field is added to the message. */
+  const COLUMNS = ['name', 'email', 'phone', 'organization', 'inquiry_type', 'event_type', 'event_date', 'budget', 'message'];
+  $$('.js-form').forEach((f) => f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = msgFor(f);
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const raw = Object.fromEntries(new FormData(f));
+    if (raw.website) return; // honeypot
+    const data = { inquiry_type: f.dataset.type || 'General' };
+    const extra = [];
+    Object.entries(raw).forEach(([k, v]) => {
+      if (k === 'website' || k === 'consent' || v === '') return;
+      if (COLUMNS.includes(k)) data[k] = v;
+      else { const label = (f.querySelector(`[name="${k}"]`)?.closest('.field')?.querySelector('label')?.textContent || k).trim(); extra.push(`${label}: ${v}`); }
+    });
+    data.message = [data.message, ...extra].filter(Boolean).join('\n') || '(no message)';
+    say(msg, 'Sending…');
+    try {
+      const out = await postJSON('/api/inquiries', data);
+      say(msg, out.ok ? (f.dataset.success || 'Thank you! We\'ll be in touch soon.') : out.message, !!out.ok);
+      if (out.ok) { f.reset(); track('form_' + (f.dataset.type || 'general').toLowerCase().replace(/\W+/g, '_')); }
+    } catch { say(msg, OFFLINE); }
+  }));
+
+
+  /* ---------- Copy blocks (emcee script) and print buttons ---------- */
+  $$('[data-copy]').forEach((box) => {
+    const btn = $('.js-copy', box), msg = $('.form-msg', box), text = $('.emcee-text', box) || box;
+    if (btn) btn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(text.innerText.trim()); say(msg, 'Copied.', true); }
+      catch { say(msg, 'Select the text and copy it manually.', false); }
+    });
+  });
+  $$('.js-print').forEach((b) => b.addEventListener('click', () => window.print()));
+
+  /* ---------- Video slots: play only when the file exists ---------- */
+  $$('.reel[data-video]').forEach((box) => {
+    const src = box.dataset.video;
+    fetch(src, { method: 'HEAD' }).then((r) => {
+      if (!r.ok || !(r.headers.get('content-type') || '').startsWith('video')) return;
+      const v = Object.assign(document.createElement('video'), { src, controls: true, preload: 'metadata', playsInline: true });
+      box.innerHTML = ''; box.appendChild(v);
+    }).catch(() => {});
+  });
+
   /* ============================================================
      AGENT YO — guided concierge (works offline).
      Step 4 connects free-text questions to the AI backend.

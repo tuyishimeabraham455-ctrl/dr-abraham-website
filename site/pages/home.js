@@ -5,6 +5,7 @@ const site = require('../content/site');
 const { framework, talks, eventTypes } = require('../content/talks');
 const { testimonials, episodes } = require('../content/proof');
 const { page, esc, icon, abs, ids } = require('../lib/layout');
+const { quiz, talkCard } = require('../lib/partials');
 
 const sampleTag = (item) => (item.sample ? '<span class="sample" title="Placeholder content to replace">Sample</span>' : '');
 
@@ -94,36 +95,10 @@ module.exports = () => {
       <a class="link-arrow reveal" href="speaking/">All talks and workshops ${icon('arrow')}</a>
     </div>
     <div class="talk-grid">
-      ${talks.map((t, i) => `<article class="talk reveal" style="--d:${i * 90}ms">
-        <span class="talk-n">0${i + 1}</span>
-        <p class="talk-kind">${esc(t.kind)} · ${esc(t.length)}</p>
-        <h3><a href="speaking/${t.slug}/">${esc(t.title)}</a></h3>
-        <p class="talk-sub">${esc(t.subtitle)}</p>
-        <ul class="ticks">${t.takeaways.slice(0, 3).map((k) => `<li>${icon('check')}${esc(k)}</li>`).join('')}</ul>
-        <a class="link-arrow" href="speaking/${t.slug}/">Explore this talk ${icon('arrow')}</a>
-      </article>`).join('')}
+      ${talks.map((t, i) => talkCard(t, i, './')).join('')}
     </div>
 
-    <div class="quiz reveal" id="quiz" aria-labelledby="quizTitle">
-      <div class="quiz-intro">
-        <p class="eyebrow">Find your talk</p>
-        <h3 id="quizTitle">Three questions. <em>Your perfect fit.</em></h3>
-        <p>Tell us about your audience and we'll match you with the right keynote or workshop.</p>
-      </div>
-      <form class="quiz-body" id="quizForm">
-        <fieldset data-step="1"><legend>Who is your audience?</legend>
-          <div class="chips"><label><input type="radio" name="aud" value="Corporate"/><span>Corporate team</span></label><label><input type="radio" name="aud" value="Nonprofit"/><span>Nonprofit or ministry</span></label><label><input type="radio" name="aud" value="Conference"/><span>Conference</span></label><label><input type="radio" name="aud" value="Women's groups"/><span>Women's group</span></label></div>
-        </fieldset>
-        <fieldset data-step="2" hidden><legend>What should they walk away with?</legend>
-          <div class="chips"><label><input type="radio" name="goal" value="business-of-you"/><span>A business idea they believe in</span></label><label><input type="radio" name="goal" value="credit-capital-confidence"/><span>Money and credit confidence</span></label><label><input type="radio" name="goal" value="each-one-reach-one"/><span>Stronger relationships and community</span></label></div>
-        </fieldset>
-        <fieldset data-step="3" hidden><legend>What format works best?</legend>
-          <div class="chips"><label><input type="radio" name="fmt" value="Keynote"/><span>Keynote</span></label><label><input type="radio" name="fmt" value="Workshop"/><span>Hands-on workshop</span></label><label><input type="radio" name="fmt" value="Panel"/><span>Panel or fireside chat</span></label><label><input type="radio" name="fmt" value="Virtual"/><span>Virtual</span></label></div>
-        </fieldset>
-        <div class="quiz-result" id="quizResult" hidden aria-live="polite"></div>
-        <div class="quiz-foot"><span class="quiz-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></span><button type="button" class="linkish" id="quizBack" hidden>Back</button></div>
-      </form>
-    </div>
+    ${quiz()}
   </div>
 </section>
 

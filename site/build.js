@@ -10,9 +10,21 @@ const site = require('./content/site');
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'docs');
 
-// Every page: route (folder path), module that returns HTML, sitemap priority
+const { talks } = require('./content/talks');
+
+// Every page: route (folder path), a render function returning HTML, sitemap priority
+const mod = (m, ...args) => () => { delete require.cache[require.resolve(m)]; return require(m)(...args); };
 const PAGES = [
-  { route: '', module: './pages/home', priority: '1.0' },
+  { route: '', render: mod('./pages/home'), priority: '1.0' },
+  { route: 'about/', render: mod('./pages/about'), priority: '0.9' },
+  { route: 'speaking/', render: mod('./pages/speaking'), priority: '0.9' },
+  ...talks.map((t) => ({ route: `speaking/${t.slug}/`, render: mod('./pages/talk', t.slug), priority: '0.8' })),
+  { route: 'speaking/workshops/', render: mod('./pages/workshops'), priority: '0.7' },
+  { route: 'speaking/corporate-nonprofit/', render: mod('./pages/corporate'), priority: '0.8' },
+  { route: 'book/', render: mod('./pages/book'), priority: '0.9' },
+  { route: 'press/', render: mod('./pages/press'), priority: '0.7' },
+  { route: 'press/one-sheet/', render: mod('./pages/onesheet'), priority: '0.6' },
+  { route: 'contact/', render: mod('./pages/contact'), priority: '0.6' },
 ];
 
 const rmrf = (p) => fs.rmSync(p, { recursive: true, force: true });
@@ -30,10 +42,8 @@ console.log('Building site → docs/');
 rmrf(OUT);
 
 for (const p of PAGES) {
-  delete require.cache[require.resolve(p.module)];
-  const html = require(p.module)();
-  write(path.join(OUT, p.route, 'index.html'), html);
-  console.log(`  ✓ /${p.route}`);
+  write(path.join(OUT, p.route, p.file || 'index.html'), p.render());
+  console.log(`  ✓ /${p.route}${p.file || ''}`);
 }
 
 copyDir(path.join(__dirname, 'assets'), path.join(OUT, 'assets'));

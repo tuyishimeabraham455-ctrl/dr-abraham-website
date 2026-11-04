@@ -238,6 +238,43 @@ db.exec(`
   );
 `);
 
+// ============================================================
+//  BOOKING ENGINE — discovery calls, notification outbox
+// ============================================================
+db.exec(`
+  CREATE TABLE IF NOT EXISTS calls (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT    NOT NULL,
+    email       TEXT    NOT NULL,
+    inquiry_id  INTEGER,
+    starts_at   TEXT    NOT NULL UNIQUE,      -- ISO time (UTC); UNIQUE prevents double booking
+    status      TEXT    DEFAULT 'booked',     -- booked | done | cancelled
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS outbox (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    to_email    TEXT    NOT NULL,
+    subject     TEXT    NOT NULL,
+    body        TEXT    NOT NULL,
+    kind        TEXT,                         -- confirmation | hot-lead | call | agent-summary
+    status      TEXT    DEFAULT 'queued',     -- queued | sent | failed
+    error       TEXT,
+    created_at  DATETIME DEFAULT (datetime('now')),
+    sent_at     DATETIME
+  );
+`);
+
+// Add columns to older tables without losing data
+const addColumn = (table, column, type) => {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
+  if (!cols.includes(column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+};
+addColumn('inquiries', 'score', 'INTEGER DEFAULT 0');   // lead score 0-100
+addColumn('inquiries', 'details', "TEXT DEFAULT ''");   // JSON with every booking field
+addColumn('inquiries', 'source', "TEXT DEFAULT ''");    // book-form | homepage | agent | ...
+addColumn('members', 'role', "TEXT DEFAULT 'member'");  // admin | team | member
+
 console.log(`[DB] ✅ Database ready at: ${DB_PATH}`);
 
 module.exports = db;

@@ -60,12 +60,58 @@ const ICONS = {
   li: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/>',
   yt: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9v6l5-3z" fill="currentColor"/>',
   fb: '<path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h2z"/>',
+  down: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+  ticket: '<path d="M3 8a2 2 0 0 0 0 4 2 2 0 0 1 0 4v2h18v-2a2 2 0 0 1 0-4 2 2 0 0 0 0-4V6H3z"/><path d="M14 6v12" stroke-dasharray="2 2"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  lock: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  file: '<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 13h6M9 17h6"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  star: '<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
 };
+
+// ---------- Helpers for inner pages ----------
+// Relative prefix for a page `depth` folders deep
+const rel = (depth) => (depth ? '../'.repeat(depth) : './');
+
+// Breadcrumbs: visible trail + BreadcrumbList schema. items = [[label, path], ...] (last item = current page)
+const crumbs = (items, depth) => {
+  const r = rel(depth);
+  const html = `<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="${r}">Home</a></li>${items.map(([label, p], i) =>
+    i === items.length - 1 ? `<li aria-current="page">${esc(label)}</li>` : `<li><a href="${r}${p}">${esc(label)}</a></li>`).join('')}</ol></nav>`;
+  const schema = { '@type': 'BreadcrumbList', itemListElement: [['Home', ''], ...items].map(([label, p], i) => ({ '@type': 'ListItem', position: i + 1, name: label, item: abs(p) })) };
+  return { html, schema };
+};
+
+// Inner-page hero (dark, editorial)
+const pageHero = ({ eyebrow, title, lead, crumbsHtml = '', extra = '', tone = '', mark = 'Yo' }) => `
+<section class="phero grain ${tone}">
+  <span class="phero-mark" aria-hidden="true">${mark}</span>
+  <div class="wrap">
+    ${crumbsHtml}
+    <p class="eyebrow eyebrow-gold reveal">${eyebrow}</p>
+    <h1 class="phero-title kinetic-soft">${title}</h1>
+    ${lead ? `<p class="phero-lead reveal">${lead}</p>` : ''}
+    ${extra}
+  </div>
+</section>`;
+
+// FAQ block (native <details>) + FAQPage schema
+const faqBlock = (faqs, heading = 'Questions, <em>answered.</em>') => ({
+  html: `<section class="faq sec" aria-labelledby="faqTitle"><div class="wrap faq-in">
+    <div><p class="eyebrow reveal">FAQ</p><h2 class="h2 reveal" id="faqTitle">${heading}</h2></div>
+    <div class="faq-list">${faqs.map(([q, a]) => `<details class="reveal"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>
+  </div></section>`,
+  schema: { '@type': 'FAQPage', mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+});
+
+const sampleTag = (item) => (item && item.sample ? '<span class="sample" title="Placeholder content to replace">Sample</span>' : '');
 const sprite = () => `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${Object.entries(ICONS).map(([k, v]) => `<symbol id="i-${k}" viewBox="0 0 24 24">${v}</symbol>`).join('')}</defs></svg>`;
 const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 
 // The page wrapper. `depth` = how many folders deep the page lives (for relative links).
-function page({ path = '', depth = 0, title, description, body, schema = [], active = '', ogImage, bodyClass = '' }) {
+function page({ path = '', depth = 0, title, description, body, schema = [], active = '', ogImage, bodyClass = '', scripts = [], noindex = false }) {
   const r = depth ? '../'.repeat(depth) : './';
   const href = (p) => r + p;
   if (title.length > 60) console.warn(`  ! title over 60 chars (${title.length}): ${title}`);
@@ -86,7 +132,7 @@ function page({ path = '', depth = 0, title, description, body, schema = [], act
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}"/>
-<link rel="canonical" href="${canonical}"/>
+<link rel="canonical" href="${canonical}"/>${noindex ? '\n<meta name="robots" content="noindex, follow"/>' : ''}
 <meta name="theme-color" content="#2A1A16"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="${esc(site.brand)}"/>
@@ -193,9 +239,10 @@ ${body}
 </div>
 
 <script src="${href('assets/js/yo.js')}" defer></script>
+${scripts.map((sc) => `<script src="${href(sc)}" defer></script>`).join('\n')}
 </body>
 </html>
 `;
 }
 
-module.exports = { page, esc, abs, icon, ids, personSchema };
+module.exports = { page, esc, abs, icon, ids, personSchema, rel, crumbs, pageHero, faqBlock, sampleTag };

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 110" role="img" aria-label="The Business of You">
+  <rect width="520" height="110" fill="#2A1A16"/>
+  <circle cx="55" cy="55" r="38" fill="none" stroke="#C9A66B" stroke-width="2"/>
+  <text x="55" y="68" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-style="italic" font-size="38" fill="#C9A66B">Yo</text>
+  <text x="112" y="68" font-family="Cormorant Garamond, Georgia, serif" font-size="40" fill="#F8F1E7">The Business <tspan font-style="italic" fill="#C9A66B">of</tspan> You</text>
+</svg>

@@ -69,9 +69,21 @@ exports.talks = [
 ];
 
 exports.workshops = [
-  { title: 'Is Your Idea a Real Problem?', text: 'A hands-on session to test, size and sharpen a business idea.', format: 'Workshop · 2 hours' },
-  { title: 'Business Credit Basics', text: 'Separate personal and business credit and build a profile lenders trust.', format: 'Workshop · 90 minutes' },
-  { title: 'Funding-Ready in 30 Days', text: 'The documents, numbers and story to prepare before you apply.', format: 'Workshop series · 4 weeks' },
+  {
+    slug: 'real-problem', title: 'Is Your Idea a Real Problem?', text: 'A hands-on session to test, size and sharpen a business idea.', format: 'Workshop · 2 hours',
+    who: 'Aspiring and early-stage entrepreneurs, incubator cohorts, ERGs.',
+    outcomes: ['Name the exact customer and the problem they pay to solve', 'Run three quick tests before spending money', 'Leave with a one-page idea snapshot'],
+  },
+  {
+    slug: 'business-credit-basics', title: 'Business Credit Basics', text: 'Separate personal and business credit and build a profile lenders trust.', format: 'Workshop · 90 minutes',
+    who: 'Small business owners, credit union members, small business center clients.',
+    outcomes: ['Understand how business credit differs from personal credit', 'Set up the foundations lenders look for', 'Build a 90-day credit action plan'],
+  },
+  {
+    slug: 'funding-ready', title: 'Funding-Ready in 30 Days', text: 'The documents, numbers and story to prepare before you apply.', format: 'Workshop series · 4 weeks',
+    who: 'Owners preparing for a loan, grant or investment conversation.',
+    outcomes: ['Gather the documents lenders ask for', 'Tell the story behind your numbers with confidence', 'Choose the right type of capital for your stage'],
+  },
 ];
 
 // Event types served (shown in the Proof section)
