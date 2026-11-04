@@ -1046,14 +1046,16 @@ a.ep-play { text-decoration: none; }
 .page-portal .p-head .seg a { font-size: .88rem; }
 
 /* ============================================================
-   TYPE: Times New Roman everywhere; running text at 14pt.
+   TYPE: Times New Roman everywhere; every word at 12pt.
    Headings, the logo and large decorative numbers keep their
    sizes so pages still have a clear hierarchy.
 ============================================================ */
 :root { --display: "Times New Roman", Tinos, Times, serif; --sans: "Times New Roman", Tinos, Times, serif; }
 *, *::before, *::after, input, select, textarea, button { font-family: "Times New Roman", Tinos, Times, serif !important; }
-:is(p, li, a, button, input, select, textarea, label, td, th, small, summary, blockquote, figcaption, dd, dt, time, span, .eyebrow):not(h1 *, h2 *, h3 *, h4 *, .h2, .h2 *, .h3, .h3 *, .phero-mark, .logo, .logo *, .agent-ava, .p-ava, .p-spark, .p-kpi b, .ic, .mnav a:not(.btn), .hero-stats dd, .big-stats dd, .meet-num, .signature, .fw-n, .talk-n, .pillar-n, .car-q, .car-slide blockquote, .car-slide blockquote *, .bm-t, .pull, .pull *, .value-n, .big-quote, .big-quote *, .side-quote, .side-quote *, .ws-num, .sheet-stats b, .ep-card-n, .event-date b, .step-dots li) { font-size: 14pt !important; }
-/* Uppercase labels at 14pt: tighter tracking so they fit */
+/* Every word at 12pt (headings included); only decorative numbers, marks and badges keep their size */
+body :not(.phero-mark, .meet-num, .meet-num *, .talk-n, .pillar-n, .ws-num, .ep-card-n, .fw-n, .value-n, .car-q, .hero-stats dd, .big-stats dd, .sheet-stats b, .event-date b, .p-kpi b, .agent-ava, .tab-yo-ava, .p-ava, .p-spark, .logo-mark, .ic, .step-dots li) { font-size: 12pt !important; }
+h1, h2, h3, h4, .h2, .h3, .phero-title, .hero-title, .h1 { line-height: 1.3 !important; letter-spacing: 0 !important; }
+/* Uppercase labels: tighter tracking so they fit */
 .p-kpi span, .p-pill, .p-sg-pri, .p-asg-box span, .p-table th, .eyebrow, .btn, .field label, dt, figcaption, small, .p-role, .status-pill { letter-spacing: .05em !important; }
 @media (max-width: 560px) { .hdr-cta .btn { display: none; } }
 .p-kpis { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
@@ -1080,7 +1082,7 @@ input, select, textarea { max-width: 100%; }
   .pkg { padding: 2.2rem 1.4rem; }
   .talk-facts, .book-side, .card-form { padding-left: 1.2rem; padding-right: 1.2rem; }
 }
-.step-dots li { font-size: 14pt; letter-spacing: .05em; }
+.step-dots li { font-size: 12pt; letter-spacing: .05em; }
 .sheet-tools { flex-wrap: wrap; }
 @media (max-width: 600px) { .step-dots li { font-size: 0; } .sheet { padding: 28px 20px; } }
 @media (max-width: 960px) {

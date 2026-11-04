@@ -42,8 +42,8 @@ app.use('/api', require('./routes/agent'));
 app.use('/api', require('./routes/portal'));
 app.use('/api', require('./routes/coach'));
 
-// ── Admin dashboard ──────────────────────────────────────────
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin', 'index.html')));
+// ── Admin dashboard: the portal (admins sign in there) ───────
+app.get(['/admin', '/admin/', '/login', '/signup'], (req, res) => res.redirect(302, req.path === '/signup' ? '/portal/#signup' : req.path === '/login' ? '/portal/' : '/portal/#overview'));
 
 // ── Previous one-page concept demo, kept for reference ──────
 app.get('/concept-demo', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
@@ -74,7 +74,7 @@ app.listen(PORT, () => {
   console.log('   Yo | The Business of You');
   console.log('  =================================================');
   console.log(`   Site:     http://localhost:${PORT}`);
-  console.log(`   Admin:    http://localhost:${PORT}/admin`);
+  console.log(`   Admin:    http://localhost:${PORT}/admin  (sign in at /portal/)`);
   console.log('  =================================================');
   console.log('');
 });
