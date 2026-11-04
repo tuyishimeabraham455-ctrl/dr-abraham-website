@@ -133,7 +133,7 @@ self.addEventListener('activate', (e) => {
 });
 self.addEventListener('fetch', (e) => {
   const req = e.request, url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== self.location.origin || url.pathname.includes('/api/') || url.pathname.includes('/admin')) return;
+  if (req.method !== 'GET' || url.origin !== self.location.origin || url.pathname.includes('/api/') || url.pathname.includes('/admin') || url.pathname.includes('/uploads/videos/') || req.headers.has('range')) return;
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; })
       .catch(() => caches.match(req).then((hit) => hit || caches.match(base + 'offline/'))));

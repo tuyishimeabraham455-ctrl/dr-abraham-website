@@ -77,7 +77,7 @@
   const TABS = [
     ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
-    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['account', 'Account', 'all'],
+    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
   ];
   const A_LABEL = { todo: 'To do', in_progress: 'In progress', submitted: 'Submitted', needs_changes: 'Needs changes', done: 'Done' };
   const today = () => new Date().toISOString().slice(0, 10);
@@ -95,6 +95,38 @@
   }).join('');
   const suggestionCard = (sg, compact) => `<article class="p-sg ${h(sg.priority)}"><header><span class="p-sg-pri">${h(sg.priority)}</span><span class="p-sg-area">${h(sg.area)}</span></header><b>${h(sg.title)}</b>${compact ? '' : `<p>${h(sg.why)}</p>`}<p class="p-sg-act">${h(sg.action)}</p><div class="p-sg-links"><a class="link-arrow" href="${h(sg.link)}">Open</a>${sg.ask ? `<button type="button" class="linkish" data-ask="${h(sg.ask)}">Ask the coach</button>` : ''}</div></article>`;
   let coachHistory = [];
+  // Profile picture, or initials when there isn't one
+  const initials = (name) => String(name || '?').split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  const safeImg = (u) => (/^\/uploads\/avatars\/[a-f0-9]{24}\.(jpg|png|webp)$/.test(u || '') ? u : '');
+  const ava = (person, cls = 'p-ava-sm', idAttr = '') => {
+    const img = safeImg(person && (person.avatar || person.author_avatar || person.from_avatar));
+    const name = person && (person.name || person.author || person.from_name);
+    return `<span class="${cls}${img ? ' has-img' : ''}"${idAttr ? ` id="${idAttr}"` : ''} aria-hidden="true">${img ? `<img src="${h(img)}" alt="" loading="lazy"/>` : h(initials(name))}</span>`;
+  };
+  // Shrink a picture in the browser to a 400×400 square JPEG before uploading
+  const squareJpeg = (file, size = 400) => new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const s = Math.min(img.naturalWidth, img.naturalHeight), c = document.createElement('canvas');
+      c.width = c.height = size;
+      c.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      c.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not read that picture.'))), 'image/jpeg', 0.88);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Please choose a picture file (JPG, PNG, HEIC or WebP).')); };
+    img.src = url;
+  });
+  // Upload a file body with progress (fetch can't report upload progress)
+  const sendFile = (path, blob, onProgress) => new Promise((resolve) => {
+    const x = new XMLHttpRequest();
+    x.open('POST', '/api' + path);
+    x.setRequestHeader('Authorization', 'Bearer ' + (store.get() || ''));
+    x.setRequestHeader('Content-Type', blob.type || 'application/octet-stream');
+    x.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
+    x.onload = () => { let out; try { out = JSON.parse(x.responseText); } catch { out = { ok: false, message: 'Upload failed.' }; } resolve(out); };
+    x.onerror = () => resolve({ ok: false, message: 'The upload was interrupted. Please check your connection and try again.' });
+    x.send(blob);
+  });
   const isStaff = () => me && (me.role === 'admin' || me.role === 'team');
   const allowed = (who) => who === 'all' || (who === 'staff' && isStaff()) || (who === 'member' && !isStaff()) || (who === 'admin' && me.role === 'admin');
 
@@ -105,7 +137,7 @@
       if (!out.ok) throw new Error(out.message);
       me = out.member;
       $('#pName').textContent = me.name; $('#pRole').textContent = ROLE[me.role] || me.role;
-      $('#pAva').textContent = me.name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+      $('#pAva').outerHTML = ava(me, 'p-ava', 'pAva');
       $('#pNav').innerHTML = TABS.filter(([, , who]) => allowed(who)).map(([k, label]) => `<a href="#${k}" data-tab="${k}">${h(label)}${k === 'inbox' ? `<span class="p-badge" id="pUnread"${out.unread ? '' : ' hidden'}>${out.unread}</span>` : ''}${k === 'assignments' ? `<span class="p-badge" id="pOpenA"${out.open_assignments ? '' : ' hidden'}>${out.open_assignments}</span>` : ''}</a>`).join('');
       loginBox.hidden = true; app.hidden = false;
       route();
@@ -279,9 +311,9 @@
     async community(v) {
       const out = await api('/portal/community');
       v.innerHTML = `<form class="p-card p-post-form" id="cp"><label class="sr" for="cpBody">Share with the community</label><textarea id="cpBody" name="body" rows="3" required maxlength="4000" placeholder="Share a win, a question or a resource…"></textarea><div class="p-row"><button class="btn btn-dark btn-sm">Post</button><span class="form-msg" aria-live="polite"></span></div></form>
-        <div id="feed">${out.data.map((p) => `<article class="p-card p-post${p.pinned ? ' pinned' : ''}"><header><b>${h(p.author)}</b><span class="p-role-sm">${h(ROLE[p.author_role] || '')}</span><time>${h(when(p.created_at))}</time>${p.pinned ? '<span class="p-pill">Pinned</span>' : ''}</header><p class="p-pre">${h(p.body)}</p>
+        <div id="feed">${out.data.map((p) => `<article class="p-card p-post${p.pinned ? ' pinned' : ''}"><header>${ava(p)}<b>${h(p.author)}</b><span class="p-role-sm">${h(ROLE[p.author_role] || '')}</span><time>${h(when(p.created_at))}</time>${p.pinned ? '<span class="p-pill">Pinned</span>' : ''}</header><p class="p-pre">${h(p.body)}</p>
           <div class="p-post-actions">${isStaff() ? `<button type="button" class="linkish" data-pin="${p.id}">${p.pinned ? 'Unpin' : 'Pin'}</button>` : ''}${p.mine || isStaff() ? `<button type="button" class="linkish" data-del="${p.id}">Delete</button>` : ''}</div>
-          <div class="p-comments">${p.comments.map((c) => `<p><b>${h(c.author)}</b> ${h(c.body)}</p>`).join('')}<form data-comment="${p.id}"><label class="sr" for="cm${p.id}">Comment</label><input id="cm${p.id}" name="body" placeholder="Write a comment…" maxlength="2000" required/><button class="btn btn-ghost-dark btn-sm">Reply</button></form></div></article>`).join('') || '<p class="p-empty">Be the first to post.</p>'}</div>`;
+          <div class="p-comments">${p.comments.map((c) => `<p>${ava(c, 'p-ava-xs')}<b>${h(c.author)}</b> ${h(c.body)}</p>`).join('')}<form data-comment="${p.id}"><label class="sr" for="cm${p.id}">Comment</label><input id="cm${p.id}" name="body" placeholder="Write a comment…" maxlength="2000" required/><button class="btn btn-ghost-dark btn-sm">Reply</button></form></div></article>`).join('') || '<p class="p-empty">Be the first to post.</p>'}</div>`;
       $('#cp').addEventListener('submit', async (e) => { e.preventDefault(); const out2 = await api('/portal/community', { method: 'POST', body: { body: e.target.body.value } }); if (out2.ok) route(); else flash($('#cp .form-msg'), out2.message, false); });
       v.querySelectorAll('[data-comment]').forEach((f) => f.addEventListener('submit', async (e) => { e.preventDefault(); await api(`/portal/community/${f.dataset.comment}/comments`, { method: 'POST', body: { body: f.body.value } }); route(); }));
       v.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => { if (confirm('Delete this post?')) { await api(`/portal/community/${b.dataset.del}`, { method: 'DELETE' }); route(); } }));
@@ -300,17 +332,110 @@
       const out = await api('/portal/users');
       v.innerHTML = `<div class="p-grid2"><form class="p-card" id="uf"><h2>Create an account</h2><div class="field"><label for="un">Name</label><input id="un" name="name" required/></div><div class="field"><label for="ue">Email</label><input id="ue" name="email" type="email" required/></div><div class="row2"><div class="field"><label for="ur">Role</label><select id="ur" name="role"><option value="member">Member</option><option value="team">Team</option><option value="admin">Admin</option></select></div><div class="field"><label for="up">Programs</label><input id="up" name="programs" placeholder="e.g. Speaker Academy"/></div></div><div class="p-row"><button class="btn btn-dark btn-sm">Create account</button></div><p class="form-msg" aria-live="polite"></p></form>
         <form class="p-card" id="bf"><h2>Message everyone</h2><div class="field"><label for="bs">Subject</label><input id="bs" name="subject" required maxlength="160"/></div><div class="field"><label for="bb">Message</label><textarea id="bb" name="body" rows="4" required></textarea></div><div class="p-row"><button class="btn btn-dark btn-sm">Send to all</button><span class="form-msg" aria-live="polite"></span></div></form></div>
-        <section class="p-card">${table([['Name', (r) => `<b>${h(r.name)}</b><small>${h(r.email)}</small>`], ['Role', (r) => `<select class="p-urole" data-id="${r.id}" data-field="role">${['member', 'team', 'admin'].map((x) => `<option value="${x}"${x === r.role ? ' selected' : ''}>${ROLE[x]}</option>`).join('')}</select>`], ['Status', (r) => `<select class="p-urole" data-id="${r.id}" data-field="status">${['active', 'paused'].map((x) => `<option${x === r.status ? ' selected' : ''}>${x}</option>`).join('')}</select>`], ['Programs', (r) => h(r.programs || '')], ['', (r) => `<button type="button" class="linkish" data-reset="${r.id}">Reset password</button>`]], out.data)}<p class="form-msg" id="um" aria-live="polite"></p></section>`;
+        <section class="p-card"><h2>Everyone (${out.data.length})</h2><div class="p-tools"><input type="search" id="uq" placeholder="Search name or email"/></div><p class="form-msg" id="um" aria-live="polite"></p>
+          <div class="p-users">${out.data.map((r) => `<article class="p-urow" data-id="${r.id}" data-q="${h((r.name + ' ' + r.email).toLowerCase())}">
+            ${ava(r, 'p-ava-md')}
+            <div class="p-ufields"><label class="sr" for="n${r.id}">Name</label><input id="n${r.id}" data-field="name" value="${h(r.name)}" maxlength="120"/><label class="sr" for="e${r.id}">Email</label><input id="e${r.id}" data-field="email" type="email" value="${h(r.email)}" maxlength="160"/></div>
+            <div class="p-uctl">
+              <label><span>Role</span><select data-field="role">${['member', 'team', 'admin'].map((x) => `<option value="${x}"${x === r.role ? ' selected' : ''}>${ROLE[x]}</option>`).join('')}</select></label>
+              <label><span>Status</span><select data-field="status">${['active', 'paused'].map((x) => `<option${x === r.status ? ' selected' : ''}>${x}</option>`).join('')}</select></label>
+              <label class="p-uprog"><span>Programs</span><input data-field="programs" value="${h(r.programs || '')}" maxlength="300"/></label>
+            </div>
+            <div class="p-uacts">${r.id === me.id ? '<span class="p-pill">You</span>' : ''}<button type="button" class="linkish" data-act="reset">Reset password</button>${r.avatar ? '<button type="button" class="linkish" data-act="noava">Remove picture</button>' : ''}${r.id !== me.id ? '<button type="button" class="linkish danger" data-act="delete">Delete account</button>' : ''}</div>
+          </article>`).join('')}</div></section>`;
       const um = $('#um');
       $('#uf').addEventListener('submit', async (e) => { e.preventDefault(); const o = await api('/portal/users', { method: 'POST', body: Object.fromEntries(new FormData(e.target)) }); const msg = $('#uf .form-msg'); if (o.ok) { msg.innerHTML = `Created. Temporary password: <code>${h(o.temp_password)}</code><br/>Share it privately; it won't be shown again.`; msg.className = 'form-msg ok'; e.target.reset(); } else flash(msg, o.message, false); });
       $('#bf').addEventListener('submit', async (e) => { e.preventDefault(); if (!confirm('Send this message to every account?')) return; const o = await api('/portal/broadcast', { method: 'POST', body: Object.fromEntries(new FormData(e.target)) }); flash($('#bf .form-msg'), o.message, o.ok); if (o.ok) e.target.reset(); });
-      v.querySelectorAll('.p-urole').forEach((s) => s.addEventListener('change', async () => { const o = await api(`/portal/users/${s.dataset.id}`, { method: 'PATCH', body: { [s.dataset.field]: s.value } }); flash(um, o.ok ? 'Saved.' : o.message, o.ok); if (!o.ok) route(); }));
-      v.querySelectorAll('[data-reset]').forEach((b) => b.addEventListener('click', async () => { if (!confirm('Reset this password? They will be signed out.')) return; const o = await api(`/portal/users/${b.dataset.reset}/reset`, { method: 'POST' }); if (o.ok) { um.innerHTML = `New temporary password: <code>${h(o.temp_password)}</code>`; um.className = 'form-msg ok'; } else flash(um, o.message, false); }));
+      $('#uq').addEventListener('input', (e) => { const q = e.target.value.trim().toLowerCase(); v.querySelectorAll('.p-urow').forEach((row) => { row.hidden = q && !row.dataset.q.includes(q); }); });
+      v.querySelectorAll('.p-urow').forEach((row) => {
+        const uid = row.dataset.id;
+        row.querySelectorAll('[data-field]').forEach((f) => f.addEventListener('change', async () => {
+          const o = await api(`/portal/users/${uid}`, { method: 'PATCH', body: { [f.dataset.field]: f.value } });
+          flash(um, o.ok ? 'Saved.' : o.message, o.ok); f.classList.toggle('saved', !!o.ok); setTimeout(() => f.classList.remove('saved'), 1200);
+          if (!o.ok) route(); else if (Number(uid) === me.id && ['name', 'email'].includes(f.dataset.field)) { me[f.dataset.field] = f.value; $('#pName').textContent = me.name; }
+        }));
+        row.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', async () => {
+          const name = row.querySelector('[data-field="name"]').value;
+          if (b.dataset.act === 'reset') {
+            if (!confirm(`Reset ${name}'s password? They will be signed out.`)) return;
+            const o = await api(`/portal/users/${uid}/reset`, { method: 'POST' });
+            if (o.ok) { um.innerHTML = `New temporary password for ${h(name)}: <code>${h(o.temp_password)}</code>`; um.className = 'form-msg ok'; } else flash(um, o.message, false);
+          } else if (b.dataset.act === 'noava') {
+            const o = await api(`/portal/users/${uid}/avatar`, { method: 'DELETE' }); flash(um, o.message, o.ok); if (o.ok) route();
+          } else if (b.dataset.act === 'delete') {
+            if (!confirm(`Delete ${name}'s account for good? Their messages are deleted too. This can't be undone.`)) return;
+            const o = await api(`/portal/users/${uid}`, { method: 'DELETE' }); flash(um, o.message, o.ok); if (o.ok) row.remove();
+          }
+        }));
+      });
+    },
+    async settings(v) {
+      const out = await api('/portal/settings'); const s = out.data;
+      const slots = [['hero_video', 'Homepage background video', 'Plays behind the big headline on the homepage.'], ['page_video', 'Page header video', 'Optional. Plays behind the title at the top of every other page.']];
+      const preview = (view) => {
+        if (!view) return '<p class="p-empty">No video yet.</p>';
+        if (view.kind === 'file') return `<video src="${h(view.src)}" muted loop autoplay playsinline></video>`;
+        const src = view.kind === 'youtube' ? `https://www.youtube-nocookie.com/embed/${h(view.id)}?autoplay=1&mute=1&loop=1&playlist=${h(view.id)}&controls=0&playsinline=1` : `https://player.vimeo.com/video/${h(view.id)}?background=1&autoplay=1&loop=1&muted=1`;
+        return `<iframe src="${src}" title="Video preview" allow="autoplay; encrypted-media"></iframe>`;
+      };
+      v.innerHTML = `${slots.map(([slot, title, note]) => `<section class="p-card p-vid" data-slot="${slot}">
+          <div class="p-vid-in">
+            <div><h2>${title}</h2><p class="fine">${note}</p>
+              <form class="p-vid-link"><label for="l_${slot}">Video link</label><div class="p-row"><input id="l_${slot}" name="link" value="${h(/^\/uploads\//.test(s[slot]) ? '' : s[slot])}" placeholder="YouTube, Vimeo, or a link to an .mp4 / .webm file"/><button class="btn btn-dark btn-sm">Use this link</button></div></form>
+              <div class="p-vid-or"><span>or</span></div>
+              <label class="btn btn-ghost-dark btn-sm p-file">Upload a video file<input type="file" accept="video/mp4,video/webm" hidden/></label>
+              <div class="p-progress" hidden><span></span></div>
+              <p class="fine">${/^\/uploads\//.test(s[slot]) ? 'Now playing: an uploaded file.' : s[slot] ? 'Now playing: the link above.' : 'Nothing set.'} MP4 or WebM, up to 200 MB. Short loops (10–30 seconds) without sound work best.</p>
+              <div class="p-row">${s[slot] ? '<button type="button" class="linkish danger" data-clear>Remove video</button>' : ''}<span class="form-msg" aria-live="polite"></span></div>
+            </div>
+            <div class="p-vid-prev">${preview(out.view[slot])}</div>
+          </div></section>`).join('')}
+        <form class="p-card" id="sf"><h2>Video strength and announcement</h2>
+          <div class="field"><label for="vs">How strongly the video shows: <b id="vsOut">${h(s.video_strength)}%</b></label><input id="vs" name="video_strength" type="range" min="10" max="90" step="2" value="${h(s.video_strength)}"/></div>
+          <label class="check"><input type="checkbox" name="announce_on"${s.announce_on === '1' ? ' checked' : ''}/> <span>Show an announcement bar at the top of every page</span></label>
+          <div class="row2"><div class="field"><label for="at2">Announcement text</label><input id="at2" name="announce_text" maxlength="160" value="${h(s.announce_text)}" placeholder="e.g. Yo is speaking at the Women in Business Summit, March 12"/></div><div class="field"><label for="al2">Link (optional)</label><input id="al2" name="announce_link" value="${h(s.announce_link)}" placeholder="/events/ or https://"/></div></div>
+          <div class="p-row"><button class="btn btn-dark btn-sm">Save</button><a class="linkish" href="/" target="_blank" rel="noopener">Open the website</a><span class="form-msg" aria-live="polite"></span></div>
+        </form>`;
+      v.querySelectorAll('.p-vid').forEach((card) => {
+        const slot = card.dataset.slot, msg = card.querySelector('.form-msg');
+        card.querySelector('.p-vid-link').addEventListener('submit', async (e) => {
+          e.preventDefault(); flash(msg, 'Checking the link…');
+          const o = await api('/portal/settings', { method: 'PUT', body: { [slot]: e.target.link.value } });
+          flash(msg, o.message, o.ok); if (o.ok) setTimeout(route, 900);
+        });
+        card.querySelector('input[type=file]').addEventListener('change', async (e) => {
+          const file = e.target.files[0]; if (!file) return;
+          if (file.size > 200 * 1024 * 1024) { flash(msg, 'That file is over 200 MB. Please use a shorter or smaller video.', false); return; }
+          const bar = card.querySelector('.p-progress'); bar.hidden = false; flash(msg, 'Uploading…');
+          const o = await sendFile(`/portal/settings/video?slot=${slot}`, file, (p) => { bar.firstElementChild.style.width = Math.round(p * 100) + '%'; msg.textContent = `Uploading… ${Math.round(p * 100)}%`; });
+          bar.hidden = true; flash(msg, o.message, o.ok); if (o.ok) setTimeout(route, 900);
+        });
+        const clear = card.querySelector('[data-clear]');
+        if (clear) clear.addEventListener('click', async () => { if (!confirm('Remove this video from the website?')) return; const o = await api('/portal/settings', { method: 'PUT', body: { [slot]: '' } }); flash(msg, o.message, o.ok); if (o.ok) route(); });
+      });
+      $('#vs').addEventListener('input', (e) => { $('#vsOut').textContent = e.target.value + '%'; });
+      $('#sf').addEventListener('submit', async (e) => {
+        e.preventDefault(); const f = e.target;
+        const o = await api('/portal/settings', { method: 'PUT', body: { video_strength: f.video_strength.value, announce_on: f.announce_on.checked, announce_text: f.announce_text.value, announce_link: f.announce_link.value } });
+        flash($('#sf .form-msg'), o.message, o.ok);
+      });
     },
     async account(v) {
-      v.innerHTML = `<form class="p-card p-narrow" id="pf"><h2>Change your password</h2><div class="field"><label for="pc">Current password</label><input id="pc" name="current" type="password" required autocomplete="current-password"/></div><div class="field"><label for="pn">New password <small>(10+ characters)</small></label><input id="pn" name="next" type="password" required minlength="10" autocomplete="new-password"/></div><div class="p-row"><button class="btn btn-dark btn-sm">Update password</button></div><p class="form-msg" aria-live="polite"></p></form>
-        <section class="p-card p-narrow"><h2>Your account</h2><p><b>${h(me.name)}</b><br/>${h(me.email)}<br/>${h(ROLE[me.role])}</p></section>`;
+      v.innerHTML = `<section class="p-card p-narrow p-me"><h2>Profile picture</h2>
+          <div class="p-me-row">${ava(me, 'p-ava-lg', 'meAva')}<div><label class="btn btn-dark btn-sm p-file">Choose a picture<input type="file" id="avaFile" accept="image/*" hidden/></label>${me.avatar ? ' <button type="button" class="linkish" id="avaDel">Remove</button>' : ''}<p class="fine">A clear photo of your face works best. It's cropped to a square.</p><p class="form-msg" id="avaMsg" aria-live="polite"></p></div></div>
+          <p><b>${h(me.name)}</b><br/>${h(me.email)}<br/>${h(ROLE[me.role])}</p></section>
+        <form class="p-card p-narrow" id="pf"><h2>Change your password</h2><div class="field"><label for="pc">Current password</label><input id="pc" name="current" type="password" required autocomplete="current-password"/></div><div class="field"><label for="pn">New password <small>(10+ characters)</small></label><input id="pn" name="next" type="password" required minlength="10" autocomplete="new-password"/></div><div class="p-row"><button class="btn btn-dark btn-sm">Update password</button></div><p class="form-msg" aria-live="polite"></p></form>`;
       $('#pf').addEventListener('submit', async (e) => { e.preventDefault(); const o = await api('/portal/password', { method: 'POST', body: Object.fromEntries(new FormData(e.target)) }); flash($('#pf .form-msg'), o.message, o.ok); if (o.ok) e.target.reset(); });
+      const setMine = (avatar) => { me.avatar = avatar; $('#pAva').outerHTML = ava(me, 'p-ava', 'pAva'); route(); };
+      $('#avaFile').addEventListener('change', async (e) => {
+        const file = e.target.files[0]; if (!file) return;
+        const msg = $('#avaMsg'); flash(msg, 'Uploading…');
+        try {
+          const o = await sendFile('/portal/me/avatar', await squareJpeg(file));
+          flash(msg, o.message, o.ok); if (o.ok) setMine(o.avatar);
+        } catch (err) { flash(msg, err.message, false); }
+      });
+      const del = $('#avaDel'); if (del) del.addEventListener('click', async () => { const o = await api('/portal/me/avatar', { method: 'DELETE' }); if (o.ok) setMine(''); });
     },
   };
 
@@ -326,7 +451,7 @@
     const last = out.data[out.data.length - 1];
     const other = last.from_id === me.id ? last.to_id : last.from_id;
     $('#pActions').innerHTML = `<a class="btn btn-ghost-dark btn-sm" href="#inbox">Back to inbox</a>`;
-    v.innerHTML = `<section class="p-card"><h2>${h(out.data[0].subject)}</h2>${out.data.map((m) => `<article class="p-thread-msg${m.from_id === me.id ? ' mine' : ''}"><header><b>${h(m.from_name)}</b> to ${h(m.to_name)}<time>${h(when(m.created_at))}</time></header><p class="p-pre">${h(m.body)}</p></article>`).join('')}<div class="p-row"><button type="button" class="btn btn-dark btn-sm" id="reply">Reply</button></div></section>`;
+    v.innerHTML = `<section class="p-card"><h2>${h(out.data[0].subject)}</h2>${out.data.map((m) => `<article class="p-thread-msg${m.from_id === me.id ? ' mine' : ''}"><header>${ava(m, 'p-ava-xs')}<b>${h(m.from_name)}</b> to ${h(m.to_name)}<time>${h(when(m.created_at))}</time></header><p class="p-pre">${h(m.body)}</p></article>`).join('')}<div class="p-row"><button type="button" class="btn btn-dark btn-sm" id="reply">Reply</button></div></section>`;
     $('#reply').addEventListener('click', () => compose(v, { to: other, subject: out.data[0].subject.startsWith('Re: ') ? out.data[0].subject : 'Re: ' + out.data[0].subject, thread: out.thread_id }));
     refreshUnread();
   }

@@ -42,6 +42,10 @@ app.use('/api', require('./routes/agent'));
 app.use('/api', require('./routes/portal'));
 app.use('/api', require('./routes/coach'));
 
+// ── Uploaded files (profile pictures, background videos) ─────
+const { UPLOAD_DIR } = require('./lib/uploads');
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '30d', immutable: true, dotfiles: 'deny', index: false }));
+
 // ── Admin dashboard: the portal (admins sign in there) ───────
 app.get(['/admin', '/admin/', '/login', '/signup'], (req, res) => res.redirect(302, req.path === '/signup' ? '/portal/#signup' : req.path === '/login' ? '/portal/' : '/portal/#overview'));
 

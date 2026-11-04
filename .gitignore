@@ -11,3 +11,4 @@ database/*.db-wal
 _backup-before-redesign/
 .env
 *.log
+database/uploads/

@@ -61,24 +61,62 @@
     });
   }
 
-  /* ---------- Hero sizzle reel: only if the video file exists ---------- */
+  /* ---------- Background videos + announcement bar (set by the admin in the portal) ----------
+     A video can be an uploaded file, a direct .mp4/.webm link, YouTube or Vimeo.
+     Without the server (static hosting) the homepage falls back to assets/video/sizzle.mp4. */
   const media = $('.hero-media[data-reel]');
-  if (media && !reduceMotion) {
+  const playBackground = (box, video, strength, withSound) => {
+    if (!box || !video || reduceMotion) return;
+    box.querySelectorAll('.bg-video').forEach((el) => el.remove());
+    let el;
+    if (video.kind === 'file') {
+      el = document.createElement('video');
+      Object.assign(el, { src: video.src, muted: true, loop: true, autoplay: true, playsInline: true, preload: 'auto' });
+      el.setAttribute('muted', ''); el.setAttribute('playsinline', '');
+      el.addEventListener('canplay', () => el.classList.add('ready'), { once: true });
+    } else {
+      el = document.createElement('div');
+      const src = video.kind === 'youtube'
+        ? `https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.id)}?autoplay=1&mute=1&loop=1&playlist=${encodeURIComponent(video.id)}&controls=0&playsinline=1&rel=0&modestbranding=1&disablekb=1&iv_load_policy=3`
+        : `https://player.vimeo.com/video/${encodeURIComponent(video.id)}?background=1&autoplay=1&loop=1&muted=1&dnt=1`;
+      el.innerHTML = `<iframe src="${src}" title="Background video" allow="autoplay; encrypted-media; picture-in-picture" tabindex="-1"></iframe>`;
+      el.querySelector('iframe').addEventListener('load', () => setTimeout(() => el.classList.add('ready'), 900), { once: true });
+    }
+    el.classList.add('bg-video', video.kind === 'file' ? 'bg-file' : 'bg-embed');
+    el.setAttribute('aria-hidden', 'true');
+    el.style.setProperty('--bg-strength', String(strength / 100));
+    box.prepend(el);
+    if (el.play) el.play().catch(() => {});
+    const t = withSound && video.kind === 'file' && $('#soundToggle');
+    if (t) {
+      t.hidden = false;
+      t.onclick = () => { el.muted = !el.muted; t.setAttribute('aria-pressed', String(!el.muted)); t.querySelector('span').textContent = el.muted ? 'Sound off' : 'Sound on'; t.querySelector('use').setAttribute('href', el.muted ? '#i-mute' : '#i-sound'); };
+    }
+  };
+  const bundledReel = () => {
+    if (!media) return;
     const src = ROOT + media.dataset.reel;
     fetch(src, { method: 'HEAD' }).then((r) => {
-      if (!r.ok || !(r.headers.get('content-type') || '').startsWith('video')) return;
-      const v = document.createElement('video');
-      Object.assign(v, { src, muted: true, loop: true, autoplay: true, playsInline: true, poster: ROOT + 'images/yolanda.jpg' });
-      v.setAttribute('aria-hidden', 'true');
-      v.addEventListener('canplay', () => v.classList.add('ready'), { once: true });
-      media.prepend(v); v.play().catch(() => {});
-      const t = $('#soundToggle');
-      if (t) {
-        t.hidden = false;
-        t.addEventListener('click', () => { v.muted = !v.muted; t.setAttribute('aria-pressed', String(!v.muted)); t.querySelector('span').textContent = v.muted ? 'Sound off' : 'Sound on'; t.querySelector('use').setAttribute('href', v.muted ? '#i-mute' : '#i-sound'); });
-      }
+      if (r.ok && (r.headers.get('content-type') || '').startsWith('video')) playBackground(media, { kind: 'file', src }, 42, true);
     }).catch(() => {});
-  }
+  };
+  fetch('/api/settings', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : Promise.reject())).then((cfg) => {
+    if (media) cfg.hero_video ? playBackground(media, cfg.hero_video, cfg.video_strength, true) : bundledReel();
+    if (cfg.page_video) $$('.phero').forEach((hero) => {
+      let box = hero.querySelector('.phero-media');
+      if (!box) { box = document.createElement('div'); box.className = 'phero-media'; box.setAttribute('aria-hidden', 'true'); hero.prepend(box); }
+      playBackground(box, cfg.page_video, cfg.video_strength, false);
+    });
+    const a = cfg.announce;
+    const key = a && 'yoAnnounce:' + a.text;
+    if (a && !store.get(key, sessionStorage)) {
+      const bar = document.createElement('div');
+      bar.className = 'announce';
+      bar.innerHTML = `<p>${escHTML(a.text)}${a.link ? ` <a href="${escHTML(a.link)}">Learn more</a>` : ''}</p><button type="button" aria-label="Close announcement">×</button>`;
+      bar.querySelector('button').addEventListener('click', () => { store.set(key, '1', sessionStorage); bar.remove(); });
+      const hdrEl = $('#hdr'); hdrEl ? hdrEl.prepend(bar) : document.body.prepend(bar);
+    }
+  }).catch(bundledReel);
 
   /* ---------- Toast ---------- */
   let toastEl;

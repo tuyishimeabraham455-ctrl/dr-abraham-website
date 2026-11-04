@@ -10,6 +10,8 @@ const router = express.Router();
 const db = require('../database/db');
 const m = require('../lib/members');
 const { agentAnalytics, agentTranscripts } = require('./agent');
+const { saveUpload, removeUpload } = require('../lib/uploads');
+const settings = require('../lib/settings');
 
 const STAFF = ['admin', 'team'];
 const isStaff = (u) => STAFF.includes(u.role);
@@ -39,11 +41,28 @@ router.post('/portal/password', anyone, (req, res) => {
   res.json({ ok: true, message: 'Password updated. Other devices were signed out.' });
 });
 
+// Profile picture: the browser sends the image itself (already resized) as the request body
+router.post('/portal/me/avatar', anyone, async (req, res) => {
+  try {
+    const { url } = await saveUpload(req, 'avatars');
+    const old = db.prepare(`SELECT avatar FROM members WHERE id = ?`).get(req.member.id).avatar;
+    db.prepare(`UPDATE members SET avatar = ? WHERE id = ?`).run(url, req.member.id);
+    removeUpload(old);
+    res.json({ ok: true, avatar: url, message: 'Profile picture updated.' });
+  } catch (err) { res.status(err.status || 500).json({ ok: false, message: err.message || 'Could not save the picture.' }); }
+});
+router.delete('/portal/me/avatar', anyone, (req, res) => {
+  const old = db.prepare(`SELECT avatar FROM members WHERE id = ?`).get(req.member.id).avatar;
+  db.prepare(`UPDATE members SET avatar = '' WHERE id = ?`).run(req.member.id);
+  removeUpload(old);
+  res.json({ ok: true, message: 'Profile picture removed.' });
+});
+
 // People you can message: staff see everyone; members see the team
 router.get('/portal/people', anyone, (req, res) => {
   const rows = isStaff(req.member)
-    ? db.prepare(`SELECT id, name, COALESCE(role,'member') role FROM members WHERE status = 'active' AND id != ? ORDER BY role, name`).all(req.member.id)
-    : db.prepare(`SELECT id, name, role FROM members WHERE status = 'active' AND role IN ('admin','team') ORDER BY name`).all();
+    ? db.prepare(`SELECT id, name, COALESCE(role,'member') role, avatar FROM members WHERE status = 'active' AND id != ? ORDER BY role, name`).all(req.member.id)
+    : db.prepare(`SELECT id, name, role, avatar FROM members WHERE status = 'active' AND role IN ('admin','team') ORDER BY name`).all();
   res.json({ ok: true, data: rows });
 });
 
@@ -52,7 +71,7 @@ router.get('/portal/messages', anyone, (req, res) => {
   const sent = req.query.box === 'sent';
   const rows = db.prepare(`
     SELECT msg.id, msg.thread_id, msg.subject, substr(msg.body, 1, 140) preview, msg.read_at, msg.created_at,
-           f.name from_name, t.name to_name, msg.from_id, msg.to_id
+           f.name from_name, f.avatar from_avatar, t.name to_name, msg.from_id, msg.to_id
     FROM messages msg JOIN members f ON f.id = msg.from_id JOIN members t ON t.id = msg.to_id
     WHERE ${sent ? 'msg.from_id' : 'msg.to_id'} = ? ORDER BY msg.id DESC LIMIT 100`).all(req.member.id);
   res.json({ ok: true, data: rows });
@@ -63,7 +82,7 @@ router.get('/portal/messages/:id', anyone, (req, res) => {
   if (!msg || (msg.from_id !== req.member.id && msg.to_id !== req.member.id)) return bad(res, 'Message not found.', 404);
   const thread = msg.thread_id || msg.id;
   const rows = db.prepare(`
-    SELECT msg.id, msg.subject, msg.body, msg.created_at, msg.read_at, msg.from_id, msg.to_id, f.name from_name, t.name to_name
+    SELECT msg.id, msg.subject, msg.body, msg.created_at, msg.read_at, msg.from_id, msg.to_id, f.name from_name, f.avatar from_avatar, t.name to_name
     FROM messages msg JOIN members f ON f.id = msg.from_id JOIN members t ON t.id = msg.to_id
     WHERE (msg.id = ? OR msg.thread_id = ?) AND (msg.from_id = ? OR msg.to_id = ?) ORDER BY msg.id`).all(thread, thread, req.member.id, req.member.id);
   db.prepare(`UPDATE messages SET read_at = datetime('now') WHERE (id = ? OR thread_id = ?) AND to_id = ? AND read_at IS NULL`).run(thread, thread, req.member.id);
@@ -98,8 +117,8 @@ router.post('/portal/broadcast', admin, (req, res) => {
 
 // ---------------- Community ----------------
 router.get('/portal/community', anyone, (req, res) => {
-  const posts = db.prepare(`SELECT p.id, p.body, p.pinned, p.created_at, p.member_id, mm.name author, COALESCE(mm.role,'member') author_role FROM community_posts p JOIN members mm ON mm.id = p.member_id ORDER BY p.pinned DESC, p.id DESC LIMIT 50`).all();
-  const comments = posts.length ? db.prepare(`SELECT c.id, c.post_id, c.body, c.created_at, c.member_id, mm.name author FROM community_comments c JOIN members mm ON mm.id = c.member_id WHERE c.post_id IN (${posts.map(() => '?').join(',')}) ORDER BY c.id`).all(...posts.map((p) => p.id)) : [];
+  const posts = db.prepare(`SELECT p.id, p.body, p.pinned, p.created_at, p.member_id, mm.name author, mm.avatar author_avatar, COALESCE(mm.role,'member') author_role FROM community_posts p JOIN members mm ON mm.id = p.member_id ORDER BY p.pinned DESC, p.id DESC LIMIT 50`).all();
+  const comments = posts.length ? db.prepare(`SELECT c.id, c.post_id, c.body, c.created_at, c.member_id, mm.name author, mm.avatar author_avatar FROM community_comments c JOIN members mm ON mm.id = c.member_id WHERE c.post_id IN (${posts.map(() => '?').join(',')}) ORDER BY c.id`).all(...posts.map((p) => p.id)) : [];
   res.json({ ok: true, data: posts.map((p) => ({ ...p, mine: p.member_id === req.member.id, comments: comments.filter((c) => c.post_id === p.id) })) });
 });
 router.post('/portal/community', anyone, (req, res) => {
@@ -283,7 +302,7 @@ router.get('/portal/agent', staff, (req, res) => res.json({ ok: true, analytics:
 
 // ---------------- Admin: users ----------------
 router.get('/portal/users', admin, (req, res) => {
-  res.json({ ok: true, data: db.prepare(`SELECT id, name, email, COALESCE(role,'member') role, status, programs, created_at FROM members ORDER BY created_at DESC`).all() });
+  res.json({ ok: true, data: db.prepare(`SELECT id, name, email, COALESCE(role,'member') role, status, programs, avatar, created_at FROM members ORDER BY created_at DESC`).all() });
 });
 router.post('/portal/users', admin, (req, res) => {
   const name = clean(req.body?.name, 120), email = clean(req.body?.email, 160).toLowerCase();
@@ -304,9 +323,18 @@ router.patch('/portal/users/:id', admin, (req, res) => {
   if (!user) return bad(res, 'User not found.', 404);
   const role = m.ROLES.includes(req.body?.role) ? req.body.role : user.role;
   const status = ['active', 'paused'].includes(req.body?.status) ? req.body.status : user.status;
+  const name = req.body?.name !== undefined ? clean(req.body.name, 120) : user.name;
+  const email = req.body?.email !== undefined ? clean(req.body.email, 160).toLowerCase() : user.email;
+  if (!name) return bad(res, 'Name can\'t be empty.');
+  if (!isEmail(email)) return bad(res, 'Use a valid email address.');
   const losingAdmin = user.role === 'admin' && (role !== 'admin' || status !== 'active');
   if (losingAdmin && adminCount() <= 1) return bad(res, 'Keep at least one active admin.');
-  db.prepare(`UPDATE members SET role = ?, status = ?, programs = ? WHERE id = ?`).run(role, status, req.body?.programs !== undefined ? clean(req.body.programs, 300) : user.programs, user.id);
+  try {
+    db.prepare(`UPDATE members SET name = ?, email = ?, role = ?, status = ?, programs = ? WHERE id = ?`).run(name, email, role, status, req.body?.programs !== undefined ? clean(req.body.programs, 300) : user.programs, user.id);
+  } catch (err) {
+    if (/UNIQUE/.test(err.message)) return bad(res, 'Another account already uses that email.', 409);
+    throw err;
+  }
   if (status !== 'active') db.prepare(`DELETE FROM member_sessions WHERE member_id = ?`).run(user.id);
   res.json({ ok: true });
 });
@@ -317,6 +345,82 @@ router.post('/portal/users/:id/reset', admin, (req, res) => {
   db.prepare(`UPDATE members SET password = ? WHERE id = ?`).run(m.hashPassword(password), user.id);
   db.prepare(`DELETE FROM member_sessions WHERE member_id = ?`).run(user.id);
   res.json({ ok: true, temp_password: password });
+});
+
+// Admin: remove someone's profile picture, or delete an account
+router.delete('/portal/users/:id/avatar', admin, (req, res) => {
+  const user = db.prepare(`SELECT id, avatar FROM members WHERE id = ?`).get(id(req.params.id));
+  if (!user) return bad(res, 'User not found.', 404);
+  db.prepare(`UPDATE members SET avatar = '' WHERE id = ?`).run(user.id);
+  removeUpload(user.avatar);
+  res.json({ ok: true, message: 'Picture removed.' });
+});
+router.delete('/portal/users/:id', admin, (req, res) => {
+  const user = db.prepare(`SELECT * FROM members WHERE id = ?`).get(id(req.params.id));
+  if (!user) return bad(res, 'User not found.', 404);
+  if (user.id === req.member.id) return bad(res, 'You can\'t delete your own account while signed in.');
+  if (user.role === 'admin' && adminCount() <= 1) return bad(res, 'Keep at least one active admin.');
+  db.transaction(() => {
+    db.prepare(`DELETE FROM member_sessions WHERE member_id = ?`).run(user.id);
+    db.prepare(`DELETE FROM messages WHERE from_id = ? OR to_id = ?`).run(user.id, user.id);
+    db.prepare(`DELETE FROM members WHERE id = ?`).run(user.id);
+  })();
+  removeUpload(user.avatar);
+  res.json({ ok: true, message: `${user.name}'s account was deleted.` });
+});
+
+// ---------------- Admin: site settings ----------------
+// Public: what the website needs (background videos, announcement bar)
+router.get('/settings', (req, res) => { res.set('Cache-Control', 'no-store'); res.json({ ok: true, ...settings.publicView() }); });
+router.get('/portal/settings', admin, (req, res) => res.json({ ok: true, data: settings.all(), view: settings.publicView() }));
+
+const videoField = async (link) => {
+  const v = String(link ?? '').trim();
+  if (!v) return { value: '', type: '' };
+  const known = settings.classifyVideo(v);
+  if (known) return { value: v, type: '' };
+  if (known === undefined && /^https?:\/\//i.test(v)) {
+    const probed = await settings.probeVideo(v);
+    if (probed) return { value: v, type: 'file' };
+  }
+  throw { status: 400, message: 'That link isn\'t a video we can play. Use a YouTube or Vimeo link, a direct link to an .mp4 or .webm file, or upload the video.' };
+};
+
+router.put('/portal/settings', admin, async (req, res) => {
+  const b = req.body || {};
+  const next = {};
+  try {
+    for (const slot of ['hero_video', 'page_video']) {
+      if (b[slot] === undefined) continue;
+      const before = settings.all()[slot];
+      const { value, type } = await videoField(b[slot]);
+      next[slot] = value; next[`${slot}_type`] = type;
+      if (before !== value) removeUpload(before);
+    }
+  } catch (err) { return bad(res, err.message, err.status || 400); }
+  if (b.video_strength !== undefined) next.video_strength = String(Math.min(90, Math.max(10, Number(b.video_strength) || 42)));
+  if (b.announce_on !== undefined) next.announce_on = b.announce_on === true || b.announce_on === '1' || b.announce_on === 'on' ? '1' : '0';
+  if (b.announce_text !== undefined) next.announce_text = clean(b.announce_text, 160);
+  if (b.announce_link !== undefined) {
+    const l = clean(b.announce_link, 400);
+    if (l && !/^(https?:\/\/|\/)[^\s<>"']+$/.test(l)) return bad(res, 'The announcement link should start with https:// or /');
+    next.announce_link = l;
+  }
+  settings.save(next);
+  res.json({ ok: true, message: 'Saved. The website shows the change right away.', data: settings.all(), view: settings.publicView() });
+});
+
+// Upload a background video file: body = the video, ?slot=hero_video|page_video
+router.post('/portal/settings/video', admin, async (req, res) => {
+  const slot = ['hero_video', 'page_video'].includes(req.query.slot) ? req.query.slot : null;
+  if (!slot) return bad(res, 'Choose where the video goes.');
+  try {
+    const { url } = await saveUpload(req, 'videos');
+    const before = settings.all()[slot];
+    settings.save({ [slot]: url, [`${slot}_type`]: '' });
+    if (before !== url) removeUpload(before);
+    res.json({ ok: true, url, message: 'Video uploaded. It now plays on the website.', view: settings.publicView() });
+  } catch (err) { res.status(err.status || 500).json({ ok: false, message: err.message || 'Upload failed.' }); }
 });
 
 module.exports = router;

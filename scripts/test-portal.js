@@ -159,6 +159,47 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     check('bot honeypot rejected', (await call('POST', '/members/register', null, { name: 'Bot', email: 'bot@example.com', password: 'long-enough-pw', website: 'spam.example' })).status === 400);
     check('new member can sign in with their password', (await login('self@example.com', 'long-enough-pw')).ok);
     check('admins told about the new member', (await call('GET', '/portal/messages', A)).body.data.some((x) => x.subject === 'New member: Self Starter'));
+
+    // Profile pictures
+    const upload = async (p, token, bytes, type) => { const r = await fetch(base + p, { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': type }, body: bytes }); return { status: r.status, body: await r.json() }; };
+    const PNG = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(64)]);
+    const av = await upload('/portal/me/avatar', M1, PNG, 'image/png');
+    check('member uploads a profile picture', av.status === 200 && /^\/uploads\/avatars\/[a-f0-9]{24}\.png$/.test(av.body.avatar));
+    check('picture file saved on disk', fs.existsSync(path.join(tmp, 'uploads', 'avatars', path.basename(av.body.avatar))));
+    check('picture shows on /portal/me', (await call('GET', '/portal/me', M1)).body.member.avatar === av.body.avatar);
+    check('non-image rejected even if labelled image', (await upload('/portal/me/avatar', M1, Buffer.from('<script>alert(1)</script>'), 'image/png')).status === 415);
+    check('picture without sign-in -> 401', (await upload('/portal/me/avatar', '', PNG, 'image/png')).status === 401);
+    const av2 = await upload('/portal/me/avatar', M1, PNG, 'image/png');
+    check('replacing a picture deletes the old file', av2.status === 200 && await new Promise((r) => setTimeout(() => r(!fs.existsSync(path.join(tmp, 'uploads', 'avatars', path.basename(av.body.avatar)))), 200)));
+    check('admin sees pictures in the user list', (await call('GET', '/portal/users', A)).body.data.find((u) => u.id === m1).avatar === av2.body.avatar);
+    check('admin removes someone\'s picture', (await call('DELETE', `/portal/users/${m1}/avatar`, A)).body.ok && !(await call('GET', '/portal/me', M1)).body.member.avatar);
+
+    // Admin controls every account
+    check('admin edits a name and email', (await call('PATCH', `/portal/users/${m1}`, A, { name: 'Member Uno', email: 'uno@example.com' })).body.ok && (await call('GET', '/portal/me', M1)).body.member.email === 'uno@example.com');
+    check('email already used -> 409', (await call('PATCH', `/portal/users/${m1}`, A, { email: 'team@example.com' })).status === 409);
+    check('members cannot edit accounts', (await call('PATCH', `/portal/users/${m1}`, M1, { role: 'admin' })).status === 403);
+    const doomed = (await call('POST', '/portal/users', A, { name: 'Leaving Soon', email: 'leaving@example.com' })).body;
+    const doomedId = (await call('GET', '/portal/users', A)).body.data.find((u) => u.email === 'leaving@example.com').id;
+    check('admin deletes an account', doomed.ok && (await call('DELETE', `/portal/users/${doomedId}`, A)).body.ok && !(await login('leaving@example.com', doomed.temp_password)).ok);
+    check('admin cannot delete their own account', (await call('DELETE', `/portal/users/${adminId}`, A)).status === 400);
+
+    // Site settings: background videos and announcement
+    check('public settings start empty', (await call('GET', '/settings')).body.hero_video === null);
+    check('members cannot change site settings', (await call('PUT', '/portal/settings', M1, { hero_video: 'https://youtu.be/dQw4w9WgXcQ' })).status === 403);
+    const yt = await call('PUT', '/portal/settings', A, { hero_video: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', video_strength: 60 });
+    check('admin sets a YouTube background video', yt.body.ok && yt.body.view.hero_video.kind === 'youtube' && yt.body.view.hero_video.id === 'dQw4w9WgXcQ');
+    check('Vimeo and .mp4 links recognised', (await call('PUT', '/portal/settings', A, { page_video: 'https://vimeo.com/76979871' })).body.view.page_video.kind === 'vimeo'
+      && (await call('PUT', '/portal/settings', A, { page_video: 'https://cdn.example.com/loop.mp4?x=1' })).body.view.page_video.kind === 'file');
+    check('not-a-video link rejected with a helpful message', /YouTube or Vimeo/.test((await call('PUT', '/portal/settings', A, { hero_video: 'just some words' })).body.message));
+    const MP4 = Buffer.concat([Buffer.from([0, 0, 0, 0x18]), Buffer.from('ftypisom'), Buffer.alloc(256)]);
+    const vid = await upload('/portal/settings/video?slot=hero_video', A, MP4, 'video/mp4');
+    check('admin uploads a background video', vid.status === 200 && vid.body.view.hero_video.kind === 'file' && /^\/uploads\/videos\//.test(vid.body.view.hero_video.src));
+    check('members cannot upload videos', (await upload('/portal/settings/video?slot=hero_video', M1, MP4, 'video/mp4')).status === 403);
+    check('a picture is not accepted as a video', (await upload('/portal/settings/video?slot=hero_video', A, PNG, 'video/mp4')).status === 415);
+    await call('PUT', '/portal/settings', A, { announce_on: true, announce_text: 'Live in Oakland, March 12', announce_link: '/events/' });
+    const pub = (await call('GET', '/settings')).body;
+    check('website reads video, strength and announcement', pub.hero_video.kind === 'file' && pub.video_strength === 60 && pub.announce.text === 'Live in Oakland, March 12');
+    check('unsafe announcement link rejected', (await call('PUT', '/portal/settings', A, { announce_link: 'javascript:alert(1)' })).status === 400);
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

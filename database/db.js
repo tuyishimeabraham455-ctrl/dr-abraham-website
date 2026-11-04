@@ -349,6 +349,13 @@ db.exec(`
     updated_at   DATETIME DEFAULT (datetime('now'))
   );
   CREATE INDEX IF NOT EXISTS idx_assignments_to ON assignments(assigned_to, status);
+
+  -- Site settings the admin controls from the portal (background videos, announcement bar)
+  CREATE TABLE IF NOT EXISTS site_settings (
+    key         TEXT PRIMARY KEY,
+    value       TEXT DEFAULT '',
+    updated_at  DATETIME DEFAULT (datetime('now'))
+  );
 `);
 
 // Add columns to older tables without losing data
@@ -360,6 +367,7 @@ addColumn('inquiries', 'score', 'INTEGER DEFAULT 0');   // lead score 0-100
 addColumn('inquiries', 'details', "TEXT DEFAULT ''");   // JSON with every booking field
 addColumn('inquiries', 'source', "TEXT DEFAULT ''");    // book-form | homepage | agent | ...
 addColumn('members', 'role', "TEXT DEFAULT 'member'");  // admin | team | member
+addColumn('members', 'avatar', "TEXT DEFAULT ''");      // /uploads/avatars/<file> profile picture
 
 console.log(`[DB] ✅ Database ready at: ${DB_PATH}`);
 

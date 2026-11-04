@@ -1,5 +1,5 @@
-/* Service worker: offline support for the installed app. Version 20261104213630 */
-const CACHE = 'yo-20261104213630';
+/* Service worker: offline support for the installed app. Version 20261104224115 */
+const CACHE = 'yo-20261104224115';
 const PRECACHE = ["","offline/","book/","speaking/","agent-yo/","portal/","assets/css/yo.css","assets/js/yo.js","assets/app/icon-192.png","images/yolanda.jpg"];
 const base = new URL('./', self.location).href;
 self.addEventListener('install', (e) => {
@@ -10,7 +10,7 @@ self.addEventListener('activate', (e) => {
 });
 self.addEventListener('fetch', (e) => {
   const req = e.request, url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== self.location.origin || url.pathname.includes('/api/') || url.pathname.includes('/admin')) return;
+  if (req.method !== 'GET' || url.origin !== self.location.origin || url.pathname.includes('/api/') || url.pathname.includes('/admin') || url.pathname.includes('/uploads/videos/') || req.headers.has('range')) return;
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; })
       .catch(() => caches.match(req).then((hit) => hit || caches.match(base + 'offline/'))));
