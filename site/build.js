@@ -12,6 +12,8 @@ const OUT = path.join(ROOT, 'docs');
 
 const { talks } = require('./content/talks');
 const { episodes } = require('./content/podcast');
+const { programs, resources } = require('./content/learn');
+const { posts } = require('./content/posts');
 
 // Every page: route (folder path), a render function returning HTML, sitemap priority
 const mod = (m, ...args) => () => { delete require.cache[require.resolve(m)]; return require(m)(...args); };
@@ -32,6 +34,13 @@ const PAGES = [
   { route: 'podcast/be-a-guest/', render: () => require('./pages/showpages').guest(), priority: '0.6' },
   { route: 'podcast/the-show/', render: () => require('./pages/showpages').show(), priority: '0.6' },
   { route: 'podcast/sponsor/', render: () => require('./pages/showpages').sponsor(), priority: '0.6' },
+  { route: 'learn/', render: () => require('./pages/learn').hub(), priority: '0.8' },
+  ...programs.map((p) => ({ route: `learn/${p.slug}/`, render: () => require('./pages/learn').program(p.slug), priority: '0.7' })),
+  ...resources.map((x) => ({ route: `learn/${x.slug}/`, render: () => require('./pages/learn').resource(x.slug), priority: '0.6' })),
+  { route: 'learn/community/', render: () => require('./pages/learn').community(), priority: '0.5' },
+  { route: 'blog/', render: () => require('./pages/blog').index(), priority: '0.7' },
+  ...posts.map((p) => ({ route: `blog/${p.slug}/`, render: () => require('./pages/blog').post(p.slug), priority: '0.7' })),
+  { route: 'events/', render: mod('./pages/events'), priority: '0.6' },
 ];
 
 const rmrf = (p) => fs.rmSync(p, { recursive: true, force: true });

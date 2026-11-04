@@ -141,6 +141,17 @@
   const msgFor = (form) => form.querySelector('.form-msg') || (form.nextElementSibling && form.nextElementSibling.classList.contains('form-msg') ? form.nextElementSibling : null);
   const say = (el, text, ok) => { if (!el) return; el.textContent = text; el.classList.toggle('ok', !!ok); el.classList.toggle('err', ok === false); };
 
+  // Free resources: reveal after sign-up and remember it on this device
+  function unlock(slug) {
+    if (!slug) return;
+    const body = $('#resourceBody'); if (!body) return;
+    body.hidden = false; store.set('yoUnlocked:' + slug, '1');
+    const gate = $('.gate-form'); if (gate) gate.classList.add('done');
+    body.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+  const gateBox = $('[data-gate]');
+  if (gateBox && store.get('yoUnlocked:' + gateBox.dataset.gate)) { $('#resourceBody').hidden = false; $('.gate-form').classList.add('done'); }
+
   $$('.js-sub').forEach((form) => form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = msgFor(form), email = form.email.value.trim();
@@ -155,8 +166,8 @@
         resource: "Thank you! Your download is ready below.",
       };
       say(msg, out.ok ? (form.dataset.success || THANKS[form.dataset.source] || "You're on the list. See you Sunday.") : out.message, !!out.ok);
-      if (out.ok) { form.reset(); track('subscribe_' + (form.dataset.source || 'website')); }
-    } catch { say(msg, OFFLINE); }
+      if (out.ok) { form.reset(); track('subscribe_' + (form.dataset.source || 'website')); unlock(form.dataset.unlock); }
+    } catch { say(msg, OFFLINE); unlock(form.dataset.unlock); }
   }));
 
   const quick = $('#quickBook');

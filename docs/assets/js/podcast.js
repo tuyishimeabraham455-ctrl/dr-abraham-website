@@ -30,6 +30,19 @@
     apply();
   }
 
+  // Blog category filter
+  const posts = $('#postGrid');
+  if (posts) {
+    const cards = $$('.post-card', posts), empty = $('#postEmpty');
+    $('#postFilters').addEventListener('click', (e) => {
+      const b = e.target.closest('.chip[data-cat]'); if (!b) return;
+      $$('.chip[data-cat]').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+      let shown = 0;
+      cards.forEach((c) => { const ok = !b.dataset.cat || c.dataset.cat === b.dataset.cat; c.classList.toggle('is-hidden', !ok); if (ok) { shown++; c.classList.add('in'); } });
+      empty.hidden = shown > 0;
+    });
+  }
+
   $$('.js-share-copy').forEach((b) => b.addEventListener('click', async () => {
     const msg = $('.share-msg');
     try { await navigator.clipboard.writeText(b.dataset.url); msg.textContent = 'Link copied.'; }
