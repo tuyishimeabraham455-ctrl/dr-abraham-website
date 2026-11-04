@@ -228,7 +228,7 @@ ${body}
       <input id="agentText" autocomplete="off" placeholder="Type a message…" maxlength="600"/>
       <button aria-label="Send">${icon('send')}</button>
     </form>
-    <p class="agent-fine">I'm an AI assistant for ${esc(site.person.name)}. I share education, not financial, legal or mental health advice. <a href="${href('ai-disclosure/')}">How I work</a></p>
+    <p class="agent-fine">I'm an AI assistant for ${esc(site.person.name)}. I share education, not financial, legal or mental health advice. <a href="${href('ai-disclosure/')}">How I work</a> · <button type="button" class="linkish js-agent-forget">Forget this chat</button></p>
   </section>
 </div>
 

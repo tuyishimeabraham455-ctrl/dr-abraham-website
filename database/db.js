@@ -265,6 +265,33 @@ db.exec(`
   );
 `);
 
+// ============================================================
+//  AGENT YO — conversations, leads it captured, content gaps
+// ============================================================
+db.exec(`
+  CREATE TABLE IF NOT EXISTS agent_sessions (
+    id            TEXT    PRIMARY KEY,          -- random id held by the visitor's browser
+    page          TEXT,                         -- page where the chat started
+    mode          TEXT    DEFAULT '',           -- planner | builder | partner
+    turns         INTEGER DEFAULT 0,
+    first_message TEXT    DEFAULT '',
+    lead_id       INTEGER,                      -- inquiry id if a lead was saved
+    locked        INTEGER DEFAULT 0,            -- 1 after a crisis redirect: no sales
+    messages      TEXT    DEFAULT '[]',         -- full API message history (append-only)
+    ip_hash       TEXT,
+    created_at    DATETIME DEFAULT (datetime('now')),
+    updated_at    DATETIME DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS agent_gaps (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id  TEXT,
+    question    TEXT    NOT NULL,
+    topic       TEXT,
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+`);
+
 // Add columns to older tables without losing data
 const addColumn = (table, column, type) => {
   const cols = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);

@@ -720,3 +720,24 @@ p { margin: 0 0 1rem; }
 }
 
 .shortcut { align-content: start; }
+
+.agent-fine .linkish { color: var(--oxblood); font-size: inherit; }
+.msg p a { word-break: break-word; }
+
+/* ============================================================
+   AGENT YO PAGE (Step 4)
+============================================================ */
+.agent-page-in { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(30px, 5vw, 70px); align-items: start; }
+.agent-modes { display: grid; gap: 16px; }
+.mode-card { padding: 1.8rem; border: 1px solid var(--line); background: #FFFBF5; }
+.mode-card .asset-ic { margin-bottom: 1rem; }
+.mode-card h2 { margin: 0 0 .4rem; }
+.mode-card > p { color: var(--ink-soft); }
+.mode-prompts { display: flex; flex-wrap: wrap; gap: .5rem; }
+.prompt-lite { border: 1px solid var(--line); background: var(--ivory); border-radius: 999px; padding: .55rem 1rem; font-size: .9rem; cursor: pointer; transition: all .3s var(--ease); }
+.prompt-lite:hover { border-color: var(--oxblood); color: var(--oxblood); }
+.handoffs { padding: 1.6rem 1.8rem; background: var(--blush); }
+.handoffs .eyebrow { margin-bottom: .9rem; }
+.agent-dock { position: sticky; top: 110px; }
+.agent-panel.docked { width: 100%; height: min(720px, calc(100svh - 140px)); animation: none; box-shadow: 0 40px 90px -50px rgba(28, 17, 14, .55); }
+@media (max-width: 960px) { .agent-page-in { grid-template-columns: 1fr; } .agent-dock { position: static; order: -1; } .agent-panel.docked { height: 560px; } }

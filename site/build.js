@@ -25,6 +25,7 @@ const PAGES = [
   { route: 'press/', render: mod('./pages/press'), priority: '0.7' },
   { route: 'press/one-sheet/', render: mod('./pages/onesheet'), priority: '0.6' },
   { route: 'contact/', render: mod('./pages/contact'), priority: '0.6' },
+  { route: 'agent-yo/', render: mod('./pages/agentyo'), priority: '0.7' },
 ];
 
 const rmrf = (p) => fs.rmSync(p, { recursive: true, force: true });

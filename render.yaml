@@ -11,6 +11,20 @@ services:
         value: production
       - key: ADMIN_TOKEN
         generateValue: true
+      - key: SITE_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY      # Agent Yo (enter in the Render dashboard)
+        sync: false
+      - key: AGENT_VOICE
+        value: warm and wise
+      - key: RESEND_API_KEY         # optional: send emails
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: ALERT_EMAIL
+        sync: false
+      - key: CRM_WEBHOOK_URL        # optional
+        sync: false
     # The free plan's filesystem is wiped on every deploy/restart, so the SQLite
     # data (subscribers, inquiries) won't persist. To keep it, switch to a paid
     # plan and uncomment the disk + DB_PATH below.

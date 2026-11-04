@@ -312,6 +312,45 @@
     setTimeout(() => { t.innerHTML = html; if (opts) options(opts); log.scrollTop = log.scrollHeight; res(); }, reduceMotion ? 0 : delay);
   });
 
+
+  /* ---------- Agent Yo AI (server) — falls back to the guided flows when offline ---------- */
+  const AI = { offline: false, session: store.get('yoAgentSession', sessionStorage) || '' };
+  // Safe formatting for AI replies: escape, then add links, bold and paragraphs
+  const formatReply = (text) => escHTML(text)
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/(https?:\/\/[^\s<)]+[^\s<).,!?])/g, (u) => {
+      const internal = u.startsWith(location.origin);
+      return `<a href="${u}"${internal ? '' : ' target="_blank" rel="noopener"'}>${internal ? u.replace(location.origin, '') || '/' : u}</a>`;
+    })
+    .split(/\n{2,}/).map((p) => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
+  const saveLog = () => {
+    const items = $$('.msg', log).slice(-40).map((m) => ({ c: m.className, h: m.innerHTML }));
+    store.set('yoAgentLog', JSON.stringify(items), sessionStorage);
+  };
+  async function askAI(text) {
+    if (AI.offline) return false;
+    const t = add('<span class="typing"><i></i><i></i><i></i></span>');
+    try {
+      const res = await fetch('/api/agent/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: AI.session, message: text, page: location.pathname }) });
+      const out = await res.json().catch(() => null);
+      if (!out || out.offline) { AI.offline = true; t.remove(); if (out && out.session_id) { AI.session = out.session_id; store.set('yoAgentSession', AI.session, sessionStorage); } return false; }
+      if (out.session_id) { AI.session = out.session_id; store.set('yoAgentSession', AI.session, sessionStorage); }
+      t.innerHTML = out.ok ? formatReply(out.reply) : `<p>${escHTML(out.message || 'Something went wrong.')}</p>`;
+      if (out.crisis) state.locked = true;
+      log.scrollTop = log.scrollHeight; saveLog();
+      track('agent_ai_reply');
+      return true;
+    } catch {
+      AI.offline = true; t.remove(); return false;
+    }
+  }
+  $$('.js-agent-forget').forEach((b) => b.addEventListener('click', async () => {
+    if (AI.session) { try { await fetch('/api/agent/forget', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: AI.session }) }); } catch { /* offline: nothing stored */ } }
+    AI.session = ''; store.set('yoAgentSession', '', sessionStorage); store.set('yoAgentLog', '[]', sessionStorage);
+    log.innerHTML = ''; state.started = false; state.locked = false; state.mode = null;
+    add('<p>Done. This conversation has been deleted.</p>', 'bot', 'notice'); start();
+  }));
+
   const openAgent = (mode) => {
     panel.hidden = false; bubble.hidden = true; store.set('yoBubble', '1', sessionStorage);
     if (!state.started) start();
@@ -319,12 +358,19 @@
     setTimeout(() => input.focus(), 80);
     track('agent_open');
   };
-  const closeAgent = () => { panel.hidden = true; };
+  const dock = $('[data-agent-dock]');
+  const closeAgent = () => { if (!dock) panel.hidden = true; };
+  // Agent Yo page: dock the chat into the page, always open
+  if (dock) {
+    dock.appendChild(panel); panel.classList.add('docked'); panel.hidden = false;
+    $('.agent-fab').hidden = true; if (bubble) bubble.remove();
+    $$('.js-agent-close', panel).forEach((b) => { b.hidden = true; });
+  }
   $$('.js-agent-open').forEach((b) => b.addEventListener('click', () => (panel.hidden ? openAgent() : closeAgent())));
   $$('.js-agent-close').forEach((b) => b.addEventListener('click', closeAgent));
-  $$('.js-ask').forEach((b) => b.addEventListener('click', () => { openAgent(); setTimeout(() => { add(escHTML(b.textContent), 'me'); chooseMode(b.dataset.mode, true); }, 300); }));
+  $$('.js-ask').forEach((b) => b.addEventListener('click', () => { openAgent(); setTimeout(() => { add(escHTML(b.textContent), 'me'); saveLog(); chooseMode(b.dataset.mode, b.textContent.trim()); }, 300); }));
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) closeAgent(); });
-  if (bubble) {
+  if (bubble && !dock) {
     // Greet after a few seconds, but never on top of the cookie notice
     const greet = () => { if (panel.hidden && (!cookie || cookie.hidden) && !store.get('yoBubble', sessionStorage)) bubble.hidden = false; };
     if (!store.get('yoBubble', sessionStorage)) setTimeout(greet, 4500);
@@ -340,8 +386,15 @@
   ];
   function start() {
     state.started = true;
+    let saved = [];
+    try { saved = JSON.parse(store.get('yoAgentLog', sessionStorage) || '[]'); } catch { saved = []; }
+    if (saved.length && AI.session) {
+      saved.forEach((m) => { const d = document.createElement('div'); d.className = m.c; d.innerHTML = m.h; log.appendChild(d); });
+      log.scrollTop = log.scrollHeight;
+      return;
+    }
     add('<p><b>Hi, I\'m Agent Yo</b>, Yolanda\'s AI assistant.</p><p>I can help you find the right talk, test a business idea, or reach the right person. What brings you here today?</p>');
-    options(MODES.map((m) => ({ ...m, run: () => chooseMode(m.value) })));
+    options(MODES.map((m) => ({ ...m, run: () => chooseMode(m.value, m.label) })));
   }
 
   // ---- Planner mode (event planners) ----
@@ -359,7 +412,12 @@
     { key: 'pay', q: 'Have people already paid you, or asked to, for this solution?', opts: ['Yes', 'They said they would', 'No'] },
   ];
 
-  function chooseMode(mode, fromPrompt) {
+  // With the AI online, a mode button or sample prompt starts an AI conversation.
+  function chooseMode(mode, text) {
+    if (text && !AI.offline) { saveLog(); askAI(text).then((ok) => { if (!ok) guidedMode(mode, true); }); return; }
+    guidedMode(mode, !!text);
+  }
+  function guidedMode(mode, fromPrompt) {
     state.mode = mode; state.step = 0; state.data = {};
     if (mode === 'partner') {
       return botSay('Wonderful. Which of these fits best?', [
@@ -436,9 +494,12 @@
     const text = input.value.trim(); if (!text) return;
     input.value = ''; add(escHTML(text), 'me');
     $$('.opts', log).forEach((o) => o.remove());
-    if (CRISIS.test(text)) return freeText(text);
+    saveLog();
     const flow = state.mode === 'planner' ? PLAN : state.mode === 'builder' ? BUILD : null;
-    if (flow && flow[state.step]) return answer(text);
-    freeText(text);
+    if (flow && flow[state.step] && !CRISIS.test(text)) return answer(text); // inside an offline guided flow
+    askAI(text).then((ok) => { if (!ok) freeText(text); });
   });
+
+  // Agent Yo page: start the docked chat once everything above is defined
+  if (dock) start();
 })();

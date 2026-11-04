@@ -38,6 +38,7 @@ app.use((req, res, next) => {
 // ── REST API ─────────────────────────────────────────────────
 app.use('/api', require('./routes/api'));
 app.use('/api', require('./routes/booking'));
+app.use('/api', require('./routes/agent'));
 
 // ── Admin dashboard ──────────────────────────────────────────
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin', 'index.html')));

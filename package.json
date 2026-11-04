@@ -9,12 +9,14 @@
   "scripts": {
     "build": "node site/build.js",
     "start": "node server.js",
-    "dev": "node site/build.js && node server.js"
+    "dev": "node site/build.js && node server.js",
+    "test": "node scripts/test-agent.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0",
     "better-sqlite3": "^13.0.3",
     "cors": "^2.8.6",
     "express": "^5.3.0"
