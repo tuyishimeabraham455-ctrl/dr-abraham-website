@@ -621,6 +621,71 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
   .group-grid{grid-template-columns:1fr}
   .msgs{grid-template-columns:1fr}.convos{border-right:0;grid-auto-flow:column;grid-auto-columns:minmax(200px,1fr);overflow-x:auto}
 }
+
+/* ===== Added features: pathways, countdown, network, stories, podcast library, login ===== */
+.ribbon{position:relative}
+.rib-social{position:absolute;right:16px;top:50%;translate:0 -50%;display:flex;gap:.35rem}
+.rib-social a{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.75);transition:background .2s,color .2s}
+.rib-social a:hover{background:var(--gold);color:var(--ink)}
+.rib-social .ic{width:15px;height:15px}
+@media (max-width:1000px){.rib-social{display:none}}
+.paths{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.path{padding:1.6rem;display:flex;flex-direction:column;gap:.6rem;transition:transform .25s,box-shadow .25s,border-color .25s}
+.path:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--gold)}
+.path>span{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--mint);color:var(--green)}
+.path h3{font-size:1.15rem}.path p{color:var(--muted)}
+.path .go{margin-top:auto;font-family:var(--head);font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);display:inline-flex;align-items:center;gap:.35rem}
+.featured-ev{display:grid;grid-template-columns:1.2fr 1fr;gap:0;overflow:hidden;margin-bottom:18px}
+.fe-main{padding:2rem;background:var(--ink);color:#fff}
+.fe-main h3{font-size:1.7rem;margin:.6rem 0 .4rem}.fe-main p{color:rgba(255,255,255,.72)}
+.countdown{display:flex;gap:10px;margin:1.4rem 0 .4rem}
+.countdown div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:.7rem .4rem;min-width:70px;text-align:center}
+.countdown b{display:block;font-family:var(--head);font-size:1.9rem;line-height:1;color:var(--gold-2)}
+.countdown small{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.fe-form{padding:2rem}
+.fe-form h4{font-size:1.15rem;margin-bottom:.9rem}
+.net-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.net-tabs button{padding:.55rem 1rem;border-radius:999px;border:1px solid var(--line);background:#fff;font-family:var(--head);font-weight:700;font-size:14px;cursor:pointer}
+.net-tabs button.on{background:var(--ink);color:var(--gold-2);border-color:var(--ink)}
+.net-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.adv{padding:1.4rem;display:grid;grid-template-columns:56px 1fr;gap:1rem;align-items:start}
+.adv .av{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-family:var(--head);font-weight:800;color:#fff;background:linear-gradient(135deg,var(--green),var(--gold))}
+.adv h3{font-size:1.05rem}.adv p{color:var(--muted);margin:.3rem 0 .7rem}
+.adv .row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.adv.hide{display:none}
+.stories{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.story{overflow:hidden}
+.story .vid{height:220px;border-radius:0}
+.story .q{padding:1.3rem 1.4rem 1.5rem}
+.story .q p{font-style:italic;color:var(--ink-2);margin-bottom:.8rem}
+.story .q b{font-family:var(--head)}.story .q small{display:block;color:var(--muted)}
+.sv1{background:linear-gradient(135deg,#3D3328,#8C6420)}.sv2{background:linear-gradient(135deg,#221C15,#B8562F)}.sv3{background:linear-gradient(135deg,#2B251D,#D4A84B)}
+.pod-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin:-24px 0 32px}
+.ep-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:26px 0 14px}
+.ep-search{flex:1;min-width:220px;position:relative}
+.ep-search input{width:100%;border:1px solid var(--line);border-radius:999px;padding:.8rem 1rem .8rem 2.6rem;background:#fff}
+.ep-search .ic{position:absolute;left:.9rem;top:50%;translate:0 -50%;width:18px;height:18px;color:var(--soft)}
+.ep-count{color:var(--muted);margin:0 0 10px}
+.ep-empty{padding:1.4rem;color:var(--muted);text-align:center;grid-column:1/-1}
+#epList .ep{cursor:pointer}
+.guest{margin-top:34px;display:grid;grid-template-columns:1fr 1.3fr;gap:0;overflow:hidden}
+.guest-intro{padding:2rem;background:var(--mint)}
+.guest-intro h3{font-size:1.4rem;margin:.5rem 0}.guest-intro p{color:var(--muted)}
+.guest form{padding:2rem}
+.rib-login{position:absolute;left:16px;top:50%;translate:0 -50%;display:inline-flex;align-items:center;gap:.4rem;background:none;border:0;color:rgba(255,255,255,.85);font-family:var(--head);font-weight:700;font-size:14px;cursor:pointer;padding:.3rem .5rem;border-radius:8px}
+.rib-login:hover{color:var(--gold-2)}
+.rib-login .ic{width:15px;height:15px}
+.login-icon{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;place-items:center;cursor:pointer;color:var(--ink)}
+.login-icon .ic{width:18px;height:18px}
+.login-icon.in{background:var(--ink);color:var(--gold-2);border-color:var(--ink)}
+@media (max-width:1000px){.rib-login{display:none}.login-icon{display:grid}}
+.modal{position:fixed;inset:0;background:rgba(21,18,14,.6);z-index:90;display:none;place-items:center;padding:16px}
+.modal.open{display:grid}
+.modal-box{width:min(420px,100%);padding:2rem;position:relative}
+.modal-box h3{font-size:1.5rem;margin:.4rem 0 .3rem}.modal-box>p{color:var(--muted);margin-bottom:1rem}
+.modal-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
+@media (max-width:900px){.paths{grid-template-columns:repeat(2,1fr)}.featured-ev,.guest{grid-template-columns:1fr}.net-grid,.stories{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.paths,.net-grid,.stories{grid-template-columns:1fr}.countdown div{min-width:0;flex:1}.pod-actions .btn{flex:1;justify-content:center}}
 </style>
 </head>
 <body>
@@ -679,7 +744,7 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
   </defs>
 </svg>
 
-<div class="ribbon"><b>FREE MASTERCLASS</b><span>Credit &amp; Capital: how to fund your small business.</span><a href="#resources">Watch free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+<div class="ribbon"><button class="rib-login js-login"><svg class="ic"><use href="#i-lock"/></svg><span class="js-login-lbl">Client Login</span></button><b>FREE MASTERCLASS</b><span>Credit &amp; Capital: how to fund your small business.</span><a href="#resources">Watch free <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a><div class="rib-social"><a href="#social" aria-label="Instagram"><svg class="ic"><use href="#i-ig"/></svg></a><a href="#social" aria-label="LinkedIn"><svg class="ic"><use href="#i-li"/></svg></a><a href="#social" aria-label="YouTube"><svg class="ic"><use href="#i-yt"/></svg></a><a href="#social" aria-label="Facebook"><svg class="ic"><use href="#i-fb"/></svg></a><a href="#social" aria-label="TikTok"><svg class="ic"><use href="#i-tt"/></svg></a></div></div>
 
 <header>
   <div class="wrap nav">
@@ -702,6 +767,7 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
     </nav>
     <div class="nav-right">
       <a href="#shop" class="cart" aria-label="Cart"><svg class="ic"><use href="#i-bag"/></svg><i id="cartCount">0</i></a>
+      <button class="login-icon js-login" aria-label="Client login" title="Client login"><svg class="ic"><use href="#i-lock"/></svg></button>
       <a href="#booking" class="btn btn-gold btn-sm">Book a Call</a>
     </div>
   </div>
@@ -743,13 +809,30 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
   </div>
 </section>
 
+<!-- START HERE: pathways -->
+<section id="paths" class="white" style="padding:72px 0">
+  <div class="wrap">
+    <div class="sec-head center" style="margin-bottom:36px">
+      <span class="eyebrow">Start Here</span>
+      <h2>How can I <em>help you?</em></h2>
+      <p class="lead">Pick the goal that fits you best and I'll point you to the right next step.</p>
+    </div>
+    <div class="paths">
+      <a href="#programs" class="card path"><span><svg class="ic"><use href="#i-spark"/></svg></span><h3>Start or grow my business</h3><p>Strategy, structure and a plan you can actually follow.</p><b class="go">Explore coaching <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></b></a>
+      <a href="#resources" class="card path"><span><svg class="ic"><use href="#i-card"/></svg></span><h3>Fix my credit &amp; get funded</h3><p>Build credit, get capital-ready and talk to lenders with confidence.</p><b class="go">Free tools <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></b></a>
+      <a href="#booking" class="card path"><span><svg class="ic"><use href="#i-users"/></svg></span><h3>Strengthen my ministry or non-profit</h3><p>Financial health and sustainable growth for mission-driven teams.</p><b class="go">Book a call <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></b></a>
+      <a href="#contact" class="card path"><span><svg class="ic"><use href="#i-mic"/></svg></span><h3>Book Yolanda to speak</h3><p>Keynotes, panels and workshops for your event or organization.</p><b class="go">Send an inquiry <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></b></a>
+    </div>
+  </div>
+</section>
+
 <!-- Feature index -->
 <section class="features white">
   <div class="wrap">
     <div class="sec-head center">
       <span class="eyebrow">One Platform</span>
       <h2>Everything your brand needs, <em>in one home.</em></h2>
-      <p class="lead">Nineteen features built to attract, convert, serve and keep clients for the long run.</p>
+      <p class="lead">Twenty-three features built to attract, convert, serve and keep clients for the long run.</p>
     </div>
     <div class="feat-grid" id="featGrid"></div>
   </div>
@@ -1170,6 +1253,11 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
       <h2>The Business of You <em>Podcast</em></h2><p style="font-family:var(--head);font-weight:700;margin:-.4rem 0 .8rem">with Yolanda Butler</p>
       <p class="lead">Every episode playable on-site with show notes, transcripts and links, plus one-tap subscribe on every platform.</p>
     </div>
+    <div class="pod-actions">
+      <a href="#gallery" class="btn btn-dark btn-sm"><svg class="ic" style="width:16px;height:16px"><use href="#i-video"/></svg>Watch Now</a>
+      <button class="btn btn-gold btn-sm" id="listenNow"><svg class="ic" style="width:16px;height:16px"><use href="#i-mic"/></svg>Listen Now</button>
+      <a href="#guestApply" class="btn btn-ghost btn-sm"><svg class="ic" style="width:16px;height:16px"><use href="#i-hand"/></svg>Be On The Show</a>
+    </div>
     <div class="card player">
       <div class="cover">The Business of You</div>
       <div>
@@ -1179,13 +1267,27 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
         <div class="p-ctrl"><button class="play" id="playBtn" aria-label="Play"><svg class="ic" style="width:20px;height:20px"><use href="#i-play"/></svg></button><span>12:04 / 38:20</span></div>
       </div>
     </div>
-    <div class="grid g2">
-      <div class="card ep"><span class="ep-n">47</span><div><b>Credit 101 for Entrepreneurs</b><small>42 min · Solo</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
-      <div class="card ep"><span class="ep-n">46</span><div><b>Building Social Capital for Business Growth</b><small>35 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
-      <div class="card ep"><span class="ep-n">45</span><div><b>From Preschool Owner to Business Coach</b><small>51 min · My story</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
-      <div class="card ep"><span class="ep-n">44</span><div><b>Money Talk for Ministries &amp; Non-Profits</b><small>28 min · with guest</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>
+    <div class="ep-tools">
+      <label class="ep-search"><svg class="ic"><use href="#i-list"/></svg><input id="epSearch" type="search" placeholder="Search episodes, topics or guests" aria-label="Search episodes"/></label>
+      <div class="net-tabs" id="epTabs" style="margin:0"><button class="on" data-t="all">All</button><button data-t="Credit">Credit</button><button data-t="Funding">Funding</button><button data-t="Business">Business</button><button data-t="Non-Profit">Non-Profit</button><button data-t="Story">Story</button></div>
     </div>
+    <p class="ep-count" id="epCount"></p>
+    <div class="grid g2" id="epList"></div>
     <div class="platforms"><span>Spotify</span><span>Apple Podcasts</span><span>YouTube</span><span>Amazon Music</span><span>Audible</span></div>
+    <div class="card guest" id="guestApply">
+      <div class="guest-intro">
+        <span class="eyebrow">Be On The Show</span>
+        <h3>Have a story that helps business owners grow?</h3>
+        <p>Founders, lenders, ministry leaders and community builders: tell us what you'd share with listeners. We review every application.</p>
+      </div>
+      <form id="guestForm">
+        <div class="frow"><div class="field"><label>Name *</label><input name="name" required/></div><div class="field"><label>Email *</label><input name="email" type="email" required/></div></div>
+        <div class="field"><label>Business / organization</label><input name="organization"/></div>
+        <div class="field"><label>Your topic idea *</label><textarea name="message" rows="3" required placeholder="What would you teach or share in one episode?"></textarea></div>
+        <button class="btn btn-dark" style="width:100%;justify-content:center">Apply to Be a Guest</button>
+        <p class="form-msg" id="guestMsg"></p>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -1212,6 +1314,22 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
   </div>
 </section>
 
+<!-- CLIENT STORIES: video testimonials -->
+<section id="stories" class="white">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Client Stories</span>
+      <h2>Real people. <em>Real results.</em></h2>
+      <p class="lead">Short video stories from entrepreneurs and leaders Yolanda has coached. Sample stories shown until client videos are added.</p>
+    </div>
+    <div class="stories">
+      <div class="card story"><div class="vid sv1 demo"><span class="dur">2:14</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Funded in 90 days</b><small>Small business owner</small></div></div><div class="q"><p>"Yolanda helped me clean up my credit and walk into the bank prepared. We got our first line of credit."</p><b>Danielle R.</b><small>Bakery owner · Sample story</small></div></div>
+      <div class="card story"><div class="vid sv2 demo"><span class="dur">3:05</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>A budget our board trusts</b><small>Ministry leader</small></div></div><div class="q"><p>"For the first time our ministry has a clear budget and a plan for growth. Our board finally feels confident."</p><b>Pastor James T.</b><small>Community church · Sample story</small></div></div>
+      <div class="card story"><div class="vid sv3 demo"><span class="dur">1:48</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>From side hustle to LLC</b><small>First-time founder</small></div></div><div class="q"><p>"I went from an idea on paper to a registered business with real clients. Each one, reach one is real."</p><b>Marcus L.</b><small>Consultant · Sample story</small></div></div>
+    </div>
+  </div>
+</section>
+
 <!-- 10. GALLERY -->
 <section id="gallery">
   <div class="wrap">
@@ -1227,6 +1345,26 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
       <div class="vid v3"><span class="dur">8:25</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Financial Wellness Workshop</b><small>Workshop</small></div></div>
       <div class="vid v4"><span class="dur">5:02</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Client Success Story</b><small>Coaching</small></div></div>
       <div class="vid v5"><span class="dur">24:18</span><span class="pbtn"><svg class="ic"><use href="#i-play"/></svg></span><div><b>Business Owner Spotlight</b><small>Interview</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVISOR NETWORK: directory -->
+<section id="network">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Each One, Reach One Network</span>
+      <h2>Trusted advisors, <em>one connection away.</em></h2>
+      <p class="lead">The lenders, attorneys, CPAs and marketers Yolanda trusts with her own clients. Sample profiles shown until the network directory is filled in.</p>
+    </div>
+    <div class="net-tabs" id="netTabs"><button class="on" data-f="all">All</button><button data-f="Credit">Credit</button><button data-f="Funding">Funding</button><button data-f="Legal">Legal</button><button data-f="Tax">Tax &amp; Accounting</button><button data-f="Marketing">Marketing</button></div>
+    <div class="net-grid" id="netGrid">
+      <div class="card adv" data-cat="Funding"><span class="av">MR</span><div><h3>Marcus Reed</h3><p>SBA &amp; community lending specialist. Helps owners prepare loan packages.</p><div class="row"><span class="tag">Funding</span><a href="#contact" class="btn-line">Connect</a></div></div></div>
+      <div class="card adv" data-cat="Credit"><span class="av">DC</span><div><h3>Denise Carter</h3><p>Business credit builder. Separates personal and business credit the right way.</p><div class="row"><span class="tag gold">Credit</span><a href="#contact" class="btn-line">Connect</a></div></div></div>
+      <div class="card adv" data-cat="Legal"><span class="av">LO</span><div><h3>Lena Ortiz, Esq.</h3><p>Business formation, contracts and non-profit compliance.</p><div class="row"><span class="tag rose">Legal</span><a href="#contact" class="btn-line">Connect</a></div></div></div>
+      <div class="card adv" data-cat="Tax"><span class="av">GK</span><div><h3>Grace Kim, CPA</h3><p>Bookkeeping systems, tax planning and clean books lenders love.</p><div class="row"><span class="tag">Tax &amp; Accounting</span><a href="#contact" class="btn-line">Connect</a></div></div></div>
+      <div class="card adv" data-cat="Marketing"><span class="av">AW</span><div><h3>Andre Wells</h3><p>Brand and local marketing for service businesses and ministries.</p><div class="row"><span class="tag gold">Marketing</span><a href="#contact" class="btn-line">Connect</a></div></div></div>
+      <div class="card adv" data-cat="Funding"><span class="av">TR</span><div><h3>Tomas Rivera</h3><p>Grants and alternative capital for mission-driven organizations.</p><div class="row"><span class="tag">Funding</span><a href="#contact" class="btn-line">Connect</a></div></div></div>
     </div>
   </div>
 </section>
@@ -1262,6 +1400,24 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
       <span class="eyebrow">Events</span>
       <h2>Upcoming <em>experiences.</em></h2>
       <p class="lead">In-person and virtual events with ticketing, reminders and check-in built in.</p>
+    </div>
+    <div class="card featured-ev">
+      <div class="fe-main">
+        <span class="tag gold">Featured · In person · Dec 6</span>
+        <h3>The Business of You Summit</h3>
+        <p>A full day of strategy, funding and connection with Yolanda and guest experts. Oakland, CA · VIP seating available.</p>
+        <div class="countdown" id="countdown" data-to="2026-12-06T17:00:00Z">
+          <div><b id="cd-d">--</b><small>Days</small></div><div><b id="cd-h">--</b><small>Hours</small></div><div><b id="cd-m">--</b><small>Mins</small></div><div><b id="cd-s">--</b><small>Secs</small></div>
+        </div>
+      </div>
+      <form class="fe-form" id="eventForm">
+        <h4>Reserve your seat</h4>
+        <div class="field"><label>Full name *</label><input name="name" required/></div>
+        <div class="field"><label>Email *</label><input name="email" type="email" required/></div>
+        <div class="field"><label>Ticket</label><select name="goal"><option>General admission</option><option>VIP (front rows + lunch)</option><option>Group of 3+</option></select></div>
+        <button class="btn btn-gold" style="width:100%;justify-content:center">Register Now</button>
+        <p class="form-msg" id="eventMsg"></p>
+      </form>
     </div>
     <div class="grid" style="gap:14px">
       <div class="card event"><div class="e-date"><b>06</b><small>Dec</small></div><div><span class="tag gold">In person · VIP available</span><h3>The Business of You Summit</h3><div class="e-meta"><span><svg class="ic"><use href="#i-pin"/></svg>Oakland, CA</span><span><svg class="ic"><use href="#i-clock"/></svg>9:00 AM - 5:00 PM</span><span><svg class="ic"><use href="#i-ticket"/></svg>48 seats left</span></div></div><a href="#payment" class="btn btn-dark btn-sm">Get Tickets</a></div>
@@ -1387,6 +1543,20 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
   </div>
 </section>
 
+<div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <form class="card modal-box" id="loginForm">
+    <button type="button" class="modal-x" id="loginClose" aria-label="Close"><svg class="ic" style="width:16px;height:16px"><use href="#i-x"/></svg></button>
+    <span class="eyebrow">Client Portal</span>
+    <h3 id="loginTitle">Welcome back.</h3>
+    <p>Log in to see your courses, sessions and goals.</p>
+    <div class="field"><label>Email</label><input name="email" type="email" required autocomplete="email"/></div>
+    <div class="field"><label>Password</label><input name="password" type="password" required autocomplete="current-password"/></div>
+    <button class="btn btn-dark" style="width:100%;justify-content:center">Log In</button>
+    <p class="form-msg" id="loginMsg"></p>
+    <p style="color:var(--muted);font-size:14px">New client? Your login is emailed when you enroll. <a href="#programs" style="color:var(--green);font-weight:700">See programs</a></p>
+  </form>
+</div>
+
 <footer>
   <div class="wrap">
     <div class="foot-grid">
@@ -1404,6 +1574,7 @@ footer .logo-txt small{color:rgba(255,255,255,.55)}
 <script>
 const FEATURES = [
   ['home','Home','A bold first impression','#home'],
+  ['target','Start Here','Find your best path','#paths'],
   ['user','About','Yolanda\'s story','#about'],
   ['target','Coaching & Programs','Courses, groups & 1:1','#programs'],
   ['video','Webinars','Free & premium live trainings','#webinars'],
@@ -1414,7 +1585,9 @@ const FEATURES = [
   ['grid','Dashboard','Client portal & admin','#dashboard'],
   ['mic','Podcast','On-site player & episodes','#podcast'],
   ['heart','Philanthropy','Causes & donations','#philanthropy'],
+  ['star','Client Stories','Video testimonials','#stories'],
   ['film','Gallery','Speaking & coaching videos','#gallery'],
+  ['users','Advisor Network','Trusted experts directory','#network'],
   ['gift','Free Tools','Lead magnets & quizzes','#resources'],
   ['ticket','Events','Ticketed experiences','#events'],
   ['live','Live Sessions','Stream with live chat','#live'],
@@ -1422,6 +1595,7 @@ const FEATURES = [
   ['bag','Shop','Books, merch & digital','#shop'],
   ['share',"Let's Get Social",'All handles in one place','#social'],
   ['mail','Contact Us','Inquiries to her inbox','#contact'],
+  ['lock','Client Login','Private client portal','#dashboard'],
 ];
 const ico = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
 document.getElementById('featGrid').innerHTML = FEATURES.map(([i,t,d,h]) => `<a class="feat" href="${h}"><span>${ico(i)}</span><b>${t}</b><small>${d}</small></a>`).join('');
@@ -1734,6 +1908,151 @@ document.getElementById('contactForm').addEventListener('submit', async e => {
     if (out.ok) e.target.reset();
   } catch { msg.textContent = 'Demo preview: message could not be sent right now.'; }
 });
+
+// ===== Added features: countdown, registration, network, podcast library, guest form, client login =====
+const postJSON = async (url, data, headers = {}) => {
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(data) });
+  return res.json();
+};
+const OFFLINE = 'This form needs the live server. It will work once the site runs on Render.';
+
+// Countdown to the featured event
+(() => {
+  const el = document.getElementById('countdown'); if (!el) return;
+  const to = new Date(el.dataset.to).getTime(), pad = n => String(n).padStart(2, '0');
+  const tick = () => {
+    let d = Math.max(0, to - Date.now()) / 1000;
+    const days = Math.floor(d / 86400); d -= days * 86400;
+    const h = Math.floor(d / 3600); d -= h * 3600;
+    const m = Math.floor(d / 60), sec = Math.floor(d - m * 60);
+    document.getElementById('cd-d').textContent = days;
+    document.getElementById('cd-h').textContent = pad(h);
+    document.getElementById('cd-m').textContent = pad(m);
+    document.getElementById('cd-s').textContent = pad(sec);
+  };
+  tick(); setInterval(tick, 1000);
+})();
+
+// Event registration -> /api/leads
+document.getElementById('eventForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('eventMsg'), data = Object.fromEntries(new FormData(e.target));
+  msg.textContent = 'Reserving...';
+  try {
+    const out = await postJSON('/api/leads', { ...data, program: 'summit-2026' });
+    msg.textContent = out.ok ? "You're registered! Check your email for details." : out.message;
+    if (out.ok) e.target.reset();
+  } catch { msg.textContent = OFFLINE; }
+});
+
+// Advisor network filter
+document.getElementById('netTabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#netTabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('#netGrid .adv').forEach(c => c.classList.toggle('hide', b.dataset.f !== 'all' && c.dataset.cat !== b.dataset.f));
+});
+
+// Searchable podcast library
+const EPISODES = [
+  [48, 'Know Your Worth: Pricing Your Business for Profit', 38, 'Solo', 'Business'],
+  [47, 'Credit 101 for Entrepreneurs', 42, 'Solo', 'Credit'],
+  [46, 'Building Social Capital for Business Growth', 35, 'with guest', 'Business'],
+  [45, 'From Preschool Owner to Business Coach', 51, 'My story', 'Story'],
+  [44, 'Money Talk for Ministries & Non-Profits', 28, 'with guest', 'Non-Profit'],
+  [43, 'What Lenders Look for Before They Say Yes', 40, 'with guest', 'Funding'],
+  [42, 'Separating Personal and Business Credit', 33, 'Solo', 'Credit'],
+  [41, 'Grants vs. Loans: Choosing the Right Capital', 37, 'with guest', 'Funding'],
+  [40, 'Budgeting for Board-Ready Non-Profits', 31, 'with guest', 'Non-Profit'],
+  [39, 'Each One, Reach One: Why Community Is Capital', 29, 'My story', 'Story'],
+  [38, 'Hiring Your First Employee Without Going Broke', 44, 'Solo', 'Business'],
+  [37, 'Repairing Credit After a Hard Season', 36, 'with guest', 'Credit'],
+];
+(() => {
+  const list = document.getElementById('epList'), q = document.getElementById('epSearch'), count = document.getElementById('epCount');
+  let topic = 'all';
+  const render = () => {
+    const term = q.value.trim().toLowerCase();
+    const rows = EPISODES.filter(([n, t, m, w, c]) => (topic === 'all' || c === topic) && (!term || (t + ' ' + w + ' ' + c + ' ' + n).toLowerCase().includes(term)));
+    count.textContent = rows.length + ' of ' + EPISODES.length + ' episodes';
+    list.innerHTML = rows.length ? rows.map(([n, t, m, w, c]) =>
+      `<div class="card ep"><span class="ep-n">${n}</span><div><b>${escH(t)}</b><small>${m} min · ${w} · ${c}</small></div><span class="mini"><svg class="ic" style="width:14px;height:14px"><use href="#i-play"/></svg></span></div>`).join('')
+      : '<div class="card ep-empty">No episodes match that search. Try another word or topic.</div>';
+  };
+  q.addEventListener('input', render);
+  document.getElementById('epTabs').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    topic = b.dataset.t;
+    document.querySelectorAll('#epTabs button').forEach(x => x.classList.toggle('on', x === b));
+    render();
+  });
+  list.addEventListener('click', e => { if (e.target.closest('.ep')) document.getElementById('playBtn').click(); });
+  render();
+})();
+document.getElementById('listenNow').addEventListener('click', () => {
+  document.querySelector('#podcast .player').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('playBtn').click();
+});
+
+// Podcast guest application -> /api/inquiries
+document.getElementById('guestForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('guestMsg'), data = Object.fromEntries(new FormData(e.target));
+  msg.textContent = 'Sending...';
+  try {
+    const out = await postJSON('/api/inquiries', { ...data, inquiry_type: 'Podcast guest' });
+    msg.textContent = out.ok ? 'Application received! We review every pitch and reply within 2 weeks.' : out.message;
+    if (out.ok) e.target.reset();
+  } catch { msg.textContent = OFFLINE; }
+});
+
+// Client login -> /api/members/login, then open the client portal
+(() => {
+  const modal = document.getElementById('loginModal'), msg = document.getElementById('loginMsg');
+  const setLbl = t => { document.querySelectorAll('.js-login-lbl').forEach(l => l.textContent = t); document.querySelectorAll('.login-icon').forEach(b => { b.classList.toggle('in', t !== 'Client Login'); b.title = t; }); };
+  const store = {
+    get: () => { try { return localStorage.getItem('ybToken'); } catch { return null; } },
+    set: v => { try { v ? localStorage.setItem('ybToken', v) : localStorage.removeItem('ybToken'); } catch {} }
+  };
+  let member = null;
+  const openPortal = m => {
+    member = m; setLbl('Hi, ' + m.name.split(' ')[0]);
+    document.querySelector('#dashTabs [data-p="client"]').click();
+    document.querySelector('#p-client .dash-top b').textContent = m.name + "'s portal";
+  };
+  const onLoginClick = async () => {
+    if (member) {
+      if (confirm('Log out of your client portal?')) {
+        try { await postJSON('/api/members/logout', {}, { Authorization: 'Bearer ' + store.get() }); } catch {}
+        store.set(null); member = null; setLbl('Client Login'); toast('You are logged out.');
+      }
+      return;
+    }
+    msg.textContent = ''; modal.classList.add('open'); modal.querySelector('input').focus();
+  };
+  document.querySelectorAll('.js-login').forEach(b => b.addEventListener('click', onLoginClick));
+  // The 'Client Login' tile in the features grid and menu opens the login too
+  document.querySelectorAll('a[href="#dashboard"]').forEach(a => { if (a.textContent.includes('Client Login')) a.addEventListener('click', e => { e.preventDefault(); onLoginClick(); }); });
+  const close = () => modal.classList.remove('open');
+  document.getElementById('loginClose').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  document.getElementById('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    msg.textContent = 'Logging in...';
+    try {
+      const out = await postJSON('/api/members/login', Object.fromEntries(new FormData(e.target)));
+      if (!out.ok) { msg.textContent = out.message; return; }
+      store.set(out.token); e.target.reset(); close();
+      openPortal(out.member);
+      document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+      toast('Welcome back, ' + out.member.name.split(' ')[0] + '!');
+    } catch { msg.textContent = 'Client login needs the live server. It will work once the site runs on Render.'; }
+  });
+  // Restore an existing session
+  const t = store.get();
+  if (t) fetch('/api/members/me', { headers: { Authorization: 'Bearer ' + t } })
+    .then(r => r.json()).then(out => out.ok ? openPortal(out.member) : store.set(null)).catch(() => {});
+})();
 </script>
 </body>
 </html>

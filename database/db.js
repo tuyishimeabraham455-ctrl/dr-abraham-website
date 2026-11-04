@@ -216,6 +216,28 @@ if (seedTestimonials.count === 0) {
   console.log('[DB] ✅ Seeded 6 testimonials');
 }
 
+// ============================================================
+//  MEMBERS — student portal accounts and login sessions
+// ============================================================
+db.exec(`
+  CREATE TABLE IF NOT EXISTS members (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT    NOT NULL,
+    email       TEXT    NOT NULL UNIQUE,
+    password    TEXT    NOT NULL,              -- scrypt: salt:hash (hex)
+    programs    TEXT    DEFAULT '',            -- comma-separated: "s3-foundation, s3-academy"
+    status      TEXT    DEFAULT 'active',      -- active | paused
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS member_sessions (
+    token_hash  TEXT    PRIMARY KEY,           -- sha256 of the session token
+    member_id   INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    expires_at  DATETIME NOT NULL,
+    created_at  DATETIME DEFAULT (datetime('now'))
+  );
+`);
+
 console.log(`[DB] ✅ Database ready at: ${DB_PATH}`);
 
 module.exports = db;
