@@ -1050,10 +1050,62 @@ a.ep-play { text-decoration: none; }
    Headings, the logo and large decorative numbers keep their
    sizes so pages still have a clear hierarchy.
 ============================================================ */
-:root { --display: "Times New Roman", Times, serif; --sans: "Times New Roman", Times, serif; }
-*, *::before, *::after, input, select, textarea, button { font-family: "Times New Roman", Times, serif !important; }
-:is(p, li, a, button, input, select, textarea, label, td, th, small, summary, blockquote, figcaption, dd, dt, time, span, .eyebrow):not(h1 *, h2 *, h3 *, h4 *, .h2, .h2 *, .h3, .h3 *, .phero-mark, .logo, .logo *, .agent-ava, .p-ava, .p-spark, .p-kpi b, .ic, .mnav a:not(.btn), .hero-stats dd, .big-stats dd, .meet-num, .signature, .fw-n, .talk-n, .pillar-n, .car-q, .car-slide blockquote, .car-slide blockquote *, .bm-t, .pull, .pull *, .value-n, .big-quote, .big-quote *, .side-quote, .side-quote *, .ws-num, .sheet-stats b, .ep-card-n, .event-date b) { font-size: 14pt !important; }
+:root { --display: "Times New Roman", Tinos, Times, serif; --sans: "Times New Roman", Tinos, Times, serif; }
+*, *::before, *::after, input, select, textarea, button { font-family: "Times New Roman", Tinos, Times, serif !important; }
+:is(p, li, a, button, input, select, textarea, label, td, th, small, summary, blockquote, figcaption, dd, dt, time, span, .eyebrow):not(h1 *, h2 *, h3 *, h4 *, .h2, .h2 *, .h3, .h3 *, .phero-mark, .logo, .logo *, .agent-ava, .p-ava, .p-spark, .p-kpi b, .ic, .mnav a:not(.btn), .hero-stats dd, .big-stats dd, .meet-num, .signature, .fw-n, .talk-n, .pillar-n, .car-q, .car-slide blockquote, .car-slide blockquote *, .bm-t, .pull, .pull *, .value-n, .big-quote, .big-quote *, .side-quote, .side-quote *, .ws-num, .sheet-stats b, .ep-card-n, .event-date b, .step-dots li) { font-size: 14pt !important; }
 /* Uppercase labels at 14pt: tighter tracking so they fit */
 .p-kpi span, .p-pill, .p-sg-pri, .p-asg-box span, .p-table th, .eyebrow, .btn, .field label, dt, figcaption, small, .p-role, .status-pill { letter-spacing: .05em !important; }
 @media (max-width: 560px) { .hdr-cta .btn { display: none; } }
 .p-kpis { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+/* Corner numbers never sit on top of text */
+.talk-kind { display: block; padding-right: 5.2rem; }
+.pillar > :first-child:not(.pillar-n), .pillar h3 { padding-right: 4.4rem; }
+@media (max-width: 600px) {
+  .talk { padding: 2rem 1.4rem; }
+  .talk-n { font-size: 3.2rem; right: 1rem; top: .9rem; }
+  .talk-kind { padding-right: 3.8rem; }
+  .pillar-n { font-size: 2.4rem; right: 1.2rem; }
+}
+
+/* ============================================================
+   PHONE FIT: grid columns may shrink below their longest word,
+   and long words (emails, links) wrap instead of pushing the
+   page sideways.
+============================================================ */
+@media (min-width: 961px) { .magnet-in.magnet-even { grid-template-columns: 1fr 1fr; } }
+body { overflow-wrap: break-word; }
+:where(.wrap, [class*="-grid"], [class*="-in"]) > * { min-width: 0; }
+input, select, textarea { max-width: 100%; }
+@media (max-width: 600px) {
+  .pkg { padding: 2.2rem 1.4rem; }
+  .talk-facts, .book-side, .card-form { padding-left: 1.2rem; padding-right: 1.2rem; }
+}
+.step-dots li { font-size: 14pt; letter-spacing: .05em; }
+.sheet-tools { flex-wrap: wrap; }
+@media (max-width: 600px) { .step-dots li { font-size: 0; } .sheet { padding: 28px 20px; } }
+@media (max-width: 960px) {
+  .agent-panel.docked { height: auto; }
+  .agent-panel.docked .agent-log { min-height: 340px; max-height: 62svh; }
+}
+/* Hidden radio inputs stay inside their chip */
+.chips label { position: relative; }
+.chips input { inset: 0; width: 100% !important; height: 100%; margin: 0; }
+/* Portal on phones: everything shrinks to the screen */
+.portal-app > * { min-width: 0; }
+.p-sg-grid { grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
+.p-res-grid { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+@media (max-width: 960px) {
+  .p-side { gap: .9rem; padding: 1rem 16px; }
+  .p-user { border-bottom: 0; padding-bottom: 0; flex: 1; min-width: 0; }
+  .p-side #pLogout { width: auto; flex: none; color: var(--on-dark) !important; border-color: var(--line-dark); padding: .5rem 1rem; }
+  .p-main { padding: 1.2rem 16px 2rem; }
+}
+@media (max-width: 600px) {
+  .p-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .p-kpi { padding: .9rem 1rem; }
+  .p-kpi b { font-size: 2.1rem; }
+  .p-coach-hero { flex-direction: column; align-items: flex-start; }
+  .p-card { padding: 1.1rem 1rem; }
+  .row2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 960px) { .p-nav { flex: 0 0 100%; } }

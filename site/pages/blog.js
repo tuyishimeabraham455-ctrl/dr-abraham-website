@@ -25,7 +25,7 @@ ${pageHero({ mark: 'Ink', eyebrow: 'Insights', title: 'Ideas for building <em>th
   </div>
 </section>
 <section class="sec blush" id="news" aria-labelledby="newsTitle">
-  <div class="wrap magnet-in" style="grid-template-columns:1fr 1fr">
+  <div class="wrap magnet-in magnet-even">
     <div><p class="eyebrow reveal">The Sunday Letter</p><h2 class="h2 reveal" id="newsTitle">One idea, <em>every Sunday.</em></h2><p class="reveal">For your business and your wellbeing. Short, practical, free.</p></div>
     <div><form class="inline-form big reveal js-sub" data-source="blog"><label class="sr" for="blogEmail">Email address</label><input id="blogEmail" name="email" type="email" placeholder="Your email" required autocomplete="email"/><button class="btn btn-dark magnetic">Subscribe</button></form><p class="form-msg" aria-live="polite"></p></div>
   </div>
