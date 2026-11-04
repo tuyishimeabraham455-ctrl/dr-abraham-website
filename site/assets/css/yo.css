@@ -995,3 +995,65 @@ a.ep-play { text-decoration: none; }
 .srch-hit p { margin: 0; color: var(--ink-soft); font-size: .95rem; }
 .srch-hit mark { background: var(--blush); color: var(--ink); padding: 0 .1em; }
 .srch-empty .linkish { color: var(--oxblood); font: inherit; }
+
+/* ============================================================
+   PORTAL: AI COACH + ASSIGNMENTS
+============================================================ */
+.p-spark { color: var(--gold); }
+.p-spark.big { font-size: 2.4rem; line-height: 1; width: 64px; height: 64px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--espresso); border: 1px solid var(--gold); }
+.p-coach-hero { display: flex; gap: 1.2rem; align-items: center; background: linear-gradient(120deg, #FFFBF5, rgba(235, 210, 198, .55)); }
+.p-coach-hero h2 { margin-bottom: .3rem; }
+.p-coach-hero p { margin: 0; color: var(--ink-soft); }
+.p-coach-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.p-sg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.p-sg { background: #FFFBF5; border: 1px solid var(--line); border-top: 3px solid var(--line); padding: 1.1rem 1.2rem; display: grid; gap: .45rem; align-content: start; }
+.p-sg.high { border-top-color: var(--oxblood); } .p-sg.medium { border-top-color: var(--gold); } .p-sg.low { border-top-color: var(--clay); }
+.p-sg header { display: flex; gap: .5rem; align-items: center; }
+.p-sg-pri { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: .15rem .5rem; border-radius: 999px; background: var(--ivory-2); color: var(--ink-soft); }
+.p-sg.high .p-sg-pri { background: var(--oxblood); color: var(--on-dark); }
+.p-sg.medium .p-sg-pri { background: #F3E1C7; color: #7A5618; }
+.p-sg-area { font-size: 12px; color: var(--ink-soft); letter-spacing: .06em; }
+.p-sg b { font-family: var(--display); font-size: 1.3rem; font-weight: 500; line-height: 1.2; }
+.p-sg p { margin: 0; color: var(--ink-soft); font-size: .93rem; }
+.p-sg .p-sg-act { color: var(--ink); }
+.p-sg-links { display: flex; gap: 1rem; align-items: center; margin-top: .3rem; }
+.p-sg-links .linkish, .p-coach-chat .linkish { color: var(--oxblood); }
+.p-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: .4rem 0 1rem; }
+.p-chip { border: 1px solid var(--line); background: var(--ivory); border-radius: 999px; padding: .45rem .9rem; cursor: pointer; color: var(--ink); transition: border-color .2s, background .2s; }
+.p-chip:hover { border-color: var(--oxblood); background: #FFFBF5; }
+.p-coach-log { display: grid; gap: .6rem; margin-bottom: 1rem; }
+.p-coach-log .p-line { white-space: normal; padding: .9rem 1.1rem; }
+.p-coach-log .p-line p, .p-coach-log .p-line ul, .p-coach-log .p-line ol { margin: .4rem 0; }
+.p-coach-log .p-line h3 { font-family: var(--display); font-size: 1.3rem; font-weight: 500; margin: .8rem 0 .2rem; }
+.p-coach-form textarea, .p-asg-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: .8rem 1rem; background: var(--ivory); resize: vertical; }
+.p-asg-stats { display: flex; flex-wrap: wrap; gap: .5rem; }
+.p-asg-list { display: grid; gap: 12px; }
+.p-asg { border-left: 3px solid var(--line); }
+.p-asg.submitted { border-left-color: var(--gold); } .p-asg.needs_changes { border-left-color: var(--oxblood); } .p-asg.done { border-left-color: #2E6B4A; opacity: .85; } .p-asg.in_progress { border-left-color: var(--clay); }
+.p-asg header { display: flex; gap: .7rem; align-items: center; flex-wrap: wrap; font-size: .88rem; }
+.p-asg header time { margin-left: auto; color: var(--ink-soft); }
+.p-asg h3 { font-family: var(--display); font-size: 1.5rem; font-weight: 500; margin: .5rem 0 .2rem; }
+.p-asg-who { color: var(--ink-soft); margin: 0 0 .6rem; font-size: .92rem; }
+.p-asg-box { background: var(--ivory); border-radius: 10px; padding: .7rem .9rem; margin: .6rem 0; }
+.p-asg-box.fb { background: rgba(235, 210, 198, .5); }
+.p-asg-box span { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+.p-asg-box p { margin: .3rem 0 0; }
+.p-asg-form { margin-top: .8rem; display: grid; gap: .4rem; }
+.p-asg-form label { font-size: .88rem; font-weight: 700; }
+.p-due { color: var(--ink-soft); } .p-due.late { color: var(--oxblood); font-weight: 700; }
+.p-pill.todo { background: var(--ivory-2); } .p-pill.in_progress { background: #F4E4DF; color: #8A3F31; } .p-pill.submitted { background: #F3E1C7; color: #7A5618; }
+.p-pill.needs_changes { background: #F4D9D5; color: var(--oxblood); } .p-pill.done { background: #DDEBDF; color: #2E6B4A; }
+.page-portal .p-head .seg a { font-size: .88rem; }
+
+/* ============================================================
+   TYPE: Times New Roman everywhere; running text at 14pt.
+   Headings, the logo and large decorative numbers keep their
+   sizes so pages still have a clear hierarchy.
+============================================================ */
+:root { --display: "Times New Roman", Times, serif; --sans: "Times New Roman", Times, serif; }
+*, *::before, *::after, input, select, textarea, button { font-family: "Times New Roman", Times, serif !important; }
+:is(p, li, a, button, input, select, textarea, label, td, th, small, summary, blockquote, figcaption, dd, dt, time, span, .eyebrow):not(h1 *, h2 *, h3 *, h4 *, .h2, .h2 *, .h3, .h3 *, .phero-mark, .logo, .logo *, .agent-ava, .p-ava, .p-spark, .p-kpi b, .ic, .mnav a:not(.btn), .hero-stats dd, .big-stats dd, .meet-num, .signature, .fw-n, .talk-n, .pillar-n, .car-q, .car-slide blockquote, .car-slide blockquote *, .bm-t, .pull, .pull *, .value-n, .big-quote, .big-quote *, .side-quote, .side-quote *, .ws-num, .sheet-stats b, .ep-card-n, .event-date b) { font-size: 14pt !important; }
+/* Uppercase labels at 14pt: tighter tracking so they fit */
+.p-kpi span, .p-pill, .p-sg-pri, .p-asg-box span, .p-table th, .eyebrow, .btn, .field label, dt, figcaption, small, .p-role, .status-pill { letter-spacing: .05em !important; }
+@media (max-width: 560px) { .hdr-cta .btn { display: none; } }
+.p-kpis { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }

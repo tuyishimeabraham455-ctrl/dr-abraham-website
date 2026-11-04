@@ -37,10 +37,26 @@
 
   /* ---------- Shell ---------- */
   const TABS = [
-    ['overview', 'Overview', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'],
+    ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
-    ['inbox', 'Inbox', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'People', 'admin'], ['account', 'Account', 'all'],
+    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'People', 'admin'], ['account', 'Account', 'all'],
   ];
+  const A_LABEL = { todo: 'To do', in_progress: 'In progress', submitted: 'Submitted', needs_changes: 'Needs changes', done: 'Done' };
+  const today = () => new Date().toISOString().slice(0, 10);
+  // Coach answers: escape first, then a little Markdown (headings, bold, lists, paragraphs)
+  const md = (text) => h(text).split(/\n{2,}/).map((block) => {
+    const inline = (s) => s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>');
+    const lines = block.split('\n');
+    if (lines.every((l) => /^\s*([-*•]|\d+[.)])\s+/.test(l))) {
+      const tag = /^\s*\d/.test(lines[0]) ? 'ol' : 'ul';
+      return `<${tag}>${lines.map((l) => `<li>${inline(l.replace(/^\s*([-*•]|\d+[.)])\s+/, ''))}</li>`).join('')}</${tag}>`;
+    }
+    const head = block.match(/^#{1,4}\s+(.*)$/);
+    if (head && lines.length === 1) return `<h3>${inline(head[1])}</h3>`;
+    return `<p>${lines.map((l) => (/^#{1,4}\s+/.test(l) ? `<b>${inline(l.replace(/^#{1,4}\s+/, ''))}</b>` : inline(l))).join('<br/>')}</p>`;
+  }).join('');
+  const suggestionCard = (sg, compact) => `<article class="p-sg ${h(sg.priority)}"><header><span class="p-sg-pri">${h(sg.priority)}</span><span class="p-sg-area">${h(sg.area)}</span></header><b>${h(sg.title)}</b>${compact ? '' : `<p>${h(sg.why)}</p>`}<p class="p-sg-act">${h(sg.action)}</p><div class="p-sg-links"><a class="link-arrow" href="${h(sg.link)}">Open</a>${sg.ask ? `<button type="button" class="linkish" data-ask="${h(sg.ask)}">Ask the coach</button>` : ''}</div></article>`;
+  let coachHistory = [];
   const isStaff = () => me && (me.role === 'admin' || me.role === 'team');
   const allowed = (who) => who === 'all' || (who === 'staff' && isStaff()) || (who === 'member' && !isStaff()) || (who === 'admin' && me.role === 'admin');
 
@@ -52,7 +68,7 @@
       me = out.member;
       $('#pName').textContent = me.name; $('#pRole').textContent = ROLE[me.role] || me.role;
       $('#pAva').textContent = me.name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
-      $('#pNav').innerHTML = TABS.filter(([, , who]) => allowed(who)).map(([k, label]) => `<a href="#${k}" data-tab="${k}">${h(label)}${k === 'inbox' ? `<span class="p-badge" id="pUnread"${out.unread ? '' : ' hidden'}>${out.unread}</span>` : ''}</a>`).join('');
+      $('#pNav').innerHTML = TABS.filter(([, , who]) => allowed(who)).map(([k, label]) => `<a href="#${k}" data-tab="${k}">${h(label)}${k === 'inbox' ? `<span class="p-badge" id="pUnread"${out.unread ? '' : ' hidden'}>${out.unread}</span>` : ''}${k === 'assignments' ? `<span class="p-badge" id="pOpenA"${out.open_assignments ? '' : ' hidden'}>${out.open_assignments}</span>` : ''}</a>`).join('');
       loginBox.hidden = true; app.hidden = false;
       route();
     } catch { if (!store.get()) return; loginBox.hidden = false; app.hidden = true; }
@@ -69,7 +85,16 @@
     const view = $('#pView'); view.innerHTML = '<p class="p-loading">Loading…</p>';
     (VIEWS[tab] || VIEWS.home)(view, location.hash.split('/')[1]).catch((err) => { view.innerHTML = `<p class="form-msg err">${h(err.message)}</p>`; });
   }
-  const refreshUnread = async () => { const out = await api('/portal/me'); const b = $('#pUnread'); if (b) { b.textContent = out.unread; b.hidden = !out.unread; } };
+  const refreshUnread = async () => {
+    const out = await api('/portal/me');
+    [['#pUnread', out.unread], ['#pOpenA', out.open_assignments]].forEach(([sel, n]) => { const b = $(sel); if (b) { b.textContent = n; b.hidden = !n; } });
+  };
+  // "Ask the coach" buttons anywhere in the portal open the coach with that question
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ask]'); if (!b) return;
+    sessionStorage.setItem('yoCoachAsk', b.dataset.ask);
+    if (location.hash === '#coach') route(); else location.hash = '#coach';
+  });
 
   /* ---------- Small UI helpers ---------- */
   const kpi = (label, value, note = '') => `<div class="p-kpi"><span>${h(label)}</span><b>${h(value)}</b>${note ? `<small>${h(note)}</small>` : ''}</div>`;
@@ -86,8 +111,9 @@
   /* ---------- Views ---------- */
   const VIEWS = {
     async overview(v) {
-      const o = await api('/portal/overview'); const k = o.kpis;
-      v.innerHTML = `<div class="p-kpis">${kpi('New inquiries', k.new_inquiries)}${kpi('Hot leads', k.hot_leads, 'score 60+')}${kpi('Upcoming calls', k.upcoming_calls)}${kpi('Subscribers', k.subscribers)}${kpi('Agent Yo conversion', o.agent.conversion_rate + '%', o.agent.sessions + ' chats')}${kpi('Emails waiting', k.queued_emails, 'outbox')}</div>
+      const [o, c] = await Promise.all([api('/portal/overview'), api('/portal/coach')]); const k = o.kpis;
+      v.innerHTML = `<div class="p-kpis">${kpi('New inquiries', k.new_inquiries)}${kpi('Hot leads', k.hot_leads, 'score 60+')}${kpi('Upcoming calls', k.upcoming_calls)}${kpi('Subscribers', k.subscribers)}${kpi('Open assignments', k.open_assignments, k.to_review ? k.to_review + ' to review' : '')}${kpi('Agent Yo conversion', o.agent.conversion_rate + '%', o.agent.sessions + ' chats')}${kpi('Emails waiting', k.queued_emails, 'outbox')}</div>
+        <section class="p-card p-coach-strip"><div class="p-coach-head"><h2><span class="p-spark" aria-hidden="true">✦</span> Today's suggestions</h2><a class="link-arrow" href="#coach">Open AI Coach</a></div><div class="p-sg-grid">${c.suggestions.slice(0, 3).map((sg) => suggestionCard(sg, true)).join('')}</div></section>
         <div class="p-grid2">
           <section class="p-card"><h2>Recent leads</h2>${table([['Name', (r) => `<b>${h(r.name)}</b><small>${h(r.organization || r.email)}</small>`], ['Type', (r) => h(r.inquiry_type || '')], ['Score', (r) => scoreTag(r.score)], ['Status', (r) => statusSelect('leads', r.id, r.status, ['new', 'read', 'replied', 'closed'])]], o.recent_leads, 'No leads yet.')}<a class="link-arrow" href="#leads">All leads</a></section>
           <section class="p-card"><h2>Upcoming calls</h2>${table([['When', (r) => h(when(r.starts_at))], ['Who', (r) => `<b>${h(r.name)}</b><small>${h(r.email)}</small>`]], o.upcoming_calls, 'No calls booked.')}<h2 style="margin-top:1.6rem">Sign-ups by source</h2>${table([['Source', (r) => h(r.source)], ['Count', (r) => h(r.n)]], o.subscribers_by_source, 'No sign-ups yet.')}</section>
@@ -118,6 +144,70 @@
         </div>
         <section class="p-card"><h2>Recent conversations</h2>${out.sessions.length ? out.sessions.map((s) => `<details class="p-convo"><summary><b>${h(when(s.updated_at))}</b> · ${h(s.mode || 'unknown')} · ${h(s.turns)} turns${s.lead_id ? ' · lead #' + h(s.lead_id) : ''}${s.locked ? ' · crisis redirect' : ''}</summary>${s.transcript.map((t) => `<p class="p-line ${t.role}"><span>${t.role === 'user' ? 'Visitor' : 'Agent Yo'}</span>${h(t.text)}</p>`).join('')}</details>`).join('') : '<p class="p-empty">No conversations yet.</p>'}</section>`;
     },
+    async coach(v) {
+      const c = await api('/portal/coach');
+      const starters = ['Prepare me for my next discovery call', 'Draft a follow-up email to my hottest lead', 'Give me 3 podcast episode ideas from what visitors ask', 'Write a 90-second opening story for my keynote', 'What should I focus on this week?'];
+      v.innerHTML = `<section class="p-card p-coach-hero"><span class="p-spark big" aria-hidden="true">✦</span><div><h2>Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, ${h(me.name.split(' ')[0])}.</h2><p>Here is what deserves your attention, based on your leads, calls, team and what visitors are asking Agent Yo.</p></div></section>
+        <div class="p-sg-grid">${c.suggestions.map((sg) => suggestionCard(sg)).join('')}</div>
+        <section class="p-card p-coach-chat"><h2>Ask your coach</h2><p class="fine">${c.ai ? 'Call prep, follow-up emails, talk ideas, content plans. The coach sees your live leads, calls and visitor questions.' : 'The AI Coach answers once ANTHROPIC_API_KEY is added on the server. The suggestions above already work.'}</p>
+          <div class="p-chips">${starters.map((s) => `<button type="button" class="p-chip" data-starter="${h(s)}">${h(s)}</button>`).join('')}</div>
+          <div class="p-coach-log" id="coachLog" aria-live="polite">${coachHistory.map((t) => `<div class="p-line ${t.role}"><span>${t.role === 'user' ? 'You' : 'AI Coach'}</span>${t.role === 'user' ? h(t.text) : md(t.text)}</div>`).join('')}</div>
+          <form id="coachForm" class="p-coach-form"><label class="sr" for="coachQ">Ask the coach</label><textarea id="coachQ" name="q" rows="3" maxlength="4000" required placeholder="e.g. Help me prepare for my call with Dana on Thursday"></textarea><div class="p-row"><button class="btn btn-dark btn-sm">Ask</button>${coachHistory.length ? '<button type="button" class="linkish" id="coachClear">Start over</button>' : ''}<span class="form-msg" aria-live="polite"></span></div></form></section>`;
+      const form = $('#coachForm'), log = $('#coachLog'), q = $('#coachQ');
+      const ask = async (text) => {
+        const msg = form.querySelector('.form-msg'); msg.textContent = 'Thinking…'; msg.className = 'form-msg';
+        form.querySelector('button').disabled = true;
+        log.insertAdjacentHTML('beforeend', `<div class="p-line user"><span>You</span>${h(text)}</div>`);
+        const out = await api('/portal/coach/ask', { method: 'POST', body: { question: text, history: coachHistory } }).catch((e) => ({ ok: false, message: e.message }));
+        form.querySelector('button').disabled = false;
+        if (!out.ok) { flash(msg, out.message, false); log.lastElementChild.remove(); return; }
+        coachHistory.push({ role: 'user', text }, { role: 'assistant', text: out.answer }); coachHistory = coachHistory.slice(-12);
+        log.insertAdjacentHTML('beforeend', `<div class="p-line assistant"><span>AI Coach</span>${md(out.answer)}</div>`);
+        msg.textContent = out.truncated ? 'The answer was long and got cut off. Ask it to continue.' : ''; q.value = '';
+        log.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+      form.addEventListener('submit', (e) => { e.preventDefault(); if (q.value.trim()) ask(q.value.trim()); });
+      v.querySelectorAll('[data-starter]').forEach((b) => b.addEventListener('click', () => ask(b.dataset.starter)));
+      const clear = $('#coachClear'); if (clear) clear.addEventListener('click', () => { coachHistory = []; route(); });
+      const pending = sessionStorage.getItem('yoCoachAsk');
+      if (pending) { sessionStorage.removeItem('yoCoachAsk'); q.value = pending; form.scrollIntoView({ block: 'center' }); q.focus(); }
+    },
+    async assignments(v, sub) {
+      const staffView = isStaff() && sub !== 'mine';
+      const [out, people] = await Promise.all([api(`/portal/assignments${staffView ? '' : '?view=mine'}`), isStaff() ? api('/portal/people') : Promise.resolve({ data: [] })]);
+      if (isStaff()) $('#pActions').innerHTML = `<div class="seg" role="tablist"><a role="tab" href="#assignments" aria-selected="${staffView}">Everyone</a><a role="tab" href="#assignments/mine" aria-selected="${!staffView}">Assigned to me</a></div>`;
+      const rows = out.data;
+      const counts = Object.fromEntries(Object.keys(A_LABEL).map((s) => [s, rows.filter((r) => r.status === s).length]));
+      const due = (r) => r.due_date ? `<span class="p-due${r.status !== 'done' && r.due_date < today() ? ' late' : ''}">${r.status !== 'done' && r.due_date < today() ? 'Overdue · ' : 'Due '}${h(r.due_date)}</span>` : '';
+      const card = (r) => {
+        const mine = r.assigned_to === me.id;
+        return `<article class="p-card p-asg ${h(r.status)}" id="a${r.id}">
+          <header><span class="p-pill ${h(r.status)}">${h(A_LABEL[r.status])}</span>${due(r)}<time>${h(when(r.updated_at))}</time></header>
+          <h3>${h(r.title)}</h3>
+          <p class="p-asg-who">${mine ? 'For you' : `For <b>${h(r.assigned_to_name)}</b>`} · from ${h(r.assigned_by_name || 'the team')}</p>
+          ${r.details ? `<p class="p-pre">${h(r.details)}</p>` : ''}
+          ${r.submission ? `<div class="p-asg-box"><span>Submitted work</span><p class="p-pre">${h(r.submission)}</p></div>` : ''}
+          ${r.feedback ? `<div class="p-asg-box fb"><span>Feedback</span><p class="p-pre">${h(r.feedback)}</p></div>` : ''}
+          ${mine && r.status !== 'done' ? `<form class="p-asg-form" data-a="${r.id}"><label for="sub${r.id}">Your work: a note or a link</label><textarea id="sub${r.id}" name="submission" rows="3" maxlength="8000">${h(r.submission)}</textarea>
+            <div class="p-row">${r.status === 'todo' ? `<button type="button" class="btn btn-ghost-dark btn-sm" data-status="in_progress">Start</button>` : ''}<button class="btn btn-dark btn-sm" data-status="submitted">${r.status === 'submitted' ? 'Update submission' : 'Submit'}</button><span class="form-msg" aria-live="polite"></span></div></form>` : ''}
+          ${isStaff() && !mine ? `<form class="p-asg-form" data-a="${r.id}"><label for="fb${r.id}">Feedback</label><textarea id="fb${r.id}" name="feedback" rows="2" maxlength="8000">${h(r.feedback)}</textarea>
+            <div class="p-row"><button class="btn btn-dark btn-sm" data-status="done">Mark done</button><button class="btn btn-ghost-dark btn-sm" data-status="needs_changes">Needs changes</button><button type="button" class="linkish" data-fbonly>Save feedback</button><button type="button" class="linkish" data-adel="${r.id}">Delete</button><span class="form-msg" aria-live="polite"></span></div></form>` : ''}
+        </article>`;
+      };
+      v.innerHTML = `${isStaff() ? `<form class="p-card" id="af"><h2>New assignment</h2><div class="row2"><div class="field"><label for="at">Title</label><input id="at" name="title" required maxlength="160" placeholder="e.g. Record your 2-minute signature story"/></div><div class="field"><label for="ato">Assign to</label><select id="ato" name="assigned_to" required>${people.data.map((p) => `<option value="${p.id}">${h(p.name)} · ${h(ROLE[p.role] || p.role)}</option>`).join('')}</select></div></div>
+          <div class="row2"><div class="field"><label for="ad">Details</label><textarea id="ad" name="details" rows="3" maxlength="8000" placeholder="What to do, and what good looks like"></textarea></div><div class="field"><label for="adue">Due date</label><input id="adue" name="due_date" type="date"/></div></div>
+          <div class="p-row"><button class="btn btn-dark btn-sm">Assign</button><span class="form-msg" aria-live="polite"></span></div></form>` : ''}
+        <div class="p-asg-stats">${['todo', 'in_progress', 'submitted', 'needs_changes', 'done'].map((s) => `<span class="p-pill ${s}">${A_LABEL[s]} · ${counts[s]}</span>`).join('')}</div>
+        <div class="p-asg-list">${rows.map(card).join('') || `<p class="p-empty">${isStaff() ? 'No assignments yet. Create the first one above.' : 'No assignments yet. When Yo\'s team gives you work, it appears here.'}</p>`}</div>`;
+      if (isStaff() && $('#af')) $('#af').addEventListener('submit', async (e) => { e.preventDefault(); const o = await api('/portal/assignments', { method: 'POST', body: Object.fromEntries(new FormData(e.target)) }); if (o.ok) route(); else flash($('#af .form-msg'), o.message, false); });
+      v.querySelectorAll('.p-asg-form').forEach((f) => {
+        const save = async (body) => { const o = await api(`/portal/assignments/${f.dataset.a}`, { method: 'PATCH', body }); if (o.ok) { await refreshUnread(); route(); } else flash(f.querySelector('.form-msg'), o.message, false); };
+        f.addEventListener('submit', (e) => { e.preventDefault(); const st = (e.submitter && e.submitter.dataset.status) || 'submitted'; save({ status: st, ...Object.fromEntries(new FormData(f)) }); });
+        f.querySelectorAll('button[type="button"][data-status]').forEach((b) => b.addEventListener('click', () => save({ status: b.dataset.status })));
+        const fbOnly = f.querySelector('[data-fbonly]'); if (fbOnly) fbOnly.addEventListener('click', () => save({ feedback: f.feedback.value }));
+        const del = f.querySelector('[data-adel]'); if (del) del.addEventListener('click', async () => { if (confirm('Delete this assignment?')) { await api(`/portal/assignments/${del.dataset.adel}`, { method: 'DELETE' }); route(); } });
+      });
+    },
     async subscribers(v) {
       const out = await api('/portal/subscribers');
       $('#pActions').innerHTML = '<button type="button" class="btn btn-dark btn-sm" id="csv">Download CSV</button>';
@@ -132,8 +222,10 @@
       v.innerHTML = `<p class="fine">Emails are sent automatically once an email service key is added on the server. Until then they wait here.</p>` + table([['Created', (r) => h(when(r.created_at))], ['To', (r) => h(r.to_email)], ['Subject', (r) => `${h(r.subject)}<small>${h(r.kind)}</small>`], ['Status', (r) => `<span class="p-pill ${h(r.status)}">${h(r.status)}</span>${r.error ? `<small>${h(r.error)}</small>` : ''}`]], out.data, 'No emails yet.');
     },
     async home(v) {
-      const [res, msgs] = await Promise.all([api('/portal/resources'), api('/portal/messages')]);
+      const [res, msgs, asg] = await Promise.all([api('/portal/resources'), api('/portal/messages'), api('/portal/assignments?view=mine')]);
+      const open = asg.data.filter((a) => a.status !== 'done');
       v.innerHTML = `<section class="p-card p-welcome"><h2>Welcome, ${h(me.name.split(' ')[0])}.</h2><p>Your programs: <b>${h(me.programs || 'none yet')}</b></p><div class="hero-ctas"><a class="btn btn-dark btn-sm" href="#inbox/new">Message the team</a><a class="btn btn-ghost-dark btn-sm" href="#community">Visit the community</a></div></section>
+        <section class="p-card"><h2>Your assignments</h2>${open.slice(0, 5).map((a) => `<a class="p-res" href="#assignments"><b>${h(a.title)}</b><small>${h(A_LABEL[a.status])}${a.due_date ? ' · due ' + h(a.due_date) : ''}</small></a>`).join('') || '<p class="p-empty">Nothing assigned right now.</p>'}</section>
         <div class="p-grid2"><section class="p-card"><h2>Latest resources</h2>${res.data.slice(0, 5).map((r) => `<a class="p-res" href="${h(r.url)}" target="_blank" rel="noopener"><b>${h(r.title)}</b><small>${h(r.kind)}</small></a>`).join('') || '<p class="p-empty">Resources appear here.</p>'}</section>
         <section class="p-card"><h2>Recent messages</h2>${msgs.data.slice(0, 5).map((m) => `<a class="p-res" href="#inbox/${m.id}"><b>${h(m.subject)}</b><small>${h(m.from_name)} · ${h(when(m.created_at))}</small></a>`).join('') || '<p class="p-empty">No messages yet.</p>'}</section></div>`;
     },

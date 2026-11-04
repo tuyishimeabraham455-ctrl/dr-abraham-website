@@ -333,6 +333,22 @@ db.exec(`
     created_by  INTEGER REFERENCES members(id) ON DELETE SET NULL,
     created_at  DATETIME DEFAULT (datetime('now'))
   );
+
+  -- Assignments: staff give tasks to the team and homework to members
+  CREATE TABLE IF NOT EXISTS assignments (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    title        TEXT    NOT NULL,
+    details      TEXT    DEFAULT '',
+    assigned_by  INTEGER REFERENCES members(id) ON DELETE SET NULL,
+    assigned_to  INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    due_date     TEXT    DEFAULT '',          -- YYYY-MM-DD
+    status       TEXT    DEFAULT 'todo',      -- todo | in_progress | submitted | needs_changes | done
+    submission   TEXT    DEFAULT '',
+    feedback     TEXT    DEFAULT '',
+    created_at   DATETIME DEFAULT (datetime('now')),
+    updated_at   DATETIME DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_assignments_to ON assignments(assigned_to, status);
 `);
 
 // Add columns to older tables without losing data

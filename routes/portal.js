@@ -24,7 +24,8 @@ const bad = (res, msg, code = 400) => res.status(code).json({ ok: false, message
 // ---------------- Profile ----------------
 router.get('/portal/me', anyone, (req, res) => {
   const unread = db.prepare(`SELECT COUNT(*) n FROM messages WHERE to_id = ? AND read_at IS NULL`).get(req.member.id).n;
-  res.json({ ok: true, member: m.publicMember(req.member), unread });
+  const open_assignments = db.prepare(`SELECT COUNT(*) n FROM assignments WHERE assigned_to = ? AND status IN ('todo','in_progress','needs_changes')`).get(req.member.id).n;
+  res.json({ ok: true, member: m.publicMember(req.member), unread, open_assignments });
 });
 
 router.post('/portal/password', anyone, (req, res) => {
@@ -146,6 +147,77 @@ router.delete('/portal/resources/:id', staff, (req, res) => {
   res.json({ ok: true });
 });
 
+// ---------------- Assignments ----------------
+// Staff assign work to anyone; the assignee updates progress and submits;
+// staff review (feedback, needs_changes, done). Each step sends an inbox note.
+const A_STATUS = ['todo', 'in_progress', 'submitted', 'needs_changes', 'done'];
+const A_LABEL = { todo: 'To do', in_progress: 'In progress', submitted: 'Submitted', needs_changes: 'Needs changes', done: 'Done' };
+const isDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s);
+const notify = (from, to, subject, body) => { if (from && to && from !== to) db.prepare(`INSERT INTO messages (from_id, to_id, subject, body) VALUES (?, ?, ?, ?)`).run(from, to, subject, body); };
+const assignmentRow = (where) => `
+  SELECT a.*, t.name assigned_to_name, COALESCE(t.role,'member') assigned_to_role, b.name assigned_by_name
+  FROM assignments a JOIN members t ON t.id = a.assigned_to LEFT JOIN members b ON b.id = a.assigned_by
+  WHERE ${where}`;
+
+router.get('/portal/assignments', anyone, (req, res) => {
+  const mine = !isStaff(req.member) || req.query.view === 'mine';
+  const rows = db.prepare(assignmentRow(mine ? 'a.assigned_to = ?' : '1 = 1 OR a.assigned_to = ?') + `
+    ORDER BY CASE a.status WHEN 'submitted' THEN 0 WHEN 'needs_changes' THEN 1 WHEN 'in_progress' THEN 2 WHEN 'todo' THEN 3 ELSE 4 END,
+             CASE WHEN a.due_date = '' THEN '9999' ELSE a.due_date END, a.id DESC LIMIT 300`).all(req.member.id);
+  res.json({ ok: true, data: rows });
+});
+
+router.post('/portal/assignments', staff, (req, res) => {
+  const title = clean(req.body?.title, 160), details = clean(req.body?.details, 8000), due = clean(req.body?.due_date, 10);
+  const to = db.prepare(`SELECT id, name, status FROM members WHERE id = ?`).get(id(req.body?.assigned_to));
+  if (!title) return bad(res, 'Add a title.');
+  if (!to || to.status !== 'active') return bad(res, 'Choose who it is for.');
+  if (due && !isDate(due)) return bad(res, 'Use a valid due date.');
+  const { lastInsertRowid } = db.prepare(`INSERT INTO assignments (title, details, assigned_by, assigned_to, due_date) VALUES (?, ?, ?, ?, ?)`).run(title, details, req.member.id, to.id, due);
+  notify(req.member.id, to.id, `New assignment: ${title}`, `${req.member.name} assigned you "${title}"${due ? `, due ${due}` : ''}.\n\n${details}\n\nOpen it under Assignments in the portal.`);
+  res.status(201).json({ ok: true, id: lastInsertRowid, message: `Assigned to ${to.name}.` });
+});
+
+router.patch('/portal/assignments/:id', anyone, (req, res) => {
+  const a = db.prepare(`SELECT * FROM assignments WHERE id = ?`).get(id(req.params.id));
+  if (!a) return bad(res, 'Assignment not found.', 404);
+  const staffer = isStaff(req.member), assignee = a.assigned_to === req.member.id;
+  if (!staffer && !assignee) return bad(res, 'Assignment not found.', 404);
+  const b = req.body || {};
+  const next = { status: a.status, submission: a.submission, feedback: a.feedback, title: a.title, details: a.details, due_date: a.due_date };
+  if (b.status !== undefined) {
+    if (!A_STATUS.includes(b.status)) return bad(res, 'Unknown status.');
+    // The assignee moves their own work forward; only staff review it
+    const assigneeMay = ['todo', 'in_progress', 'submitted'];
+    if (!staffer && !assigneeMay.includes(b.status)) return bad(res, 'Only Yo\'s team can mark work reviewed.', 403);
+    if (!staffer && a.status === 'done') return bad(res, 'This assignment is already complete.', 403);
+    next.status = b.status;
+  }
+  if (b.submission !== undefined) { if (!assignee) return bad(res, 'Only the person assigned can submit work.', 403); next.submission = clean(b.submission, 8000); }
+  if (staffer) {
+    if (b.feedback !== undefined) next.feedback = clean(b.feedback, 8000);
+    if (b.title !== undefined) next.title = clean(b.title, 160) || a.title;
+    if (b.details !== undefined) next.details = clean(b.details, 8000);
+    if (b.due_date !== undefined) { const d = clean(b.due_date, 10); if (d && !isDate(d)) return bad(res, 'Use a valid due date.'); next.due_date = d; }
+  }
+  if (next.status === 'submitted' && !next.submission.trim() && assignee && b.status === 'submitted') return bad(res, 'Add a note or link about your work before submitting.');
+  db.prepare(`UPDATE assignments SET status = ?, submission = ?, feedback = ?, title = ?, details = ?, due_date = ?, updated_at = datetime('now') WHERE id = ?`)
+    .run(next.status, next.submission, next.feedback, next.title, next.details, next.due_date, a.id);
+
+  if (next.status !== a.status) {
+    if (assignee && next.status === 'submitted') notify(req.member.id, a.assigned_by, `Submitted: ${a.title}`, `${req.member.name} submitted "${a.title}".\n\n${next.submission}`);
+    else if (staffer && !assignee) notify(req.member.id, a.assigned_to, `${A_LABEL[next.status]}: ${a.title}`, `${req.member.name} marked "${a.title}" as ${A_LABEL[next.status].toLowerCase()}.${next.feedback ? `\n\nFeedback:\n${next.feedback}` : ''}`);
+  } else if (staffer && !assignee && b.feedback !== undefined && next.feedback !== a.feedback && next.feedback) {
+    notify(req.member.id, a.assigned_to, `Feedback: ${a.title}`, `${req.member.name} left feedback on "${a.title}":\n\n${next.feedback}`);
+  }
+  res.json({ ok: true, message: 'Saved.' });
+});
+
+router.delete('/portal/assignments/:id', staff, (req, res) => {
+  const { changes } = db.prepare(`DELETE FROM assignments WHERE id = ?`).run(id(req.params.id));
+  res.json({ ok: changes > 0 });
+});
+
 // ---------------- Staff: CRM ----------------
 router.get('/portal/overview', staff, (req, res) => {
   const n = (sql, ...a) => db.prepare(sql).get(...a).n;
@@ -158,6 +230,8 @@ router.get('/portal/overview', staff, (req, res) => {
       subscribers: n(`SELECT COUNT(*) n FROM subscribers WHERE status = 'active'`),
       queued_emails: n(`SELECT COUNT(*) n FROM outbox WHERE status != 'sent'`),
       page_views_7d: n(`SELECT COUNT(*) n FROM page_views WHERE created_at > datetime('now','-7 days')`),
+      open_assignments: n(`SELECT COUNT(*) n FROM assignments WHERE status IN ('todo','in_progress','needs_changes')`),
+      to_review: n(`SELECT COUNT(*) n FROM assignments WHERE status = 'submitted'`),
     },
     recent_leads: db.prepare(`SELECT id, name, email, organization, inquiry_type, event_type, event_date, score, status, created_at FROM inquiries ORDER BY id DESC LIMIT 8`).all(),
     upcoming_calls: db.prepare(`SELECT c.id, c.name, c.email, c.starts_at, c.inquiry_id FROM calls c WHERE c.status = 'booked' AND c.starts_at > ? ORDER BY c.starts_at LIMIT 8`).all(new Date().toISOString()),

@@ -20,6 +20,8 @@ const app = express();
 app.use(express.json());
 app.use('/api', require('../routes/api'));
 app.use('/api', require('../routes/portal'));
+const coachRoutes = require('../routes/coach');
+app.use('/api', coachRoutes);
 const server = app.listen(0);
 const base = `http://127.0.0.1:${server.address().port}/api`;
 const call = async (method, p, token, body) => {
@@ -110,6 +112,41 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     check('wrong current password rejected', (await call('POST', '/portal/password', M1, { current: 'nope', next: 'a-much-longer-password' })).status === 400);
     check('password changed', (await call('POST', '/portal/password', M1, { current: 'password-123', next: 'a-much-longer-password' })).body.ok);
     check('other session signed out; this one kept', (await call('GET', '/portal/me', second)).status === 401 && (await call('GET', '/portal/me', M1)).status === 200);
+
+    // Assignments
+    const asg = await call('POST', '/portal/assignments', A, { title: 'Record your signature story', details: 'Two minutes, phone video is fine.', assigned_to: m1, due_date: '2020-01-01' });
+    check('staff creates assignment', asg.status === 201 && asg.body.ok);
+    check('member cannot create assignments', (await call('POST', '/portal/assignments', M1, { title: 'x', assigned_to: teamId })).status === 403);
+    check('bad due date rejected', (await call('POST', '/portal/assignments', A, { title: 'x', assigned_to: m1, due_date: 'soon' })).status === 400);
+    const meM1 = (await call('GET', '/portal/me', M1)).body;
+    check('assignee sees open-assignment badge', meM1.open_assignments === 1);
+    check('assignee gets an inbox note', (await call('GET', '/portal/messages', M1)).body.data.some((x) => x.subject.startsWith('New assignment')));
+    const listM1 = (await call('GET', '/portal/assignments', M1)).body.data;
+    check('member sees only their own assignments', listM1.length === 1 && listM1[0].assigned_to === m1);
+    const other = await call('POST', '/portal/assignments', A, { title: 'Team task', assigned_to: teamId });
+    check('member cannot open someone else\'s assignment', (await call('PATCH', `/portal/assignments/${other.body.id}`, M1, { status: 'in_progress' })).status === 404);
+    check('member cannot mark own work done', (await call('PATCH', `/portal/assignments/${asg.body.id}`, M1, { status: 'done' })).status === 403);
+    check('empty submission rejected', (await call('PATCH', `/portal/assignments/${asg.body.id}`, M1, { status: 'submitted', submission: ' ' })).status === 400);
+    check('member submits work', (await call('PATCH', `/portal/assignments/${asg.body.id}`, M1, { status: 'submitted', submission: 'https://example.com/my-story' })).body.ok);
+    check('assigner notified of submission', (await call('GET', '/portal/messages', A)).body.data.some((x) => x.subject.startsWith('Submitted:')));
+    check('staff marks needs changes with feedback', (await call('PATCH', `/portal/assignments/${asg.body.id}`, A, { status: 'needs_changes', feedback: 'Open with the preschool story.' })).body.ok);
+    check('member notified of feedback', (await call('GET', '/portal/messages', M1)).body.data.some((x) => x.subject.startsWith('Needs changes:')));
+    const ovA = (await call('GET', '/portal/overview', A)).body.kpis;
+    check('overview counts open assignments', ovA.open_assignments === 2 && ovA.to_review === 0);
+
+    // AI Coach
+    const coach = (await call('GET', '/portal/coach', A)).body;
+    check('coach briefing works without an API key', coach.ok && coach.ai === false && coach.suggestions.length > 0);
+    check('coach flags overdue assignment', coach.suggestions.some((s) => s.area === 'Team' && /overdue/.test(s.title)));
+    check('members cannot open the coach', (await call('GET', '/portal/coach', M1)).status === 403);
+    check('coach ask offline -> 503 offline', (await call('POST', '/portal/coach/ask', A, { question: 'What should I focus on?' })).body.offline === true);
+    process.env.ANTHROPIC_API_KEY = 'test';
+    let seen = null;
+    coachRoutes._setClient({ beta: { messages: { create: async (req) => { seen = req; return { stop_reason: 'end_turn', content: [{ type: 'text', text: '**Focus:** reply to your hot leads first.' }] }; } } } });
+    const asked = await call('POST', '/portal/coach/ask', A, { question: 'What should I focus on?', history: [{ role: 'assistant', text: 'stray' }, { role: 'user', text: 'Hi' }, { role: 'assistant', text: 'Hello!' }] });
+    check('coach answers with Claude', asked.body.ok && asked.body.answer.includes('hot leads'));
+    check('coach request: model, live data, valid history', seen.model === 'claude-opus-5-5' && seen.system.includes('<business_data') && seen.system.includes('Record your signature story') && seen.messages.map((x) => x.role).join() === 'user,assistant,user');
+    delete process.env.ANTHROPIC_API_KEY;
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

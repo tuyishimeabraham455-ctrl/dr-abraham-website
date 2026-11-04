@@ -142,9 +142,6 @@ function page({ path = '', depth = 0, title, description, body, schema = [], act
 <meta property="og:image" content="${og}"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <link rel="icon" href="${favicon}"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap"/>
 <link rel="stylesheet" href="${href('assets/css/yo.css')}"/>
 <script type="application/ld+json">${JSON.stringify(graph).replace(/</g, '\\u003c')}</script>
 </head>
