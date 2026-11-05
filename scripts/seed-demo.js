@@ -46,6 +46,7 @@ function remove() {
     db.prepare(`DELETE FROM subscribers WHERE email LIKE ?`).run('%@demo.example.com');
     db.prepare(`DELETE FROM page_views WHERE referrer = 'demo-seed'`).run();
     (man.resources || []).forEach((id) => db.prepare(`DELETE FROM portal_resources WHERE id = ?`).run(id));
+    (man.revenue || []).forEach((id) => db.prepare(`DELETE FROM revenue WHERE id = ?`).run(id));
     db.prepare(`DELETE FROM site_settings WHERE key = 'demo_seed'`).run();
   })();
   files.forEach(removeUpload);
@@ -61,8 +62,30 @@ function copyAsset(name, kind = 'photos') {
 const copyPhoto = (name) => copyAsset(name, 'photos');
 const copyVideo = (name) => copyAsset(path.join('videos', name), 'videos');
 
+// Sample revenue across the last 12 months, so the monthly chart has something to show
+function seedRevenue(man, adminId) {
+  const month = (back, day) => { const d = new Date(); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - back, Math.min(day, back ? 28 : d.getUTCDate()))).toISOString().slice(0, 10); };
+  const ins = db.prepare(`INSERT INTO revenue (amount_cents, source, description, client, received_on, created_by) VALUES (?, ?, ?, ?, ?, ?)`);
+  man.revenue = [
+    [11, 3, 2500, 'Speaking fee', 'Chamber luncheon keynote', 'Antioch Chamber of Commerce'], [10, 14, 1200, 'Coaching', '3-session coaching package', 'Private client'],
+    [9, 8, 4000, 'Speaking fee', 'Conference breakout', 'Bay Area Women Expo'], [8, 20, 3600, 'Program', 'Business of You Lab, spring cohort (12 seats)', 'Lab members'],
+    [7, 5, 1500, 'Sponsorship', 'Podcast season sponsor', 'Community Bank'], [6, 11, 5000, 'Speaking fee', 'Corporate training, 2 sessions', 'Becker Logistics'],
+    [5, 2, 2400, 'Program', 'Funding-Ready Intensive, summer cohort', 'Intensive members'], [4, 17, 900, 'Product', 'Workbook bundle sales', 'Online store'],
+    [3, 9, 7500, 'Speaking fee', 'Annual summit keynote', 'Women Who Build'], [2, 6, 1800, 'Coaching', 'Speaker coaching, 6 sessions', 'Private client'],
+    [1, 13, 4800, 'Program', 'Speaker Academy, fall cohort', 'Academy members'], [1, 22, 2500, 'Speaking fee', 'Small business week panel', 'City of Antioch'],
+    [0, 2, 3000, 'Speaking fee', 'Workshop, half day', 'East Bay SBDC'],
+  ].map(([back, day, usd, source, desc, client]) => ins.run(usd * 100, source, `Sample: ${desc}`, client, month(back, day), adminId).lastInsertRowid);
+}
+
 function seed() {
-  if (manifest().members?.length) {
+  const existing = manifest();
+  if (existing.members?.length && !existing.revenue) {
+    const admin = db.prepare(`SELECT id FROM members WHERE role = 'admin' ORDER BY id LIMIT 1`).get();
+    seedRevenue(existing, admin && admin.id); saveManifest(existing);
+    console.log(`Added ${existing.revenue.length} sample revenue entries.`);
+    return;
+  }
+  if (existing.members?.length) {
     console.log('Sample data is already there. To start over: npm run seed-demo -- --remove, then run it again.');
     return;
   }
@@ -213,6 +236,7 @@ function seed() {
     db.prepare(`INSERT INTO site_settings (key, value) VALUES ('hero_video', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(man.hero);
   }
 
+  seedRevenue(man, Yo);
   saveManifest(man);
   console.log(`Added sample data:
   10 accounts (2 team, 8 members) — sign in with any of them using password ${PASSWORD}
@@ -220,7 +244,8 @@ function seed() {
   ${man.posts.length + 8} community posts with photos, a video and comments
   messages, 7 assignments at every stage, 8 booking requests, discovery calls,
   14 subscribers, a week of page visits, 3 member resources, 6 books on the bookshelf,
-  3 lesson videos on the Watch page and a homepage background video (if none was set)
+  3 lesson videos on the Watch page, a homepage background video (if none was set)
+  and 13 sample revenue entries across the last 12 months
 Remove it all any time: npm run seed-demo -- --remove`);
 }
 

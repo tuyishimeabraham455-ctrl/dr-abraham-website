@@ -43,6 +43,7 @@ app.use('/api', require('./routes/portal'));
 app.use('/api', require('./routes/coach'));
 app.use('/api', require('./routes/media'));
 app.use('/api', require('./routes/training'));
+app.use('/api', require('./routes/insights'));
 
 // ── Offline worker and app manifest: always fetched fresh ────
 app.get(['/sw.js', '/manifest.webmanifest'], (req, res, next) => { res.set('Cache-Control', 'no-cache'); next(); });

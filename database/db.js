@@ -376,6 +376,21 @@ db.exec(`
     PRIMARY KEY (path, key)
   );
 
+  -- Revenue the team records (speaking fees, programs, sponsorships…), for the monthly chart
+  CREATE TABLE IF NOT EXISTS revenue (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    amount_cents INTEGER NOT NULL,
+    currency     TEXT    DEFAULT 'USD',
+    source       TEXT    DEFAULT 'Other',   -- Speaking fee | Program | Sponsorship | Product | Coaching | Other
+    description  TEXT    DEFAULT '',
+    client       TEXT    DEFAULT '',
+    inquiry_id   INTEGER,                   -- the lead it came from, if any
+    received_on  TEXT    NOT NULL,          -- YYYY-MM-DD
+    created_by   INTEGER REFERENCES members(id) ON DELETE SET NULL,
+    created_at   DATETIME DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_revenue_date ON revenue(received_on);
+
   -- Answers the admin teaches Agent Yo (used without any AI service)
   CREATE TABLE IF NOT EXISTS agent_training (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -42,7 +42,7 @@ function snapshot() {
     FROM calls c LEFT JOIN inquiries i ON i.id = c.inquiry_id WHERE c.status = 'booked' AND c.starts_at > ? AND c.starts_at < ? ORDER BY c.starts_at`).all(now, week);
   const gaps = db.prepare(`SELECT question, topic, COUNT(*) n FROM agent_gaps GROUP BY lower(question) ORDER BY n DESC, MAX(id) DESC LIMIT 12`).all();
   const questions = db.prepare(`SELECT lower(first_message) question, COUNT(*) n FROM agent_sessions WHERE first_message != '' AND created_at > datetime('now','-30 days') GROUP BY 1 ORDER BY n DESC LIMIT 8`).all();
-  const assignments = db.prepare(`SELECT a.id, a.title, a.status, a.due_date, t.name assignee FROM assignments a JOIN members t ON t.id = a.assigned_to WHERE a.status != 'done' ORDER BY a.due_date = '', a.due_date LIMIT 30`).all();
+  const assignments = db.prepare(`SELECT a.id, a.title, a.status, a.due_date, a.updated_at, t.name assignee FROM assignments a JOIN members t ON t.id = a.assigned_to WHERE a.status != 'done' ORDER BY a.due_date = '', a.due_date LIMIT 60`).all();
   const n = (sql) => db.prepare(sql).get().n;
   const stats = {
     subscribers_7d: n(`SELECT COUNT(*) n FROM subscribers WHERE created_at > datetime('now','-7 days')`),
@@ -78,9 +78,12 @@ function suggestions(s) {
       action: 'Review their request and pick the talk to recommend.', link: '#calls', ask: `Prepare me for my discovery call with ${c.name}${c.inquiry_id ? ` (inquiry #${c.inquiry_id})` : ''}: what to ask, which talk to recommend and why, and a clear next step to close.` });
   }
 
-  const review = s.assignments.filter((a) => a.status === 'submitted');
-  if (review.length) add({ priority: 'high', area: 'Team', title: `${review.length} assignment${review.length === 1 ? '' : 's'} waiting for your review`,
-    why: review.slice(0, 3).map((a) => `${a.assignee}: ${a.title}`).join('; '), action: 'Give feedback or mark them done.', link: '#assignments' });
+  // Name each person who submitted, newest first, so nobody waits unseen
+  const review = s.assignments.filter((a) => a.status === 'submitted').sort((x, y) => String(y.updated_at).localeCompare(String(x.updated_at)));
+  review.slice(0, 3).forEach((a) => add({ priority: 'high', area: 'Review', title: `${a.assignee} submitted "${a.title}"`,
+    why: `Submitted ${daysSince(a.updated_at) <= 0 ? 'today' : `${daysSince(a.updated_at)} day${daysSince(a.updated_at) === 1 ? '' : 's'} ago`}${a.due_date ? `, due ${a.due_date}` : ''}. Quick feedback keeps people moving.`,
+    action: 'Open it, use ✨ AI review for a feedback draft, then send it or mark it done.', link: '#assignments', ask: 'Who submitted assignments, and who is late?' }));
+  if (review.length > 3) add({ priority: 'high', area: 'Review', title: `${review.length - 3} more submission${review.length - 3 === 1 ? '' : 's'} waiting for review`, why: review.slice(3, 6).map((a) => `${a.assignee}: ${a.title}`).join('; '), action: 'Open Assignments.', link: '#assignments' });
   const overdue = s.assignments.filter((a) => a.due_date && a.due_date < s.today && a.status !== 'submitted');
   if (overdue.length) add({ priority: 'medium', area: 'Team', title: `${overdue.length} assignment${overdue.length === 1 ? ' is' : 's are'} overdue`,
     why: overdue.slice(0, 3).map((a) => `${a.assignee}: ${a.title} (due ${a.due_date})`).join('; '), action: 'Check in, or move the due date.', link: '#assignments' });

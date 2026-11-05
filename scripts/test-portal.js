@@ -24,6 +24,7 @@ const coachRoutes = require('../routes/coach');
 app.use('/api', coachRoutes);
 app.use('/api', require('../routes/media'));
 app.use('/api', require('../routes/training'));
+app.use('/api', require('../routes/insights'));
 const server = app.listen(0);
 const base = `http://127.0.0.1:${server.address().port}/api`;
 const call = async (method, p, token, body) => {
@@ -133,6 +134,31 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     check('assigner notified of submission', (await call('GET', '/portal/messages', A)).body.data.some((x) => x.subject.startsWith('Submitted:')));
     check('staff marks needs changes with feedback', (await call('PATCH', `/portal/assignments/${asg.body.id}`, A, { status: 'needs_changes', feedback: 'Open with the preschool story.' })).body.ok);
     check('member notified of feedback', (await call('GET', '/portal/messages', M1)).body.data.some((x) => x.subject.startsWith('Needs changes:')));
+    // Admin insights: users, revenue by month, who submitted
+    check('member submits again after feedback', (await call('PATCH', `/portal/assignments/${asg.body.id}`, M1, { status: 'submitted', submission: 'New version, opening with the preschool story: https://example.com/my-story-v2' })).body.ok);
+    const ins = (await call('GET', '/portal/insights', A)).body;
+    check('insights: user totals and 12 months', ins.ok && ins.users.total >= 4 && ins.users.months.length === 12 && ins.users.months.at(-1).count >= 4);
+    check('insights: AI names who submitted', ins.assignments.to_review.some((r) => r.id === asg.body.id && r.name && /preschool/.test(r.preview)));
+    check('insights: per-person tracker', ins.assignments.people.some((p) => p.id === m1 && p.submitted === 1));
+    check('team sees insights without revenue', (await call('GET', '/portal/insights', T)).body.revenue === null);
+    check('members cannot open insights', (await call('GET', '/portal/insights', M1)).status === 403);
+    const now = new Date().toISOString().slice(0, 10);
+    check('admin records revenue', (await call('POST', '/portal/revenue', A, { amount: '$2,500', received_on: now, source: 'Speaking fee', client: 'Test Org' })).status === 201);
+    check('revenue: bad amount rejected', (await call('POST', '/portal/revenue', A, { amount: 'lots', received_on: now })).status === 400);
+    check('revenue: future date rejected', (await call('POST', '/portal/revenue', A, { amount: 10, received_on: '2999-01-01' })).status === 400);
+    check('team cannot record revenue', (await call('POST', '/portal/revenue', T, { amount: 10, received_on: now })).status === 403);
+    const rv = (await call('GET', '/portal/revenue', A)).body;
+    check('revenue shows in this month of the chart', rv.insight.this_month_cents === 250000 && rv.insight.months.at(-1).cents === 250000 && rv.data[0].client === 'Test Org');
+    check('admin deletes a revenue entry', (await call('DELETE', `/portal/revenue/${rv.data[0].id}`, A)).body.ok && (await call('GET', '/portal/revenue', A)).body.insight.count === 0);
+    const act = (await call('GET', '/portal/activity?since=2000-01-01 00:00:00', A)).body;
+    check('live activity lists the submission', act.ok && act.events.some((e) => e.kind === 'submission' && e.id === asg.body.id));
+    check('members cannot read live activity', (await call('GET', '/portal/activity', M1)).status === 403);
+    const rev = (await call('POST', `/portal/assignments/${asg.body.id}/ai-review`, A)).body;
+    check('AI review drafts feedback without an API key', rev.ok && rev.source === 'local' && /preschool|thank you/i.test(rev.draft) && rev.summary);
+    check('AI review needs a submission', (await call('POST', `/portal/assignments/${other.body.id}/ai-review`, A)).status === 400);
+    check('members cannot use AI review', (await call('POST', `/portal/assignments/${asg.body.id}/ai-review`, M1)).status === 403);
+    check('staff sends needs-changes again', (await call('PATCH', `/portal/assignments/${asg.body.id}`, A, { status: 'needs_changes', feedback: rev.draft })).body.ok);
+
     const ovA = (await call('GET', '/portal/overview', A)).body.kpis;
     check('overview counts open assignments', ovA.open_assignments === 2 && ovA.to_review === 0);
 

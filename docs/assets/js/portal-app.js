@@ -77,7 +77,7 @@
   const TABS = [
     ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'], ['train', 'Train Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
-    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['media', 'Admin · Media', 'admin'], ['books', 'Admin · Books', 'admin'], ['podcast', 'Admin · Podcast', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
+    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['revenue', 'Admin · Revenue', 'admin'], ['media', 'Admin · Media', 'admin'], ['books', 'Admin · Books', 'admin'], ['podcast', 'Admin · Podcast', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
   ];
   const A_LABEL = { todo: 'To do', in_progress: 'In progress', submitted: 'Submitted', needs_changes: 'Needs changes', done: 'Done' };
   const today = () => new Date().toISOString().slice(0, 10);
@@ -220,7 +220,7 @@
       $('#pAva').outerHTML = ava(me, 'p-ava', 'pAva');
       $('#pNav').innerHTML = TABS.filter(([, , who]) => allowed(who)).map(([k, label]) => `<a href="#${k}" data-tab="${k}">${h(label)}${k === 'inbox' ? `<span class="p-badge" id="pUnread"${out.unread ? '' : ' hidden'}>${out.unread}</span>` : ''}${k === 'assignments' ? `<span class="p-badge" id="pOpenA"${out.open_assignments ? '' : ' hidden'}>${out.open_assignments}</span>` : ''}</a>`).join('');
       loginBox.hidden = true; app.hidden = false;
-      route();
+      route(); if (isStaff()) startActivity();
     } catch { if (!store.get()) return; loginBox.hidden = false; app.hidden = true; }
   }
   // Phones: the section list opens from a menu button instead of a sideways strip
@@ -262,16 +262,109 @@
     s.classList.toggle('saved', !!out.ok); setTimeout(() => s.classList.remove('saved'), 1200);
   });
 
+
+  // ---------- Charts: one series, bars by month (SVG, no library) ----------
+  const money = (cents) => '$' + (Math.round(cents) / 100).toLocaleString('en-US', { maximumFractionDigits: cents % 100 ? 2 : 0 });
+  const monthName = (ym, long) => new Date(ym + '-01T12:00:00Z').toLocaleString('en-US', long ? { month: 'long', year: 'numeric', timeZone: 'UTC' } : { month: 'short', timeZone: 'UTC' });
+  const niceMax = (v) => { if (v <= 0) return 4; const mag = 10 ** Math.floor(Math.log10(v)), n = v / mag; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * mag; };
+  const moneyTick = (c) => (c >= 100000 ? '$' + +(c / 100000).toFixed(1) + 'k' : money(c));
+  let chartSeq = 0;
+  const barChart = (points, { fmt = (x) => String(x), label = 'Value', tick = fmt, whole = false } = {}) => {
+    const id = 'ch' + (++chartSeq), W = 640, H = 230, L = 58, R = 10, T = 14, B = 28;
+    const top0 = Math.max(0, ...points.map((p) => p.value)), max = whole ? Math.max(4, Math.ceil(top0 / 4) * 4) : niceMax(top0), step = (W - L - R) / points.length, bw = Math.min(34, step * 0.6);
+    const y = (v) => T + (H - T - B) * (1 - v / max);
+    const grid = [0, 0.25, 0.5, 0.75, 1].map((f) => `<line x1="${L}" x2="${W - R}" y1="${y(max * f)}" y2="${y(max * f)}" class="ch-grid"/><text x="${L - 8}" y="${y(max * f) + 4}" class="ch-ytick">${h(tick(max * f))}</text>`).join('');
+    const bars = points.map((p, i) => {
+      const x = L + i * step + (step - bw) / 2, top = y(p.value), base = y(0), r = Math.min(4, bw / 2, base - top);
+      const path = p.value > 0 ? `M${x},${base} V${top + r} Q${x},${top} ${x + r},${top} H${x + bw - r} Q${x + bw},${top} ${x + bw},${top + r} V${base} Z` : '';
+      return `<g class="ch-bar" data-i="${i}" tabindex="0" role="img" aria-label="${h(p.long)}: ${h(fmt(p.value))}"><rect x="${L + i * step}" y="${T}" width="${step}" height="${H - T - B}" class="ch-hit"/>${path ? `<path d="${path}" class="ch-fill"/>` : `<line x1="${x}" x2="${x + bw}" y1="${base - 0.5}" y2="${base - 0.5}" class="ch-zero"/>`}<text x="${L + i * step + step / 2}" y="${H - 9}" class="ch-xtick">${h(p.label)}</text></g>`;
+    }).join('');
+    return `<div class="ch" id="${id}" data-points='${h(JSON.stringify(points.map((p) => [p.long, fmt(p.value)])))}'>
+      <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${h(label)} by month">${grid}<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" class="ch-axis"/>${bars}</svg>
+      <div class="ch-tip" hidden></div>
+      <details class="ch-table"><summary>Show as table</summary><table class="p-table"><thead><tr><th>Month</th><th>${h(label)}</th></tr></thead><tbody>${points.map((p) => `<tr><td>${h(p.long)}</td><td>${h(fmt(p.value))}</td></tr>`).join('')}</tbody></table></details>
+    </div>`;
+  };
+  // Tooltips for every chart inside a view (hover, tap or keyboard focus)
+  const wireCharts = (root) => root.querySelectorAll('.ch').forEach((ch) => {
+    const pts = JSON.parse(ch.dataset.points), tip = ch.querySelector('.ch-tip'), svg = ch.querySelector('svg');
+    const show = (g) => {
+      const [name, val] = pts[Number(g.dataset.i)], box = g.querySelector('.ch-hit').getBoundingClientRect(), cb = ch.getBoundingClientRect();
+      tip.innerHTML = `<b>${h(val)}</b><span>${h(name)}</span>`; tip.hidden = false;
+      tip.style.left = Math.min(cb.width - tip.offsetWidth - 4, Math.max(4, box.left - cb.left + box.width / 2 - tip.offsetWidth / 2)) + 'px';
+      ch.querySelectorAll('.ch-bar').forEach((b) => b.classList.toggle('on', b === g));
+    };
+    svg.querySelectorAll('.ch-bar').forEach((g) => { g.addEventListener('mouseenter', () => show(g)); g.addEventListener('focus', () => show(g)); g.addEventListener('click', () => show(g)); });
+    svg.addEventListener('mouseleave', () => { tip.hidden = true; ch.querySelectorAll('.ch-bar').forEach((b) => b.classList.remove('on')); });
+  });
+  const monthPoints = (rows, key) => rows.map((r) => ({ label: monthName(r.month), long: monthName(r.month, true), value: r[key] }));
+  // A month in progress isn't comparable to a full one, so show last month's total beside it
+  const trend = (now, before) => `so far · last month ${money(before)}`;
+
+  // ---------- Live alerts while staff have the portal open ----------
+  let activitySince = null, activityTimer = null;
+  const alertBox = () => { let b = $('#pAlerts'); if (!b) { b = document.createElement('div'); b.id = 'pAlerts'; b.className = 'p-alerts'; b.setAttribute('aria-live', 'polite'); document.body.appendChild(b); } return b; };
+  const pushAlert = (e) => {
+    const el = document.createElement('a'); el.className = 'p-alert'; el.href = e.link || '#overview';
+    el.innerHTML = `<span class="p-alert-ic" aria-hidden="true">${e.kind === 'submission' ? '📝' : e.kind === 'signup' ? '👋' : '✉️'}</span><span><b>${h(e.text)}</b><small>${e.kind === 'submission' ? 'AI Coach: review it while it\'s fresh' : 'Just now'}</small></span>`;
+    el.addEventListener('click', () => el.remove());
+    alertBox().appendChild(el); setTimeout(() => el.classList.add('out'), 9000); setTimeout(() => el.remove(), 9600);
+  };
+  const pollActivity = async () => {
+    if (!me || !isStaff()) return;
+    try {
+      const out = await api('/portal/activity' + (activitySince ? '?since=' + encodeURIComponent(activitySince) : ''));
+      if (activitySince) out.events.forEach(pushAlert);
+      activitySince = out.now;
+      if (out.events.length) refreshUnread();
+    } catch { /* offline for a moment */ }
+  };
+  const startActivity = () => { clearInterval(activityTimer); activitySince = null; pollActivity(); activityTimer = setInterval(pollActivity, 20000); };
+
   /* ---------- Views ---------- */
   const VIEWS = {
     async overview(v) {
-      const [o, c] = await Promise.all([api('/portal/overview'), api('/portal/coach')]); const k = o.kpis;
-      v.innerHTML = `<div class="p-kpis">${kpi('New inquiries', k.new_inquiries)}${kpi('Hot leads', k.hot_leads, 'score 60+')}${kpi('Upcoming calls', k.upcoming_calls)}${kpi('Subscribers', k.subscribers)}${kpi('Open assignments', k.open_assignments, k.to_review ? k.to_review + ' to review' : '')}${kpi('Agent Yo conversion', o.agent.conversion_rate + '%', o.agent.sessions + ' chats')}${kpi('Emails waiting', k.queued_emails, 'outbox')}</div>
+      const [o, c, ins] = await Promise.all([api('/portal/overview'), api('/portal/coach'), api('/portal/insights')]); const k = o.kpis;
+      const U = ins.users, Rv = ins.revenue, A = ins.assignments, isAdmin = me.role === 'admin';
+      v.innerHTML = `<div class="p-kpis">${kpi('Users', U.total, `+${U.new_this_month} this month`)}${isAdmin ? kpi('Revenue this month', money(Rv.this_month_cents), trend(Rv.this_month_cents, Rv.last_month_cents)) : ''}${kpi('New inquiries', k.new_inquiries)}${kpi('Hot leads', k.hot_leads, 'score 60+')}${kpi('Upcoming calls', k.upcoming_calls)}${kpi('Subscribers', k.subscribers)}${kpi('Open assignments', k.open_assignments, k.to_review ? k.to_review + ' to review' : '')}${kpi('Agent Yo conversion', o.agent.conversion_rate + '%', o.agent.sessions + ' chats')}</div>
+        <section class="p-card p-ai-asg"><div class="p-coach-head"><h2><span class="p-spark" aria-hidden="true">✦</span> AI Coach: assignments</h2><a class="link-arrow" href="#assignments">Open assignments</a></div>
+          <div class="p-ai-says">${A.to_review.length ? A.to_review.slice(0, 4).map((r) => `<div class="p-ai-line">${ava(r, 'p-ava-sm')}<p><b>${h(r.name)}</b> submitted <b>“${h(r.title)}”</b> <small>${h(r.submitted_ago)}</small><span class="p-ai-prev">${h(r.preview)}</span></p><a class="btn btn-dark btn-sm" href="#assignments/a${r.id}">Review</a></div>`).join('') : '<p class="p-empty">Nobody is waiting for a review right now.</p>'}
+          ${A.late.length ? `<p class="p-ai-late">⏰ <b>Late:</b> ${A.late.slice(0, 5).map((l) => `${h(l.name)} (“${h(l.title)}”, due ${h(l.due_date)})`).join(', ')}</p>` : ''}</div>
+          ${A.people.length ? `<details class="p-ai-track"><summary>Track everyone (${A.people.length} people · ${A.totals.done} done · ${A.totals.submitted} to review · ${A.totals.late} late)</summary>${table([['Person', (p) => `<span class="p-who">${ava(p, 'p-ava-xs')}<b>${h(p.name)}</b></span>`], ['Assigned', (p) => h(p.assigned)], ['To review', (p) => (p.submitted ? `<b>${h(p.submitted)}</b>` : '0')], ['Done', (p) => h(p.done)], ['Late', (p) => (p.late ? `<b class="p-late">${h(p.late)}</b>` : '0')], ['Not started', (p) => h(p.not_started)]], A.people)}</details>` : ''}
+        </section>
+        <div class="p-grid2">
+          ${isAdmin ? `<section class="p-card"><div class="p-coach-head"><h2>Revenue by month</h2><a class="link-arrow" href="#revenue">Record revenue</a></div><p class="p-chart-sum"><b>${money(Rv.year_cents)}</b> this year · ${Rv.count ? `${Rv.count} entr${Rv.count === 1 ? 'y' : 'ies'}` : 'nothing recorded yet'}</p>${barChart(monthPoints(Rv.months, 'cents'), { fmt: money, label: 'Revenue', tick: moneyTick })}</section>` : ''}
+          <section class="p-card"><div class="p-coach-head"><h2>New users by month</h2><a class="link-arrow" href="#people">All users</a></div><p class="p-chart-sum"><b>${U.total}</b> users · ${U.active_30d} active in the last 30 days · ${Object.entries(U.by_role).map(([r, n]) => `${n} ${ROLE[r] || r}${n === 1 ? '' : 's'}`).join(', ')}</p>${barChart(monthPoints(U.months, 'count'), { fmt: (x) => `${x} new user${x === 1 ? '' : 's'}`, label: 'New users', tick: (x) => String(x), whole: true })}
+            <h3 class="p-sub">Newest</h3><div class="p-recent">${U.recent.map((r) => `<span class="p-recent-u">${ava(r, 'p-ava-sm')}<span><b>${h(r.name)}</b><small>${h(ROLE[r.role] || r.role)} · ${h(when(r.created_at))}</small></span></span>`).join('')}</div></section>
+        </div>
         <section class="p-card p-coach-strip"><div class="p-coach-head"><h2><span class="p-spark" aria-hidden="true">✦</span> Today's suggestions</h2><a class="link-arrow" href="#coach">Open AI Coach</a></div><div class="p-sg-grid">${c.suggestions.slice(0, 3).map((sg) => suggestionCard(sg, true)).join('')}</div></section>
         <div class="p-grid2">
           <section class="p-card"><h2>Recent leads</h2>${table([['Name', (r) => `<b>${h(r.name)}</b><small>${h(r.organization || r.email)}</small>`], ['Type', (r) => h(r.inquiry_type || '')], ['Score', (r) => scoreTag(r.score)], ['Status', (r) => statusSelect('leads', r.id, r.status, ['new', 'read', 'replied', 'closed'])]], o.recent_leads, 'No leads yet.')}<a class="link-arrow" href="#leads">All leads</a></section>
           <section class="p-card"><h2>Upcoming calls</h2>${table([['When', (r) => h(when(r.starts_at))], ['Who', (r) => `<b>${h(r.name)}</b><small>${h(r.email)}</small>`]], o.upcoming_calls, 'No calls booked.')}<h2 style="margin-top:1.6rem">Sign-ups by source</h2>${table([['Source', (r) => h(r.source)], ['Count', (r) => h(r.n)]], o.subscribers_by_source, 'No sign-ups yet.')}</section>
         </div>`;
+      wireCharts(v);
+    },
+    async revenue(v) {
+      const out = await api('/portal/revenue'); const Rv = out.insight;
+      const pre = (() => { try { return JSON.parse(sessionStorage.getItem('yoRevenuePrefill') || 'null'); } catch { return null; } })();
+      sessionStorage.removeItem('yoRevenuePrefill');
+      v.innerHTML = `<div class="p-kpis">${kpi('This month', money(Rv.this_month_cents), trend(Rv.this_month_cents, Rv.last_month_cents))}${kpi('Last month', money(Rv.last_month_cents))}${kpi('This year', money(Rv.year_cents))}${kpi('Entries', Rv.count)}</div>
+        <div class="p-grid2">
+          <section class="p-card"><h2>Revenue by month</h2>${barChart(monthPoints(Rv.months, 'cents'), { fmt: money, label: 'Revenue', tick: moneyTick })}
+            ${Rv.by_source.length ? `<h3 class="p-sub">By source (last 12 months)</h3>${table([['Source', (r) => h(r.source)], ['Total', (r) => h(money(r.cents))]], Rv.by_source)}` : ''}</section>
+          <form class="p-card" id="rvf"><h2>Record revenue</h2>
+            <p class="fine">Add money once it's received: a speaking fee, program enrollment, coaching, sponsorship or product sale. The chart updates straight away.</p>
+            <div class="row2"><div class="field"><label for="rva">Amount (USD)</label><input id="rva" name="amount" inputmode="decimal" required placeholder="2500" value="${h(pre && pre.amount || '')}"/></div><div class="field"><label for="rvd">Date received</label><input id="rvd" name="received_on" type="date" required value="${new Date().toISOString().slice(0, 10)}"/></div></div>
+            <div class="row2"><div class="field"><label for="rvs">Source</label><select id="rvs" name="source">${out.sources.map((s) => `<option${pre && pre.source === s ? ' selected' : ''}>${h(s)}</option>`).join('')}</select></div><div class="field"><label for="rvc">Client</label><input id="rvc" name="client" maxlength="160" value="${h(pre && pre.client || '')}" placeholder="e.g. Bay Credit Union"/></div></div>
+            <div class="field"><label for="rvn">Note</label><input id="rvn" name="description" maxlength="300" value="${h(pre && pre.description || '')}" placeholder="e.g. Keynote, March summit"/></div>
+            <input type="hidden" name="inquiry_id" value="${h(pre && pre.inquiry_id || '')}"/>
+            ${pre && pre.inquiry_id ? `<p class="fine">Linked to the lead from <b>${h(pre.client)}</b>. Saving marks that lead closed (won).</p>` : ''}
+            <div class="p-row"><button class="btn btn-dark btn-sm">Save</button><span class="form-msg" aria-live="polite"></span></div></form>
+        </div>
+        <section class="p-card"><h2>All entries</h2>${table([['Date', (r) => h(r.received_on)], ['Amount', (r) => `<b>${h(money(r.amount_cents))}</b>`], ['Source', (r) => h(r.source)], ['Client', (r) => `${h(r.client || '')}${r.lead_name ? `<small>Lead: ${h(r.lead_name)}</small>` : ''}`], ['Note', (r) => h(r.description || '')], ['', (r) => `<button type="button" class="linkish danger" data-rvdel="${r.id}">Delete</button>`]], out.data, 'Nothing recorded yet. Add your first entry above.')}</section>`;
+      wireCharts(v);
+      $('#rvf').addEventListener('submit', async (e) => { e.preventDefault(); const o = await api('/portal/revenue', { method: 'POST', body: Object.fromEntries(new FormData(e.target)) }); flash($('#rvf .form-msg'), o.message, o.ok); if (o.ok) setTimeout(route, 600); });
+      v.querySelectorAll('[data-rvdel]').forEach((b) => b.addEventListener('click', async () => { if (confirm('Delete this revenue entry?')) { await api(`/portal/revenue/${b.dataset.rvdel}`, { method: 'DELETE' }); route(); } }));
     },
     async leads(v) {
       v.innerHTML = `<div class="p-tools"><input type="search" id="lq" placeholder="Search name, email, organization or message"/><select id="ls"><option value="">All statuses</option><option>new</option><option>read</option><option>replied</option><option>closed</option></select></div><div id="lt"></div>`;
@@ -280,8 +373,13 @@
         $('#lt').innerHTML = table([
           ['Received', (r) => h(when(r.created_at))], ['Name', (r) => `<b>${h(r.name)}</b><small><a href="mailto:${h(r.email)}">${h(r.email)}</a></small>`],
           ['Request', (r) => `${h(r.inquiry_type || '')}<small>${h([r.event_type, r.event_date, r.budget].filter(Boolean).join(' · '))}</small><details><summary>Details</summary><p class="p-pre">${h(r.message)}</p></details>`],
-          ['Source', (r) => h(r.source || '')], ['Score', (r) => scoreTag(r.score)], ['Status', (r) => statusSelect('leads', r.id, r.status, ['new', 'read', 'replied', 'closed'])],
+          ['Source', (r) => h(r.source || '')], ['Score', (r) => scoreTag(r.score)], ['Status', (r) => statusSelect('leads', r.id, r.status, ['new', 'read', 'replied', 'closed']) + (me.role === 'admin' ? `<button type="button" class="linkish" data-won="${r.id}" data-client="${h(r.organization || r.name)}" data-type="${h(r.inquiry_type || '')}">Won · record revenue</button>` : '')],
         ], out.data, 'No leads match.');
+        $('#lt').querySelectorAll('[data-won]').forEach((b) => b.addEventListener('click', () => {
+          const type = b.dataset.type.toLowerCase();
+          sessionStorage.setItem('yoRevenuePrefill', JSON.stringify({ inquiry_id: b.dataset.won, client: b.dataset.client, source: /speak|keynote|event/.test(type) ? 'Speaking fee' : /coach/.test(type) ? 'Coaching' : /program|course/.test(type) ? 'Program' : /sponsor/.test(type) ? 'Sponsorship' : 'Other', description: b.dataset.type }));
+          location.hash = '#revenue';
+        }));
       };
       let t; $('#lq').addEventListener('input', () => { clearTimeout(t); t = setTimeout(load, 250); }); $('#ls').addEventListener('change', load); await load();
     },
@@ -345,7 +443,7 @@
           ${mine && r.status !== 'done' ? `<form class="p-asg-form" data-a="${r.id}"><label for="sub${r.id}">Your work: a note or a link</label><textarea id="sub${r.id}" name="submission" rows="3" maxlength="8000">${h(r.submission)}</textarea>
             <div class="p-row">${r.status === 'todo' ? `<button type="button" class="btn btn-ghost-dark btn-sm" data-status="in_progress">Start</button>` : ''}<button class="btn btn-dark btn-sm" data-status="submitted">${r.status === 'submitted' ? 'Update submission' : 'Submit'}</button><span class="form-msg" aria-live="polite"></span></div></form>` : ''}
           ${isStaff() && !mine ? `<form class="p-asg-form" data-a="${r.id}"><label for="fb${r.id}">Feedback</label><textarea id="fb${r.id}" name="feedback" rows="2" maxlength="8000">${h(r.feedback)}</textarea>
-            <div class="p-row"><button class="btn btn-dark btn-sm" data-status="done">Mark done</button><button class="btn btn-ghost-dark btn-sm" data-status="needs_changes">Needs changes</button><button type="button" class="linkish" data-fbonly>Save feedback</button><button type="button" class="linkish" data-adel="${r.id}">Delete</button><span class="form-msg" aria-live="polite"></span></div></form>` : ''}
+            <div class="p-row"><button class="btn btn-dark btn-sm" data-status="done">Mark done</button><button class="btn btn-ghost-dark btn-sm" data-status="needs_changes">Needs changes</button>${r.submission ? `<button type="button" class="btn btn-ghost-dark btn-sm" data-aireview="${r.id}">✨ AI review</button>` : ''}<button type="button" class="linkish" data-fbonly>Save feedback</button><button type="button" class="linkish" data-adel="${r.id}">Delete</button><span class="form-msg" aria-live="polite"></span></div></form>` : ''}
         </article>`;
       };
       v.innerHTML = `${isStaff() ? `<form class="p-card" id="af"><h2>New assignment</h2><div class="row2"><div class="field"><label for="at">Title</label><input id="at" name="title" required maxlength="160" placeholder="e.g. Record your 2-minute signature story"/></div><div class="field"><label for="ato">Assign to</label><select id="ato" name="assigned_to" required>${people.data.map((p) => `<option value="${p.id}">${h(p.name)} · ${h(ROLE[p.role] || p.role)}</option>`).join('')}</select></div></div>
@@ -353,12 +451,23 @@
           <div class="p-row"><button class="btn btn-dark btn-sm">Assign</button><span class="form-msg" aria-live="polite"></span></div></form>` : ''}
         <div class="p-asg-stats">${['todo', 'in_progress', 'submitted', 'needs_changes', 'done'].map((s) => `<span class="p-pill ${s}">${A_LABEL[s]} · ${counts[s]}</span>`).join('')}</div>
         <div class="p-asg-list">${rows.map(card).join('') || `<p class="p-empty">${isStaff() ? 'No assignments yet. Create the first one above.' : 'No assignments yet. When Yo\'s team gives you work, it appears here.'}</p>`}</div>`;
+      const jump = /^a(\d+)$/.exec(sub || ''); const target = jump && $('#a' + jump[1]);
+      if (target) { target.classList.add('p-flash'); target.scrollIntoView({ block: 'start' }); }
       if (isStaff() && $('#af')) $('#af').addEventListener('submit', async (e) => { e.preventDefault(); const o = await api('/portal/assignments', { method: 'POST', body: Object.fromEntries(new FormData(e.target)) }); if (o.ok) route(); else flash($('#af .form-msg'), o.message, false); });
       v.querySelectorAll('.p-asg-form').forEach((f) => {
         const save = async (body) => { const o = await api(`/portal/assignments/${f.dataset.a}`, { method: 'PATCH', body }); if (o.ok) { await refreshUnread(); route(); } else flash(f.querySelector('.form-msg'), o.message, false); };
         f.addEventListener('submit', (e) => { e.preventDefault(); const st = (e.submitter && e.submitter.dataset.status) || 'submitted'; save({ status: st, ...Object.fromEntries(new FormData(f)) }); });
         f.querySelectorAll('button[type="button"][data-status]').forEach((b) => b.addEventListener('click', () => save({ status: b.dataset.status })));
         const fbOnly = f.querySelector('[data-fbonly]'); if (fbOnly) fbOnly.addEventListener('click', () => save({ feedback: f.feedback.value }));
+        const air = f.querySelector('[data-aireview]');
+        if (air) air.addEventListener('click', async () => {
+          const msg = f.querySelector('.form-msg'); msg.textContent = 'AI is reading the submission…'; msg.className = 'form-msg'; air.disabled = true;
+          const o = await api(`/portal/assignments/${air.dataset.aireview}/ai-review`, { method: 'POST' }).catch((e) => ({ ok: false, message: e.message }));
+          air.disabled = false;
+          if (!o.ok) return flash(msg, o.message, false);
+          f.feedback.value = o.draft; f.feedback.rows = 7; f.feedback.focus();
+          flash(msg, `AI draft ready (${o.summary}) Edit it, then press Mark done or Needs changes.`);
+        });
         const del = f.querySelector('[data-adel]'); if (del) del.addEventListener('click', async () => { if (confirm('Delete this assignment?')) { await api(`/portal/assignments/${del.dataset.adel}`, { method: 'DELETE' }); route(); } });
       });
     },
