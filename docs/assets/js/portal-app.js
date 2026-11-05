@@ -143,6 +143,9 @@
       route();
     } catch { if (!store.get()) return; loginBox.hidden = false; app.hidden = true; }
   }
+  // Phones: the section list opens from a menu button instead of a sideways strip
+  const setNavOpen = (open) => { $('.p-side').classList.toggle('nav-open', open); $('#pNavToggle').setAttribute('aria-expanded', String(open)); };
+  $('#pNavToggle').addEventListener('click', () => setNavOpen(!$('.p-side').classList.contains('nav-open')));
   addEventListener('hashchange', route);
   function route() {
     if (!me) return;
@@ -152,6 +155,7 @@
     if (!def || !allowed(def[2])) tab = first;
     document.querySelectorAll('#pNav a').forEach((a) => a.toggleAttribute('aria-current', a.dataset.tab === tab));
     $('#pTitle').textContent = TABS.find(([k]) => k === tab)[1]; $('#pActions').innerHTML = '';
+    $('#pNavCurrent').textContent = TABS.find(([k]) => k === tab)[1]; setNavOpen(false);
     const view = $('#pView'); view.innerHTML = '<p class="p-loading">Loading…</p>';
     (VIEWS[tab] || VIEWS.home)(view, location.hash.split('/')[1]).catch((err) => { view.innerHTML = `<p class="form-msg err">${h(err.message)}</p>`; });
   }
@@ -168,7 +172,7 @@
 
   /* ---------- Small UI helpers ---------- */
   const kpi = (label, value, note = '') => `<div class="p-kpi"><span>${h(label)}</span><b>${h(value)}</b>${note ? `<small>${h(note)}</small>` : ''}</div>`;
-  const table = (cols, rows, empty = 'Nothing here yet.') => rows.length ? `<div class="p-table-wrap"><table class="p-table"><thead><tr>${cols.map(([l]) => `<th>${h(l)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${cols.map(([, f]) => `<td>${f(r)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : `<p class="p-empty">${h(empty)}</p>`;
+  const table = (cols, rows, empty = 'Nothing here yet.') => rows.length ? `<div class="p-table-wrap"><table class="p-table"><thead><tr>${cols.map(([l]) => `<th>${h(l)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${cols.map(([l, f]) => `<td data-label="${h(l)}">${f(r)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : `<p class="p-empty">${h(empty)}</p>`;
   const scoreTag = (s) => `<span class="p-score ${s >= 60 ? 'hot' : s >= 30 ? 'warm' : ''}">${h(s || 0)}</span>`;
   const statusSelect = (kind, idv, current, options) => `<select class="p-status" data-kind="${kind}" data-id="${idv}">${options.map((o) => `<option${o === current ? ' selected' : ''}>${o}</option>`).join('')}</select>`;
   const flash = (el, text, ok = true) => { el.textContent = text; el.className = 'form-msg ' + (ok ? 'ok' : 'err'); };
