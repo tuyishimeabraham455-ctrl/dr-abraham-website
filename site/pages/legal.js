@@ -48,7 +48,7 @@ exports.privacy = () => legalPage({
       'To keep the site secure and prevent spam.',
     ], 'We do not sell, rent or trade your information, and we do not use it for advertising.']],
     ['Services that help us', [[
-      'Anthropic (Claude API) powers Agent Yo. Your chat messages are sent to Anthropic to generate replies.',
+      'Agent Yo normally answers on our own server from Yo\'s material, without sending your messages anywhere else. If we switch on Anthropic\'s Claude to power it, your chat messages are sent to Anthropic to generate replies.',
       'An email delivery service (such as Resend) sends confirmations and newsletters when enabled.',
       'A CRM or automation tool may receive lead details when the team connects one.',
       'Our hosting provider stores the website and its database.',
@@ -88,7 +88,7 @@ exports.aiDisclosure = () => legalPage({
   lead: 'Agent Yo is an AI assistant. Here is what it does, what it does not do, and how your conversation is handled.',
   description: 'Agent Yo is an AI assistant for The Business of You. How it works, its limits, safety guardrails, and how conversations are stored and deleted.',
   sections: [
-    ['It is an AI, not Yolanda', ['Agent Yo is an AI assistant built on Anthropic\'s Claude models. It speaks in Yolanda\'s voice to help you, but it is not Yolanda and it will say so if asked.']],
+    ['It is an AI, not Yolanda', ['Agent Yo is an AI assistant. It answers on its own from Yolanda\'s material and from answers her team teaches it, and it can also be powered by Anthropic\'s Claude models. It speaks in Yolanda\'s voice to help you, but it is not Yolanda and it will say so if asked.']],
     ['What it knows', ['Agent Yo answers from Yolanda\'s own material: her bio, talks, workshops, programs and frequently asked questions. It does not browse the web. If it does not know something, it says so and offers to connect you with a person.']],
     ['What it will not do', [[
       'Quote fees. Fees are shared by Yo\'s team after a short conversation.',
@@ -97,7 +97,7 @@ exports.aiDisclosure = () => legalPage({
     ]]],
     ['Your safety', ['If you share that you are in distress, Agent Yo stops all booking and sales conversation and shares crisis resources, including the 988 Suicide & Crisis Lifeline (call or text 988 in the US). If you are in immediate danger, call 911.']],
     ['Your details', ['Agent Yo only sends your name, email and request to Yo\'s team after you say yes in the conversation. It can also book a discovery call if you ask it to.']],
-    ['Your conversation', ['Conversations are stored so the team can follow up and improve answers. You can delete yours any time with "Forget this chat" under the chat window. Messages are processed by Anthropic to generate replies. We never sell conversations or use them for advertising.']],
+    ['Your conversation', ['Conversations are stored so the team can follow up and improve answers, and questions Agent Yo could not answer are shown to the team so they can teach it. You can delete yours any time with "Forget this chat" under the chat window. When Claude is switched on, messages are processed by Anthropic to generate replies. We never sell conversations or use them for advertising.']],
   ],
 });
 

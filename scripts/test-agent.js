@@ -119,10 +119,27 @@ const get = async (p) => (await fetch(base + p)).json();
     const f = await post('/agent/forget', { session_id: r2.body.session_id });
     check('forget deletes the conversation', f.body.deleted === true && !db.prepare(`SELECT 1 FROM agent_sessions WHERE id = ?`).get(r2.body.session_id));
 
-    // 10. Offline mode without credentials
+    // 10. Without credentials: the local brain answers (no AI service)
     delete process.env.ANTHROPIC_API_KEY;
     r = await post('/agent/chat', { message: 'hi' });
-    check('no API key -> offline:true (site uses guided mode)', r.status === 503 && r.body.offline === true);
+    check('no API key -> local brain answers', r.status === 200 && r.body.ok && r.body.local === true && /Agent Yo/.test(r.body.reply));
+    r = await post('/agent/chat', { message: 'How much does Yo charge for a keynote?' });
+    check('local: never quotes a fee', r.body.local && !/\$\s?\d/.test(r.body.reply) && /quote/i.test(r.body.reply) && r.body.chips.some((c) => c.href === '/book/'));
+    r = await post('/agent/chat', { message: 'Does Yo work with churches?' });
+    check('local: answers from Yo\'s material with next-step buttons', /church/i.test(r.body.reply) && r.body.chips.length >= 2);
+    r = await post('/agent/chat', { message: 'I want to book Yo for our conference' });
+    check('local: booking intent offers the guided planner', r.body.chips.some((c) => c.mode === 'planner'));
+    r = await post('/agent/chat', { message: 'can you help with my taxes' });
+    check('local: education, not tax advice', /licensed professional/i.test(r.body.reply));
+    r = await post('/agent/chat', { message: 'I want to end my life' });
+    check('local: crisis redirect still comes first', r.body.crisis === true && /988/.test(r.body.reply));
+    const gapsBefore = db.prepare(`SELECT COUNT(*) n FROM agent_gaps`).get().n;
+    r = await post('/agent/chat', { message: 'what is the capital of Mongolia' });
+    check('local: unknown question is honest and logged for training', r.body.local && /still learning/i.test(r.body.reply) && db.prepare(`SELECT COUNT(*) n FROM agent_gaps`).get().n === gapsBefore + 1);
+    db.prepare(`INSERT INTO agent_training (questions, answer, link, link_label) VALUES (?, ?, ?, ?)`).run('Do you offer payment plans?\nCan I pay in installments?', 'Yes. Programs can be paid in three monthly installments.', '/learn/', 'See programs');
+    require('../lib/local-agent').refreshTraining();
+    r = await post('/agent/chat', { message: 'can i pay in installments' });
+    check('local: taught answers are used straight away', /three monthly installments/.test(r.body.reply) && r.body.source === 'taught' && r.body.chips[0].href === '/learn/');
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

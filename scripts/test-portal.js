@@ -23,6 +23,7 @@ app.use('/api', require('../routes/portal'));
 const coachRoutes = require('../routes/coach');
 app.use('/api', coachRoutes);
 app.use('/api', require('../routes/media'));
+app.use('/api', require('../routes/training'));
 const server = app.listen(0);
 const base = `http://127.0.0.1:${server.address().port}/api`;
 const call = async (method, p, token, body) => {
@@ -137,10 +138,26 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
 
     // AI Coach
     const coach = (await call('GET', '/portal/coach', A)).body;
-    check('coach briefing works without an API key', coach.ok && coach.ai === false && coach.suggestions.length > 0);
+    check('coach briefing works without an API key', coach.ok && coach.local === true && coach.suggestions.length > 0);
     check('coach flags overdue assignment', coach.suggestions.some((s) => s.area === 'Team' && /overdue/.test(s.title)));
     check('members cannot open the coach', (await call('GET', '/portal/coach', M1)).status === 403);
-    check('coach ask offline -> 503 offline', (await call('POST', '/portal/coach/ask', A, { question: 'What should I focus on?' })).body.offline === true);
+    const lc = (await call('POST', '/portal/coach/ask', A, { question: 'What should I focus on this week?' })).body;
+    check('coach answers locally without an API key', lc.ok && lc.local === true && /focus this week/i.test(lc.answer));
+    check('local coach drafts content ideas', /Content plan/.test((await call('POST', '/portal/coach/ask', A, { question: 'Give me podcast episode ideas' })).body.answer));
+    check('local coach writes an opening story from real facts', /Operation HOPE/.test((await call('POST', '/portal/coach/ask', A, { question: 'Write an opening story for my keynote' })).body.answer));
+
+    // Train Agent Yo (local brain)
+    const tr = await call('POST', '/portal/training', A, { questions: 'Do you offer payment plans?\nCan I pay monthly?', answer: 'Yes, programs can be paid monthly.', link: '/learn/', link_label: 'Programs' });
+    check('admin teaches Agent Yo an answer', tr.status === 201);
+    check('team can teach too; members cannot', (await call('GET', '/portal/training', T)).status === 200 && (await call('GET', '/portal/training', M1)).status === 403);
+    const tried = (await call('POST', '/portal/training/try', A, { message: 'can I pay monthly' })).body;
+    check('try box shows the taught answer and its source', /paid monthly/.test(tried.reply) && tried.source === 'taught' && /taught/i.test(tried.source_label));
+    check('unsafe link in a taught answer refused', (await call('POST', '/portal/training', A, { questions: 'x', answer: 'y', link: 'javascript:alert(1)' })).status === 400);
+    db.prepare(`INSERT INTO agent_gaps (session_id, question, topic) VALUES ('t', 'Do you speak Spanish?', 'unanswered')`).run();
+    check('unanswered questions are listed for teaching', (await call('GET', '/portal/training', A)).body.gaps.some((g) => g.question === 'Do you speak Spanish?'));
+    await call('DELETE', '/portal/training/gaps', A, { question: 'Do you speak Spanish?' });
+    check('dismissing an unanswered question removes it', !(await call('GET', '/portal/training', A)).body.gaps.some((g) => g.question === 'Do you speak Spanish?'));
+    check('editing and deleting taught answers', (await call('PATCH', `/portal/training/${tr.body.id}`, A, { answer: 'Yes, monthly payments are available.' })).body.ok && (await call('DELETE', `/portal/training/${tr.body.id}`, A)).body.ok);
     process.env.ANTHROPIC_API_KEY = 'test';
     let seen = null;
     coachRoutes._setClient({ beta: { messages: { create: async (req) => { seen = req; return { stop_reason: 'end_turn', content: [{ type: 'text', text: '**Focus:** reply to your hot leads first.' }] }; } } } });

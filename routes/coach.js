@@ -18,6 +18,7 @@ const db = require('../database/db');
 const m = require('../lib/members');
 const { knowledge } = require('../lib/agent-knowledge');
 const { HOT } = require('../lib/leads');
+const localCoach = require('../lib/local-coach');
 
 const MODEL = process.env.COACH_MODEL || process.env.AGENT_MODEL || 'claude-opus-5-5';
 const EFFORT = process.env.COACH_EFFORT || 'high';
@@ -105,7 +106,7 @@ function suggestions(s) {
 
 router.get('/portal/coach', staff, (req, res) => {
   const s = snapshot();
-  res.json({ ok: true, ai: hasCredentials(), today: s.today, stats: s.stats, suggestions: suggestions(s), calls: s.calls.map((c) => ({ ...c, when: PT(c.starts_at) })) });
+  res.json({ ok: true, ai: true, local: !hasCredentials(), today: s.today, stats: s.stats, suggestions: suggestions(s), calls: s.calls.map((c) => ({ ...c, when: PT(c.starts_at) })) });
 });
 
 // ---------------- Ask the coach (Claude) ----------------
@@ -137,7 +138,8 @@ ${knowledge()}`;
 router.post('/portal/coach/ask', staff, async (req, res) => {
   const question = clean(req.body?.question, 4000);
   if (!question) return res.status(400).json({ ok: false, message: 'Ask the coach a question.' });
-  if (!hasCredentials()) return res.status(503).json({ ok: false, offline: true, message: 'The AI Coach needs ANTHROPIC_API_KEY on the server. Your briefing suggestions above still work without it.' });
+  // No AI service configured: the local coach drafts from live data and Yo's material
+  if (!hasCredentials() || process.env.AGENT_LOCAL === '1') { const snap = snapshot(); return res.json({ ok: true, local: true, answer: localCoach.answer(question, snap, suggestions(snap)) }); }
 
   // Short history from this browser session: alternating user/assistant text, ending before this question
   const history = (Array.isArray(req.body?.history) ? req.body.history : []).slice(-10)

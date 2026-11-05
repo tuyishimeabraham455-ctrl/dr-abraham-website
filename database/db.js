@@ -376,6 +376,18 @@ db.exec(`
     PRIMARY KEY (path, key)
   );
 
+  -- Answers the admin teaches Agent Yo (used without any AI service)
+  CREATE TABLE IF NOT EXISTS agent_training (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    questions   TEXT    NOT NULL,             -- one way of asking per line
+    answer      TEXT    NOT NULL,
+    link        TEXT    DEFAULT '',           -- optional page to point to, e.g. /book/
+    link_label  TEXT    DEFAULT '',
+    hits        INTEGER DEFAULT 0,
+    created_at  DATETIME DEFAULT (datetime('now')),
+    updated_at  DATETIME DEFAULT (datetime('now'))
+  );
+
   -- Site settings the admin controls from the portal (background videos, announcement bar)
   CREATE TABLE IF NOT EXISTS site_settings (
     key         TEXT PRIMARY KEY,

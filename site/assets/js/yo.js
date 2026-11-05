@@ -393,6 +393,12 @@
       if (out.session_id) { AI.session = out.session_id; store.set('yoAgentSession', AI.session, sessionStorage); }
       t.innerHTML = out.ok ? formatReply(out.reply) : `<p>${escHTML(out.message || 'Something went wrong.')}</p>`;
       if (out.crisis) state.locked = true;
+      // Next-step buttons from the local brain: open a page, start a guided flow, or ask a follow-up
+      if (out.ok && Array.isArray(out.chips) && out.chips.length && !state.locked) {
+        options(out.chips.slice(0, 5).map((c) => (c.href && /^\/[^/]/.test(c.href) ? { label: c.label, href: c.href }
+          : c.mode ? { label: c.label, run: () => guidedMode(c.mode) }
+          : c.say ? { label: c.label, run: () => askAI(c.say) } : null)).filter(Boolean));
+      }
       log.scrollTop = log.scrollHeight; saveLog();
       track('agent_ai_reply');
       return true;

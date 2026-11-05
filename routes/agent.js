@@ -18,6 +18,7 @@ const { requireAdmin } = require('../lib/auth');
 const { systemPrompt, URL } = require('../lib/agent-knowledge');
 const { scoreLead, notifyBooking, queueEmail, syncCRM, HOT } = require('../lib/leads');
 const { allSlots, AVAIL } = require('./booking');
+const localBrain = require('../lib/local-agent');
 
 const MODEL = process.env.AGENT_MODEL || 'claude-opus-5-5';
 const EFFORT = process.env.AGENT_EFFORT || 'medium';
@@ -177,7 +178,14 @@ router.post('/agent/chat', async (req, res) => {
   if (session.turns >= MAX_TURNS) {
     return res.json({ ok: true, session_id: session.id, reply: `We've covered a lot! To keep going, Yo's team would love to help directly: ${URL('contact/')}` });
   }
-  if (!hasCredentials()) return res.status(503).json({ ok: false, offline: true, session_id: session.id, message: 'Agent Yo is in guided mode.' });
+  // No AI service configured: answer with the local brain trained on Yo's content and the admin's answers
+  if (!hasCredentials() || process.env.AGENT_LOCAL === '1') {
+    const r = localBrain.answer(message);
+    messages.push({ role: 'user', content: message }, { role: 'assistant', content: r.reply });
+    if (r.unknown) db.prepare(`INSERT INTO agent_gaps (session_id, question, topic) VALUES (?, ?, ?)`).run(session.id, message.slice(0, 500), 'unanswered');
+    saveSession(session, messages, { first: firstUser, mode: session.mode ? '' : guessMode(message) });
+    return res.json({ ok: true, session_id: session.id, reply: r.reply, chips: r.chips, local: true, source: r.source });
+  }
 
   messages.push({ role: 'user', content: message });
   if (session.locked) messages.push({ role: 'system', content: CRISIS_NOTE });

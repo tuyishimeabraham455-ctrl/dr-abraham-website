@@ -75,7 +75,7 @@
 
   /* ---------- Shell ---------- */
   const TABS = [
-    ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'],
+    ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'], ['train', 'Train Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
     ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['media', 'Admin · Media', 'admin'], ['books', 'Admin · Books', 'admin'], ['podcast', 'Admin · Podcast', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
   ];
@@ -662,6 +662,50 @@
         if (link) link.addEventListener('click', () => { const u = row.querySelector('.p-ep-link').value.trim(); if (u) save(u); });
         const rm = row.querySelector('[data-rm]');
         if (rm) rm.addEventListener('click', async () => { if (!confirm('Remove this audio? The page goes back to the sample preview.')) return; await api(`/portal/media/${rm.dataset.rm}`, { method: 'DELETE' }); route(); });
+      });
+    },
+    async train(v) {
+      const out = await api('/portal/training');
+      v.innerHTML = `<p class="fine">Agent Yo answers on its own, without any paid AI service. It has learned from Yo's website: talks, programs, podcast, articles and FAQs. Teach it anything else below, and it uses your answer straight away.</p>
+        <section class="p-card"><h2>Try Agent Yo</h2>
+          <form id="tryF" class="p-row"><label class="sr" for="tryQ">Question</label><input id="tryQ" class="p-ep-link" placeholder="Ask anything a visitor might ask, e.g. Does Yo speak at churches?" maxlength="600"/><button class="btn btn-dark btn-sm">Ask</button></form>
+          <div id="tryOut" class="p-try" hidden></div>
+        </section>
+        <div class="p-grid2">
+          <form class="p-card" id="tf"><h2 id="tfTitle">Teach an answer</h2><input type="hidden" name="editId"/>
+            <div class="field"><label for="tq">Ways people might ask it <small>(one per line)</small></label><textarea id="tq" name="questions" rows="4" required placeholder="Do you offer payment plans?&#10;Can I pay in installments?"></textarea></div>
+            <div class="field"><label for="ta">Agent Yo's answer</label><textarea id="ta" name="answer" rows="4" required maxlength="3000"></textarea></div>
+            <div class="row2"><div class="field"><label for="tl">Link (optional)</label><input id="tl" name="link" placeholder="/book/ or https://"/></div><div class="field"><label for="tll">Button label</label><input id="tll" name="link_label" placeholder="e.g. Book Yo" maxlength="60"/></div></div>
+            <div class="p-row"><button class="btn btn-dark btn-sm" id="tfSave">Teach Agent Yo</button><button type="button" class="linkish" id="tfCancel" hidden>Cancel editing</button><span class="form-msg" aria-live="polite"></span></div>
+          </form>
+          <section class="p-card"><h2>Questions it couldn't answer (${out.gaps.length})</h2><p class="fine">Visitors asked these and Agent Yo didn't know. Teach an answer and it will next time.</p>
+            <div class="p-gaps">${out.gaps.map((g, i) => `<div class="p-gap"><span><b>${h(g.question)}</b><small>${g.times > 1 ? `Asked ${g.times} times · ` : ''}${h(when(g.last))}</small></span><button type="button" class="btn btn-gold btn-sm" data-teach="${i}">Teach</button><button type="button" class="linkish" data-dismiss="${i}">Dismiss</button></div>`).join('') || '<p class="p-empty">Nothing waiting. Agent Yo answered everything so far.</p>'}</div>
+          </section>
+        </div>
+        <section class="p-card"><h2>What you've taught (${out.taught.length})</h2>${out.taught.length ? `<div class="p-taught">${out.taught.map((t) => `<article class="p-tcard" data-id="${t.id}"><div class="p-tq">${t.questions.split('\n').map((q) => `<span>${h(q)}</span>`).join('')}</div><p class="p-pre">${h(t.answer)}</p>${t.link ? `<small>Button: ${h(t.link_label || 'Learn more')} → ${h(t.link)}</small>` : ''}<div class="p-row"><small>Used ${t.hits} time${t.hits === 1 ? '' : 's'}</small><button type="button" class="linkish" data-edit>Edit</button><button type="button" class="linkish danger" data-del>Delete</button></div></article>`).join('')}</div>` : '<p class="p-empty">Nothing taught yet. Start with a question visitors often ask you.</p>'}</section>`;
+
+      $('#tryF').addEventListener('submit', async (e) => {
+        e.preventDefault(); const q = $('#tryQ').value.trim(); if (!q) return;
+        const o = await api('/portal/training/try', { method: 'POST', body: { message: q } });
+        const box = $('#tryOut'); box.hidden = false;
+        box.innerHTML = o.ok ? `<p class="p-pre">${h(o.reply)}</p>${o.chips.length ? `<div class="p-chips">${o.chips.map((c) => `<span class="p-chip">${h(c.label)}</span>`).join('')}</div>` : ''}<p class="fine">Answered from: <b>${h(o.source_label)}</b>${o.source === 'unknown' ? ' · <button type="button" class="linkish" id="tryTeach">Teach an answer</button>' : ''}</p>` : `<p class="form-msg err">${h(o.message)}</p>`;
+        const tt = $('#tryTeach'); if (tt) tt.addEventListener('click', () => { reset(); f.questions.value = q; f.answer.focus(); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+      });
+      const f = $('#tf'), msg = f.querySelector('.form-msg');
+      const reset = () => { f.reset(); f.editId.value = ''; $('#tfTitle').textContent = 'Teach an answer'; $('#tfSave').textContent = 'Teach Agent Yo'; $('#tfCancel').hidden = true; };
+      $('#tfCancel').addEventListener('click', reset);
+      f.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = Object.fromEntries(new FormData(f)); delete body.editId;
+        const o = f.editId.value ? await api(`/portal/training/${f.editId.value}`, { method: 'PATCH', body }) : await api('/portal/training', { method: 'POST', body });
+        flash(msg, o.message, o.ok); if (o.ok) setTimeout(route, 700);
+      });
+      v.querySelectorAll('[data-teach]').forEach((b) => b.addEventListener('click', () => { reset(); f.questions.value = out.gaps[Number(b.dataset.teach)].question; f.answer.focus(); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); }));
+      v.querySelectorAll('[data-dismiss]').forEach((b) => b.addEventListener('click', async () => { await api('/portal/training/gaps', { method: 'DELETE', body: { question: out.gaps[Number(b.dataset.dismiss)].question } }); route(); }));
+      v.querySelectorAll('.p-tcard').forEach((card) => {
+        const t = out.taught.find((x) => x.id === Number(card.dataset.id));
+        card.querySelector('[data-edit]').addEventListener('click', () => { reset(); f.editId.value = t.id; f.questions.value = t.questions; f.answer.value = t.answer; f.link.value = t.link; f.link_label.value = t.link_label; $('#tfTitle').textContent = 'Edit answer'; $('#tfSave').textContent = 'Save changes'; $('#tfCancel').hidden = false; f.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+        card.querySelector('[data-del]').addEventListener('click', async () => { if (confirm('Delete this answer? Agent Yo will stop using it.')) { await api(`/portal/training/${t.id}`, { method: 'DELETE' }); route(); } });
       });
     },
     async settings(v) {

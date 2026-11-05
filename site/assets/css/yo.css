@@ -1484,3 +1484,29 @@ html, body { max-width: 100%; overflow-x: clip; }
 }
 .mnav .mnav-top .logo { border-bottom: 0; padding: 0; }
 @media (max-width: 700px) { .ftr-news .form-msg:empty { display: none; } .ftr-news p:last-child { margin-bottom: 0; } }
+/* Portal: train Agent Yo */
+.p-try { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: 12px; background: var(--blush); }
+.p-try .p-pre { margin: 0 0 .6rem; }
+.p-gaps { display: grid; gap: 8px; }
+.p-gap { display: flex; gap: .7rem; align-items: center; padding: .7rem .8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); flex-wrap: wrap; }
+.p-gap span { flex: 1; min-width: 160px; display: grid; }
+.p-gap small { color: var(--ink-soft); }
+.p-taught { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+.p-tcard { border: 1px solid var(--line); border-radius: 12px; background: var(--ivory); padding: .9rem 1rem; display: grid; gap: .4rem; align-content: start; }
+.p-tq { display: flex; flex-wrap: wrap; gap: .3rem; }
+.p-tq span { background: #FFFBF5; border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; }
+.p-tcard small { color: var(--ink-soft); }
+.p-tcard .p-row small { margin-right: auto; }
+/* Portal: train Agent Yo */
+.p-try { margin-top: 1rem; padding: 1rem 1.1rem; border-radius: 12px; background: var(--blush); }
+.p-try .p-pre { margin: 0 0 .6rem; }
+.p-gaps { display: grid; gap: 8px; }
+.p-gap { display: flex; gap: .7rem; align-items: center; padding: .7rem .8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); flex-wrap: wrap; }
+.p-gap span { flex: 1; min-width: 160px; display: grid; }
+.p-gap small { color: var(--ink-soft); }
+.p-taught { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+.p-tcard { border: 1px solid var(--line); border-radius: 12px; background: var(--ivory); padding: .9rem 1rem; display: grid; gap: .4rem; align-content: start; }
+.p-tq { display: flex; flex-wrap: wrap; gap: .3rem; }
+.p-tq span { background: #FFFBF5; border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; }
+.p-tcard small { color: var(--ink-soft); }
+.p-tcard .p-row small { margin-right: auto; }
