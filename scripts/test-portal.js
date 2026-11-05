@@ -295,6 +295,16 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     check('admin attaches audio to an episode', (await call('POST', '/portal/media', A, { kind: 'audio', category: epList[0].slug, title: epList[0].title, src: au.body.url, show_on: ['podcast'] })).status === 201);
     const pubAudio = (await call('GET', '/media?kind=audio')).body.data;
     check('episode page can find the real audio', pubAudio.some((x) => x.category === epList[0].slug && x.src === au.body.url));
+
+    // Videos in HEVC (H.265) don't play in many browsers: detected and converted, or a clear warning
+    const HEVC = Buffer.concat([Buffer.from([0, 0, 0, 0x18]), Buffer.from('ftypisom'), Buffer.alloc(32), Buffer.from('moov....trak....hvc1'), Buffer.alloc(256)]);
+    const hv = await upload('/portal/settings/video?slot=page_video', A, HEVC, 'video/mp4');
+    check('HEVC video upload: converted or clearly warned (never a silent failure)', hv.status === 200 && (hv.body.converted === true || /HEVC/.test(hv.body.message)), hv.body.message.slice(0, 60));
+    const { codecOf } = require('../lib/video-convert');
+    const tmpH264 = path.join(tmp, 'h264.mp4'); fs.writeFileSync(tmpH264, Buffer.concat([Buffer.from('....ftypisom'), Buffer.from('avc1')]));
+    const tmpHevc = path.join(tmp, 'hevc.mp4'); fs.writeFileSync(tmpHevc, HEVC);
+    check('video format detection (H.264 vs HEVC)', codecOf(tmpH264) === 'h264' && codecOf(tmpHevc) === 'hevc');
+    await call('PUT', '/portal/settings', A, { page_video: '' });
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

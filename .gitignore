@@ -12,3 +12,4 @@ _backup-before-redesign/
 .env
 *.log
 database/uploads/
+tools/

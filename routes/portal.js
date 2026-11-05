@@ -146,7 +146,7 @@ const readMedia = (list) => {
 router.post('/portal/community/upload', anyone, async (req, res) => {
   const kind = ['photos', 'videos'].includes(req.query.kind) ? req.query.kind : null;
   if (!kind) return bad(res, 'Choose a photo or a video.');
-  try { const { url } = await saveUpload(req, kind); res.status(201).json({ ok: true, url }); }
+  try { const { url, warning, converted } = await saveUpload(req, kind); res.status(201).json({ ok: true, url, warning, converted }); }
   catch (err) { res.status(err.status || 500).json({ ok: false, message: err.message || 'Upload failed.' }); }
 });
 
@@ -447,11 +447,11 @@ router.post('/portal/settings/video', admin, async (req, res) => {
   const slot = ['hero_video', 'page_video'].includes(req.query.slot) ? req.query.slot : null;
   if (!slot) return bad(res, 'Choose where the video goes.');
   try {
-    const { url } = await saveUpload(req, 'videos');
+    const { url, warning, converted } = await saveUpload(req, 'videos');
     const before = settings.all()[slot];
     settings.save({ [slot]: url, [`${slot}_type`]: '' });
     if (before !== url) removeUpload(before);
-    res.json({ ok: true, url, message: 'Video uploaded. It now plays on the website.', view: settings.publicView() });
+    res.json({ ok: true, url, warning, converted, message: warning || (converted ? 'Video uploaded and converted so every browser can play it. It now plays on the website.' : 'Video uploaded. It now plays on the website.'), view: settings.publicView() });
   } catch (err) { res.status(err.status || 500).json({ ok: false, message: err.message || 'Upload failed.' }); }
 });
 

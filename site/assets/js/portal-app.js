@@ -161,6 +161,41 @@
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Please choose a picture file (JPG, PNG, HEIC or WebP).')); };
     img.src = url;
   });
+
+  // Videos recorded as HEVC (H.265) don't play in many browsers. Convert them to H.264 in this browser before uploading.
+  const isHevc = async (file) => {
+    const n = 4 * 1024 * 1024;
+    const text = (await file.slice(0, n).text()) + (await file.slice(Math.max(0, file.size - n)).text());
+    return /hvc1|hev1/.test(text);
+  };
+  const toH264InBrowser = (file, onProgress) => new Promise((resolve) => {
+    const type = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1.640028', 'video/mp4'].find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
+    if (!type) return resolve(null);
+    const v = document.createElement('video');
+    v.src = URL.createObjectURL(file); v.muted = true; v.playsInline = true; v.preload = 'auto';
+    const done = (out) => { URL.revokeObjectURL(v.src); resolve(out); };
+    v.onerror = () => done(null);
+    v.onloadedmetadata = async () => {
+      const stream = v.captureStream ? v.captureStream() : (v.mozCaptureStream ? v.mozCaptureStream() : null);
+      if (!stream || !v.videoWidth) return done(null);
+      const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 4500000 });
+      const chunks = []; rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+      rec.onstop = () => done(chunks.length ? new File([new Blob(chunks, { type: 'video/mp4' })], file.name.replace(/\.\w+$/, '') + '.mp4', { type: 'video/mp4' }) : null);
+      v.ontimeupdate = () => onProgress && onProgress(Math.min(1, v.currentTime / (v.duration || 1)));
+      v.onended = () => rec.state !== 'inactive' && rec.stop();
+      rec.start(1000);
+      try { await v.play(); } catch { if (rec.state !== 'inactive') rec.stop(); done(null); }
+    };
+  });
+  // Returns a file every browser can play (converted when needed and possible)
+  const playableVideo = async (file, say) => {
+    try {
+      if (!(await isHevc(file))) return file;
+      say('This video is in HEVC format, which many browsers can\'t play. Converting it so everyone can see it… 0%');
+      const out = await toH264InBrowser(file, (p) => say(`Converting so every browser can play it… ${Math.round(p * 100)}%`));
+      return out || file; // the server converts it if this browser can't
+    } catch { return file; }
+  };
   // Upload a file body with progress (fetch can't report upload progress)
   const sendFile = (path, blob, onProgress) => new Promise((resolve) => {
     const x = new XMLHttpRequest();
@@ -407,8 +442,9 @@
         e.target.value = '';
       });
       $('#cpVideo').addEventListener('change', async (e) => {
-        const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+        let f = e.target.files[0]; e.target.value = ''; if (!f) return;
         if (media.some((m) => m.type === 'video')) { flash(msg, 'One video per post.', false); return; }
+        f = await playableVideo(f, (t) => flash(msg, t));
         const url = await uploadOne(f, 'videos', 'video'); if (url) { media.push({ type: 'video', src: url, label: f.name }); drawPrev(); }
       });
       $('#cpLinkBtn').addEventListener('click', () => { $('#cpLinkRow').hidden = !$('#cpLinkRow').hidden; if (!$('#cpLinkRow').hidden) $('#cpLink').focus(); });
@@ -522,13 +558,14 @@
       let uploadedVideo = '';
       const showFiles = () => { $('#vfFiles').textContent = [uploadedVideo && 'Video file ready', vf.thumb.value && 'Cover photo ready'].filter(Boolean).join(' · '); };
       vf.querySelectorAll('[data-up]').forEach((inp) => inp.addEventListener('change', async () => {
-        const file = inp.files[0]; if (!file) return;
+        let file = inp.files[0]; if (!file) return;
+        if (inp.dataset.up === 'videos') file = await playableVideo(file, (t) => flash(vmsg, t));
         vbar.hidden = false; flash(vmsg, 'Uploading…');
         const o = await sendFile(`/portal/uploads?kind=${inp.dataset.up === 'videos' ? 'videos' : 'photos'}`, file, (p) => { vbar.firstElementChild.style.width = Math.round(p * 100) + '%'; vmsg.textContent = `Uploading… ${Math.round(p * 100)}%`; });
         vbar.hidden = true;
         if (!o.ok) { flash(vmsg, o.message, false); return; }
         if (inp.dataset.up === 'videos') { uploadedVideo = o.url; vf.src.value = ''; } else vf.thumb.value = o.url;
-        flash(vmsg, 'Uploaded.'); showFiles();
+        flash(vmsg, o.warning || (o.converted ? 'Uploaded and converted so every browser can play it.' : 'Uploaded.'), !o.warning); showFiles();
       }));
       const resetForm = () => { vf.reset(); vf.editId.value = ''; vf.thumb.value = ''; uploadedVideo = ''; $('#vfTitle').textContent = 'Add a video'; $('#vfSave').textContent = 'Add video'; $('#vfCancel').hidden = true; showFiles(); vf.querySelector('[data-place="watch"]').checked = true; };
       $('#vfCancel').addEventListener('click', resetForm);
@@ -743,7 +780,8 @@
           flash(msg, o.message, o.ok); if (o.ok) setTimeout(route, 900);
         });
         card.querySelector('input[type=file]').addEventListener('change', async (e) => {
-          const file = e.target.files[0]; if (!file) return;
+          let file = e.target.files[0]; if (!file) return;
+          file = await playableVideo(file, (t) => flash(msg, t));
           if (file.size > 200 * 1024 * 1024) { flash(msg, 'That file is over 200 MB. Please use a shorter or smaller video.', false); return; }
           const bar = card.querySelector('.p-progress'); bar.hidden = false; flash(msg, 'Uploading…');
           const o = await sendFile(`/portal/settings/video?slot=${slot}`, file, (p) => { bar.firstElementChild.style.width = Math.round(p * 100) + '%'; msg.textContent = `Uploading… ${Math.round(p * 100)}%`; });

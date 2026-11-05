@@ -65,7 +65,7 @@ router.get('/content', (req, res) => {
 router.post('/portal/uploads', admin, async (req, res) => {
   const kind = ['photos', 'videos', 'audio'].includes(req.query.kind) ? req.query.kind : null;
   if (!kind) return bad(res, 'Choose a photo, video or audio file.');
-  try { const { url } = await saveUpload(req, kind); res.status(201).json({ ok: true, url }); }
+  try { const { url, warning, converted } = await saveUpload(req, kind); res.status(201).json({ ok: true, url, warning, converted }); }
   catch (err) { res.status(err.status || 500).json({ ok: false, message: err.message || 'Upload failed.' }); }
 });
 
