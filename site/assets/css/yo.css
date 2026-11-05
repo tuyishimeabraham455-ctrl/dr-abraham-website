@@ -1369,3 +1369,29 @@ html, body { max-width: 100%; overflow-x: clip; }
   .p-side.nav-open .p-nav { display: grid !important; grid-template-columns: 1fr 1fr; gap: 6px; overflow: visible; }
   .p-side.nav-open .p-nav a { white-space: normal; border: 1px solid var(--line-dark); justify-content: space-between; }
 }
+
+/* Community: posts with photos and videos */
+.p-compose { display: grid; grid-template-columns: auto 1fr; gap: .8rem; align-items: start; }
+.p-compose textarea { width: 100%; }
+.p-compose-bar { margin-top: .6rem; gap: .4rem; }
+.p-grow { flex: 1; }
+.p-attach { display: inline-flex; align-items: center; gap: .3rem; padding: .45rem .8rem; border-radius: 999px; border: 1px solid var(--line); background: var(--ivory); color: var(--ink); cursor: pointer; }
+.p-attach:hover { border-color: var(--oxblood); }
+.p-attach input { display: none; }
+.p-video-link { display: flex; gap: .5rem; margin-top: .6rem; }
+.p-video-link input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 999px; padding: .55rem .9rem; background: var(--ivory); }
+.p-attach-prev { display: flex; flex-wrap: wrap; gap: 8px; margin-top: .6rem; }
+.p-attach-prev:empty { display: none; }
+.p-prev-item { position: relative; }
+.p-prev-item img { width: 84px; height: 84px; object-fit: cover; border-radius: 10px; display: block; }
+.p-prev-vid { display: inline-flex; align-items: center; height: 84px; padding: 0 1rem; border-radius: 10px; background: var(--espresso); color: var(--gold); max-width: 220px; overflow: hidden; }
+.p-prev-item button { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: var(--oxblood); color: #fff; cursor: pointer; line-height: 1; }
+.p-post-video { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; margin: .6rem 0; }
+.p-post-video video, .p-post-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.p-post-photos { display: grid; gap: 4px; margin: .6rem 0; border-radius: 12px; overflow: hidden; grid-template-columns: 1fr 1fr; }
+.p-post-photos.n1 { grid-template-columns: 1fr; }
+.p-post-photos.n3 a:first-child { grid-row: span 2; }
+.p-post-photos a { display: block; }
+.p-post-photos img { width: 100%; height: 100%; min-height: 140px; max-height: 420px; object-fit: cover; display: block; }
+.p-post-photos.n1 img { max-height: 520px; }
+.p-post-actions span { color: var(--ink-soft); margin-left: auto; }

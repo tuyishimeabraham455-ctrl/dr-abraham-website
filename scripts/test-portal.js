@@ -240,6 +240,21 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     check('other pages are untouched', Object.keys((await call('GET', '/content?path=/speaking/')).body.data).length === 0);
     await call('PUT', '/portal/content', A, { path: '/about/', reset: true });
     check('reset puts the page back to original', Object.keys((await call('GET', '/content?path=/about/')).body.data).length === 0);
+
+    // Community posts with photos and videos
+    const cph = await upload('/portal/community/upload?kind=photos', M1, JPG, 'image/jpeg');
+    check('members upload photos for posts', cph.status === 201 && cph.body.url.startsWith('/uploads/photos/'));
+    check('upload needs sign-in', (await upload('/portal/community/upload?kind=photos', '', JPG, 'image/jpeg')).status === 401);
+    const pPost = await call('POST', '/portal/community', M1, { body: 'My first workshop!', media: [{ type: 'photo', src: cph.body.url }] });
+    check('post with a photo', pPost.status === 201);
+    check('post with only a YouTube video (no text)', (await call('POST', '/portal/community', M1, { body: '', media: [{ type: 'video', src: 'https://youtu.be/dQw4w9WgXcQ' }] })).status === 201);
+    check('photo from outside the site refused', (await call('POST', '/portal/community', M1, { body: 'x', media: [{ type: 'photo', src: 'https://evil.example/x.jpg' }] })).status === 400);
+    check('more than one video refused', (await call('POST', '/portal/community', M1, { media: [{ type: 'video', src: 'https://youtu.be/dQw4w9WgXcQ' }, { type: 'video', src: 'https://vimeo.com/76979871' }] })).status === 400);
+    check('empty post refused', (await call('POST', '/portal/community', M1, { body: '  ', media: [] })).status === 400);
+    const feedT = (await call('GET', '/portal/community', T)).body.data;
+    check('feed shows the photo and the playable video', feedT.some((p) => p.media.some((x) => x.type === 'photo' && x.src === cph.body.url)) && feedT.some((p) => p.media.some((x) => x.type === 'video' && x.video.kind === 'youtube')));
+    await call('DELETE', `/portal/community/${pPost.body.id}`, M1);
+    check('deleting a post removes its photo file', await new Promise((r) => setTimeout(() => r(!fs.existsSync(path.join(tmp, 'uploads', 'photos', path.basename(cph.body.url)))), 200)));
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

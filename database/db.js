@@ -394,6 +394,7 @@ addColumn('inquiries', 'details', "TEXT DEFAULT ''");   // JSON with every booki
 addColumn('inquiries', 'source', "TEXT DEFAULT ''");    // book-form | homepage | agent | ...
 addColumn('members', 'role', "TEXT DEFAULT 'member'");  // admin | team | member
 addColumn('members', 'avatar', "TEXT DEFAULT ''");      // /uploads/avatars/<file> profile picture
+addColumn('community_posts', 'media', "TEXT DEFAULT ''");  // JSON: [{ type: 'photo'|'video', src }]
 
 console.log(`[DB] ✅ Database ready at: ${DB_PATH}`);
 

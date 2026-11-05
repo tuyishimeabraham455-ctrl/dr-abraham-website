@@ -314,11 +314,70 @@
     },
     async community(v) {
       const out = await api('/portal/community');
-      v.innerHTML = `<form class="p-card p-post-form" id="cp"><label class="sr" for="cpBody">Share with the community</label><textarea id="cpBody" name="body" rows="3" required maxlength="4000" placeholder="Share a win, a question or a resource…"></textarea><div class="p-row"><button class="btn btn-dark btn-sm">Post</button><span class="form-msg" aria-live="polite"></span></div></form>
-        <div id="feed">${out.data.map((p) => `<article class="p-card p-post${p.pinned ? ' pinned' : ''}"><header>${ava(p)}<b>${h(p.author)}</b><span class="p-role-sm">${h(ROLE[p.author_role] || '')}</span><time>${h(when(p.created_at))}</time>${p.pinned ? '<span class="p-pill">Pinned</span>' : ''}</header><p class="p-pre">${h(p.body)}</p>
-          <div class="p-post-actions">${isStaff() ? `<button type="button" class="linkish" data-pin="${p.id}">${p.pinned ? 'Unpin' : 'Pin'}</button>` : ''}${p.mine || isStaff() ? `<button type="button" class="linkish" data-del="${p.id}">Delete</button>` : ''}</div>
+      const videoEmbed = (m) => {
+        const vd = m.video; if (!vd) return '';
+        if (vd.kind === 'file') return `<video src="${h(vd.src)}" controls playsinline preload="metadata"></video>`;
+        const src = vd.kind === 'youtube' ? `https://www.youtube-nocookie.com/embed/${h(vd.id)}?rel=0&modestbranding=1&playsinline=1` : `https://player.vimeo.com/video/${h(vd.id)}?dnt=1`;
+        return `<iframe src="${src}" title="Video" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>`;
+      };
+      const mediaHtml = (list) => {
+        if (!list || !list.length) return '';
+        const photos = list.filter((m) => m.type === 'photo'), vids = list.filter((m) => m.type === 'video');
+        return `${vids.map((m) => `<div class="p-post-video">${videoEmbed(m)}</div>`).join('')}${photos.length ? `<div class="p-post-photos n${photos.length}">${photos.map((m) => `<a href="${h(m.src)}" target="_blank" rel="noopener"><img src="${h(m.src)}" alt="Photo shared in the community" loading="lazy"/></a>`).join('')}</div>` : ''}`;
+      };
+      v.innerHTML = `<form class="p-card p-post-form" id="cp">
+          <div class="p-compose">${ava(me, 'p-ava-sm')}<div><label class="sr" for="cpBody">Share with the community</label><textarea id="cpBody" name="body" rows="3" maxlength="4000" placeholder="Share a win, a question or a resource…"></textarea></div></div>
+          <div class="p-attach-prev" id="cpPrev"></div>
+          <div class="p-video-link" id="cpLinkRow" hidden><label class="sr" for="cpLink">Video link</label><input id="cpLink" placeholder="Paste a YouTube, Vimeo or .mp4 link"/><button type="button" class="btn btn-ghost-dark btn-sm" id="cpLinkAdd">Add link</button></div>
+          <div class="p-progress" hidden><span></span></div>
+          <div class="p-row p-compose-bar">
+            <label class="p-attach">📷 Photo<input type="file" id="cpPhotos" accept="image/*" multiple hidden/></label>
+            <label class="p-attach">🎬 Video<input type="file" id="cpVideo" accept="video/mp4,video/webm,video/*" hidden/></label>
+            <button type="button" class="p-attach" id="cpLinkBtn">🔗 Video link</button>
+            <span class="p-grow"></span><button class="btn btn-dark btn-sm">Post</button>
+          </div>
+          <span class="form-msg" aria-live="polite"></span>
+        </form>
+        <div id="feed">${out.data.map((p) => `<article class="p-card p-post${p.pinned ? ' pinned' : ''}"><header>${ava(p)}<b>${h(p.author)}</b><span class="p-role-sm">${h(ROLE[p.author_role] || '')}</span><time>${h(when(p.created_at))}</time>${p.pinned ? '<span class="p-pill">Pinned</span>' : ''}</header>${p.body ? `<p class="p-pre">${h(p.body)}</p>` : ''}${mediaHtml(p.media)}
+          <div class="p-post-actions">${isStaff() ? `<button type="button" class="linkish" data-pin="${p.id}">${p.pinned ? 'Unpin' : 'Pin'}</button>` : ''}${p.mine || isStaff() ? `<button type="button" class="linkish" data-del="${p.id}">Delete</button>` : ''}<span>${p.comments.length} comment${p.comments.length === 1 ? '' : 's'}</span></div>
           <div class="p-comments">${p.comments.map((c) => `<p>${ava(c, 'p-ava-xs')}<b>${h(c.author)}</b> ${h(c.body)}</p>`).join('')}<form data-comment="${p.id}"><label class="sr" for="cm${p.id}">Comment</label><input id="cm${p.id}" name="body" placeholder="Write a comment…" maxlength="2000" required/><button class="btn btn-ghost-dark btn-sm">Reply</button></form></div></article>`).join('') || '<p class="p-empty">Be the first to post.</p>'}</div>`;
-      $('#cp').addEventListener('submit', async (e) => { e.preventDefault(); const out2 = await api('/portal/community', { method: 'POST', body: { body: e.target.body.value } }); if (out2.ok) route(); else flash($('#cp .form-msg'), out2.message, false); });
+
+      // ---- Composer: attachments ----
+      const form = $('#cp'), msg = form.querySelector('.form-msg'), bar = form.querySelector('.p-progress');
+      let media = [];
+      const drawPrev = () => {
+        $('#cpPrev').innerHTML = media.map((m, i) => `<div class="p-prev-item">${m.type === 'photo' ? `<img src="${h(m.src)}" alt=""/>` : `<span class="p-prev-vid">🎬 ${h(m.label || 'Video')}</span>`}<button type="button" data-rm="${i}" aria-label="Remove">×</button></div>`).join('');
+        $('#cpPrev').querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', () => { media.splice(Number(b.dataset.rm), 1); drawPrev(); }));
+      };
+      const uploadOne = async (file, kind, label) => {
+        bar.hidden = false; flash(msg, `Uploading ${label}…`);
+        const o = await sendFile(`/portal/community/upload?kind=${kind}`, file, (p) => { bar.firstElementChild.style.width = Math.round(p * 100) + '%'; msg.textContent = `Uploading ${label}… ${Math.round(p * 100)}%`; });
+        bar.hidden = true;
+        if (!o.ok) { flash(msg, o.message, false); return null; }
+        msg.textContent = ''; return o.url;
+      };
+      $('#cpPhotos').addEventListener('change', async (e) => {
+        const files = [...e.target.files].slice(0, 4 - media.filter((m) => m.type === 'photo').length);
+        for (const [i, f] of files.entries()) { const url = await uploadOne(f, 'photos', `photo ${i + 1} of ${files.length}`); if (url) { media.push({ type: 'photo', src: url }); drawPrev(); } }
+        e.target.value = '';
+      });
+      $('#cpVideo').addEventListener('change', async (e) => {
+        const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+        if (media.some((m) => m.type === 'video')) { flash(msg, 'One video per post.', false); return; }
+        const url = await uploadOne(f, 'videos', 'video'); if (url) { media.push({ type: 'video', src: url, label: f.name }); drawPrev(); }
+      });
+      $('#cpLinkBtn').addEventListener('click', () => { $('#cpLinkRow').hidden = !$('#cpLinkRow').hidden; if (!$('#cpLinkRow').hidden) $('#cpLink').focus(); });
+      $('#cpLinkAdd').addEventListener('click', () => {
+        const link = $('#cpLink').value.trim(); if (!link) return;
+        if (media.some((m) => m.type === 'video')) { flash(msg, 'One video per post.', false); return; }
+        media.push({ type: 'video', src: link, label: link.replace(/^https?:\/\/(www\.)?/, '').slice(0, 40) }); $('#cpLink').value = ''; $('#cpLinkRow').hidden = true; drawPrev();
+      });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const o = await api('/portal/community', { method: 'POST', body: { body: form.body.value, media: media.map(({ type, src }) => ({ type, src })) } });
+        if (o.ok) route(); else flash(msg, o.message, false);
+      });
+
       v.querySelectorAll('[data-comment]').forEach((f) => f.addEventListener('submit', async (e) => { e.preventDefault(); await api(`/portal/community/${f.dataset.comment}/comments`, { method: 'POST', body: { body: f.body.value } }); route(); }));
       v.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => { if (confirm('Delete this post?')) { await api(`/portal/community/${b.dataset.del}`, { method: 'DELETE' }); route(); } }));
       v.querySelectorAll('[data-pin]').forEach((b) => b.addEventListener('click', async () => { await api(`/portal/community/${b.dataset.pin}/pin`, { method: 'POST' }); route(); }));

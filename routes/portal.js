@@ -117,14 +117,45 @@ router.post('/portal/broadcast', admin, (req, res) => {
 
 // ---------------- Community ----------------
 router.get('/portal/community', anyone, (req, res) => {
-  const posts = db.prepare(`SELECT p.id, p.body, p.pinned, p.created_at, p.member_id, mm.name author, mm.avatar author_avatar, COALESCE(mm.role,'member') author_role FROM community_posts p JOIN members mm ON mm.id = p.member_id ORDER BY p.pinned DESC, p.id DESC LIMIT 50`).all();
+  const posts = db.prepare(`SELECT p.id, p.body, p.media, p.pinned, p.created_at, p.member_id, mm.name author, mm.avatar author_avatar, COALESCE(mm.role,'member') author_role FROM community_posts p JOIN members mm ON mm.id = p.member_id ORDER BY p.pinned DESC, p.id DESC LIMIT 50`).all();
   const comments = posts.length ? db.prepare(`SELECT c.id, c.post_id, c.body, c.created_at, c.member_id, mm.name author, mm.avatar author_avatar FROM community_comments c JOIN members mm ON mm.id = c.member_id WHERE c.post_id IN (${posts.map(() => '?').join(',')}) ORDER BY c.id`).all(...posts.map((p) => p.id)) : [];
-  res.json({ ok: true, data: posts.map((p) => ({ ...p, mine: p.member_id === req.member.id, comments: comments.filter((c) => c.post_id === p.id) })) });
+  res.json({ ok: true, data: posts.map((p) => ({ ...p, media: postMedia(p.media), mine: p.member_id === req.member.id, comments: comments.filter((c) => c.post_id === p.id) })) });
 });
+// Community attachments: up to 4 photos, or 1 video (uploaded file, YouTube, Vimeo or .mp4 link)
+const parseMedia = (raw) => { try { const a = JSON.parse(raw || '[]'); return Array.isArray(a) ? a : []; } catch { return []; } };
+const postMedia = (raw) => parseMedia(raw).map((m) => (m.type === 'photo' ? { type: 'photo', src: m.src } : { type: 'video', src: m.src, video: settings.classifyVideo(m.src) || null })).filter((m) => m.type === 'photo' || m.video);
+const readMedia = (list) => {
+  const items = Array.isArray(list) ? list.slice(0, 5) : [];
+  const out = [];
+  for (const m of items) {
+    const src = clean(m && m.src, 600);
+    if (m && m.type === 'photo') {
+      if (!/^\/uploads\/photos\/[a-f0-9]{24}\.(jpg|png|webp)$/.test(src)) throw { message: 'Upload the photo first.' };
+      out.push({ type: 'photo', src });
+    } else if (m && m.type === 'video') {
+      if (!settings.classifyVideo(src)) throw { message: 'Use a YouTube or Vimeo link, a direct .mp4/.webm link, or upload the video.' };
+      out.push({ type: 'video', src });
+    }
+  }
+  if (out.filter((m) => m.type === 'photo').length > 4) throw { message: 'Add up to 4 photos per post.' };
+  if (out.filter((m) => m.type === 'video').length > 1) throw { message: 'Add one video per post.' };
+  return out;
+};
+
+// Signed-in members can upload photos and videos for their posts
+router.post('/portal/community/upload', anyone, async (req, res) => {
+  const kind = ['photos', 'videos'].includes(req.query.kind) ? req.query.kind : null;
+  if (!kind) return bad(res, 'Choose a photo or a video.');
+  try { const { url } = await saveUpload(req, kind); res.status(201).json({ ok: true, url }); }
+  catch (err) { res.status(err.status || 500).json({ ok: false, message: err.message || 'Upload failed.' }); }
+});
+
 router.post('/portal/community', anyone, (req, res) => {
   const body = clean(req.body?.body, 4000);
-  if (!body) return bad(res, 'Write something to share.');
-  const { lastInsertRowid } = db.prepare(`INSERT INTO community_posts (member_id, body) VALUES (?, ?)`).run(req.member.id, body);
+  let media;
+  try { media = readMedia(req.body?.media); } catch (err) { return bad(res, err.message); }
+  if (!body && !media.length) return bad(res, 'Write something or add a photo or video.');
+  const { lastInsertRowid } = db.prepare(`INSERT INTO community_posts (member_id, body, media) VALUES (?, ?, ?)`).run(req.member.id, body, media.length ? JSON.stringify(media) : '');
   res.status(201).json({ ok: true, id: lastInsertRowid });
 });
 router.post('/portal/community/:id/comments', anyone, (req, res) => {
@@ -140,6 +171,7 @@ router.delete('/portal/community/:id', anyone, (req, res) => {
   if (!post) return bad(res, 'Post not found.', 404);
   if (post.member_id !== req.member.id && !isStaff(req.member)) return bad(res, 'You can only delete your own posts.', 403);
   db.prepare(`DELETE FROM community_posts WHERE id = ?`).run(post.id);
+  parseMedia(post.media).forEach((m) => removeUpload(m.src));
   res.json({ ok: true });
 });
 router.post('/portal/community/:id/pin', staff, (req, res) => {
