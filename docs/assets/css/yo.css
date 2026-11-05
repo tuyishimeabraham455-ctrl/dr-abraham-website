@@ -1395,3 +1395,26 @@ html, body { max-width: 100%; overflow-x: clip; }
 .p-post-photos img { width: 100%; height: 100%; min-height: 140px; max-height: 420px; object-fit: cover; display: block; }
 .p-post-photos.n1 img { max-height: 520px; }
 .p-post-actions span { color: var(--ink-soft); margin-left: auto; }
+
+/* Books */
+.bk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(170px, 44%), 1fr)); gap: 26px 20px; }
+.bk-card { display: grid; gap: .5rem; text-align: left; border: 0; background: none; padding: 0; cursor: pointer; color: var(--ink); }
+.bk-card small { color: var(--ink-soft); }
+.bk-cover { display: block; aspect-ratio: 2 / 3; border-radius: 4px 10px 10px 4px; overflow: hidden; background: var(--espresso); box-shadow: 0 22px 40px -22px rgba(42, 26, 22, .7), inset 6px 0 0 rgba(0, 0, 0, .12); transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
+.bk-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bk-card:hover .bk-cover, .bk-card:focus-visible .bk-cover { transform: translateY(-6px) rotate(-1deg); box-shadow: 0 34px 50px -24px rgba(42, 26, 22, .8); }
+.bk-blank { display: grid; align-content: center; gap: .4rem; height: 100%; padding: 1rem; color: var(--gold); font-style: italic; }
+.bk-own { margin-bottom: clamp(3rem, 6vw, 4.5rem); }
+.bk-feature { display: grid; grid-template-columns: minmax(150px, 260px) 1fr; gap: clamp(1.4rem, 4vw, 3rem); align-items: center; }
+.bk-feature p { color: var(--ink-soft); }
+.bk-detail { display: grid; grid-template-columns: minmax(120px, 220px) 1fr; gap: 1.4rem; padding: 1.6rem; align-items: start; }
+.bk-detail h2 { color: var(--on-dark); margin: .2rem 0 .6rem; }
+.bk-detail p { color: var(--on-dark-soft); }
+@media (max-width: 600px) { .bk-feature, .bk-detail { grid-template-columns: 1fr; } .bk-detail .bk-cover, .bk-feature .bk-cover { max-width: 200px; } }
+/* Portal: bookshelf */
+.p-books { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+.p-book { display: grid; gap: .3rem; align-content: start; }
+.p-book small { color: var(--ink-soft); }
+.p-book-cover { position: relative; aspect-ratio: 2 / 3; border-radius: 4px 8px 8px 4px; overflow: hidden; background: var(--espresso); display: grid; place-items: center; color: var(--gold); text-align: center; padding: 0; }
+.p-book-cover img { width: 100%; height: 100%; object-fit: cover; }
+.p-book-cover .p-pill { position: absolute; left: 6px; top: 6px; }

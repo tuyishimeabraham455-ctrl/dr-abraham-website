@@ -41,6 +41,7 @@ const PAGES = [
   { route: 'learn/', render: () => require('./pages/learn').hub(), priority: '0.8' },
   ...programs.map((p) => ({ route: `learn/${p.slug}/`, render: () => require('./pages/learn').program(p.slug), priority: '0.7' })),
   ...resources.map((x) => ({ route: `learn/${x.slug}/`, render: () => require('./pages/learn').resource(x.slug), priority: '0.6' })),
+  { route: 'learn/books/', render: mod('./pages/books'), priority: '0.6' },
   { route: 'learn/community/', render: () => require('./pages/learn').community(), priority: '0.5' },
   { route: 'blog/', render: () => require('./pages/blog').index(), priority: '0.7' },
   ...posts.map((p) => ({ route: `blog/${p.slug}/`, render: () => require('./pages/blog').post(p.slug), priority: '0.7' })),

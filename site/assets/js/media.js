@@ -81,6 +81,26 @@
     }).catch(() => { $('#watchEmpty').hidden = false; });
   }
 
+  // ---------- Books page ----------
+  const shelf = $('#booksApp');
+  if (shelf) {
+    fetch('/api/media?kind=book&on=books', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : Promise.reject())).then(({ data }) => {
+      if (!data.length) { $('#booksEmpty').hidden = false; return; }
+      const coverOf = (b) => (safe(b.thumb) ? `<img src="${esc(safe(b.thumb))}" alt="Cover of ${esc(b.title)}" loading="lazy"/>` : `<span class="bk-blank"><b>${esc(b.title)}</b><small>${esc(b.category)}</small></span>`);
+      const getIt = (b) => (safe(b.link) || /^\//.test(b.link || '') ? `<a class="btn btn-gold btn-sm" href="${esc(b.link)}" target="_blank" rel="noopener">Get the book</a>` : '');
+      const own = data.filter((b) => b.featured), rest = data.filter((b) => !b.featured);
+      if (own.length) {
+        const o = $('#booksOwn'); o.hidden = false;
+        o.innerHTML = own.map((b) => `<article class="bk-feature"><div class="bk-cover">${coverOf(b)}</div><div><p class="eyebrow">By Yolanda Butler</p><h2 class="h2">${esc(b.title)}</h2>${b.description ? `<p>${esc(b.description)}</p>` : ''}${getIt(b)}</div></article>`).join('');
+      }
+      $('#booksGrid').innerHTML = rest.map((b, i) => `<button type="button" class="bk-card" data-b="${i}"><span class="bk-cover">${coverOf(b)}</span><b>${esc(b.title)}</b><small>${esc(b.category)}</small></button>`).join('');
+      $('#booksGrid').querySelectorAll('[data-b]').forEach((btn) => btn.addEventListener('click', () => {
+        const b = rest[Number(btn.dataset.b)];
+        openDialog(`<div class="bk-detail"><div class="bk-cover">${coverOf(b)}</div><div><p class="eyebrow">${esc(b.category)}</p><h2>${esc(b.title)}</h2>${b.description ? `<p>${esc(b.description)}</p>` : ''}${getIt(b)}</div></div>`, b.title);
+      }));
+    }).catch(() => { $('#booksEmpty').hidden = false; });
+  }
+
   // ---------- Media blocks on other pages (About) ----------
   document.querySelectorAll('[data-media-on]').forEach((block) => {
     load(block.dataset.mediaOn).then((items) => {

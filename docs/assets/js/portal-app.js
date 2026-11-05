@@ -77,7 +77,7 @@
   const TABS = [
     ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
-    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['media', 'Admin · Media', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
+    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['media', 'Admin · Media', 'admin'], ['books', 'Admin · Books', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
   ];
   const A_LABEL = { todo: 'To do', in_progress: 'In progress', submitted: 'Submitted', needs_changes: 'Needs changes', done: 'Done' };
   const today = () => new Date().toISOString().slice(0, 10);
@@ -541,6 +541,53 @@
             $('#vfTitle').textContent = 'Edit video'; $('#vfSave').textContent = 'Save changes'; $('#vfCancel').hidden = false;
             $('#vfFiles').textContent = it.raw_src.startsWith('/uploads/') ? 'Using the uploaded video file. Paste a link or upload to replace it.' : '';
             vf.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }));
+      });
+    },
+    async books(v) {
+      const out = await api('/portal/media');
+      const books = out.data.filter((x) => x.kind === 'book');
+      v.innerHTML = `<p class="fine">Books appear on <a href="/learn/books/" target="_blank" rel="noopener">Yo's bookshelf</a>. Tick <b>Yo's own book</b> for a book Yolanda wrote: it's shown first, larger, with "By Yolanda Butler".</p>
+        <form class="p-card" id="bkf"><h2 id="bkTitle">Add a book</h2><input type="hidden" name="editId"/><input type="hidden" name="thumb"/>
+          <div class="row2"><div class="field"><label for="bt">Title</label><input id="bt" name="title" required maxlength="160"/></div><div class="field"><label for="ba">Author</label><input id="ba" name="category" maxlength="60" placeholder="e.g. Yolanda Butler"/></div></div>
+          <div class="field"><label for="bd">Why Yo recommends it</label><textarea id="bd" name="description" rows="3" maxlength="2000"></textarea></div>
+          <div class="field"><label for="bl">Where to get it (link)</label><input id="bl" name="src" placeholder="https://bookshop.org/… or Amazon, or Yo's own page"/></div>
+          <div class="p-row"><label class="btn btn-ghost-dark btn-sm p-file">Cover photo<input type="file" id="bkCover" accept="image/jpeg,image/png,image/webp" hidden/></label><span class="fine" id="bkCoverMsg"></span><label class="p-place"><input type="checkbox" name="featured"/> Yo's own book</label></div>
+          <div class="p-row"><button class="btn btn-dark btn-sm" id="bkSave">Add book</button><button type="button" class="linkish" id="bkCancel" hidden>Cancel editing</button><span class="form-msg" aria-live="polite"></span></div>
+        </form>
+        <section class="p-card"><h2>Bookshelf (${books.length})</h2>${books.length ? `<div class="p-books">${books.map((b, i) => `<article class="p-book" data-id="${b.id}">
+            <div class="p-book-cover">${b.thumb ? `<img src="${h(b.thumb)}" alt=""/>` : `<span>${h(b.title)}</span>`}${b.featured ? '<span class="p-pill submitted">Yo\'s book</span>' : ''}</div>
+            <b>${h(b.title)}</b><small>${h(b.category)}</small>
+            <div class="p-row"><button type="button" class="linkish" data-do="edit">Edit</button>${i ? '<button type="button" class="linkish" data-do="up">←</button>' : ''}${i < books.length - 1 ? '<button type="button" class="linkish" data-do="down">→</button>' : ''}<button type="button" class="linkish danger" data-do="delete">Delete</button></div>
+          </article>`).join('')}</div>` : '<p class="p-empty">No books yet.</p>'}</section>`;
+      const f = $('#bkf'), msg = f.querySelector('.form-msg');
+      const reset = () => { f.reset(); f.editId.value = ''; f.thumb.value = ''; $('#bkCoverMsg').textContent = ''; $('#bkTitle').textContent = 'Add a book'; $('#bkSave').textContent = 'Add book'; $('#bkCancel').hidden = true; };
+      $('#bkCancel').addEventListener('click', reset);
+      $('#bkCover').addEventListener('change', async (e) => {
+        const file = e.target.files[0]; if (!file) return;
+        $('#bkCoverMsg').textContent = 'Uploading…';
+        const o = await sendFile('/portal/uploads?kind=photos', file);
+        if (o.ok) { f.thumb.value = o.url; $('#bkCoverMsg').textContent = 'Cover ready.'; } else $('#bkCoverMsg').textContent = o.message;
+      });
+      f.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = { kind: 'book', title: f.title.value, category: f.category.value, description: f.description.value, src: f.src.value.trim(), thumb: f.thumb.value, featured: f.featured.checked, show_on: ['books'] };
+        const o = f.editId.value ? await api(`/portal/media/${f.editId.value}`, { method: 'PATCH', body }) : await api('/portal/media', { method: 'POST', body });
+        flash(msg, o.message, o.ok); if (o.ok) setTimeout(route, 600);
+      });
+      v.querySelectorAll('.p-book').forEach((row) => {
+        const bid = Number(row.dataset.id), b = books.find((x) => x.id === bid), idx = books.indexOf(b);
+        row.querySelectorAll('[data-do]').forEach((btn) => btn.addEventListener('click', async () => {
+          const act = btn.dataset.do;
+          if (act === 'delete') { if (confirm(`Remove "${b.title}" from the bookshelf?`)) { await api(`/portal/media/${bid}`, { method: 'DELETE' }); route(); } }
+          else if (act === 'up' || act === 'down') {
+            const ids = books.map((x) => x.id), j = idx + (act === 'up' ? -1 : 1); [ids[idx], ids[j]] = [ids[j], ids[idx]];
+            await Promise.all(ids.map((mid, k) => api(`/portal/media/${mid}`, { method: 'PATCH', body: { sort: k } }))); route();
+          } else {
+            reset(); f.editId.value = bid; f.title.value = b.title; f.category.value = b.category; f.description.value = b.description; f.src.value = b.raw_src || ''; f.thumb.value = b.raw_thumb || ''; f.featured.checked = b.featured;
+            $('#bkCoverMsg').textContent = b.thumb ? 'Keeping the current cover. Choose a photo to replace it.' : ''; $('#bkTitle').textContent = 'Edit book'; $('#bkSave').textContent = 'Save changes'; $('#bkCancel').hidden = false;
+            f.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         }));
       });

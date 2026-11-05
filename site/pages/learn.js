@@ -30,7 +30,7 @@ ${pageHero({ mark: 'Learn', eyebrow: 'Learn with Yo', title: 'Build your busines
   <div class="wrap">
     <div class="sec-head"><p class="eyebrow reveal">Free resources</p><h2 class="h2 reveal" id="resTitle">Start <em>today, for free.</em></h2></div>
     <div class="assets">
-      ${resources.map((x, i) => `<a class="asset reveal" style="--d:${i * 70}ms" href="${r}learn/${x.slug}/"><span class="asset-ic">${icon(x.kind === 'Workbook' ? 'file' : 'check')}</span><span><b>${esc(x.title)}</b><small>${esc(x.kind)} · for ${esc(x.audience.toLowerCase())}</small></span></a>`).join('')}
+      ${resources.map((x, i) => `<a class="asset reveal" style="--d:${i * 70}ms" href="${r}learn/${x.slug}/"><span class="asset-ic">${icon(x.kind === 'Workbook' ? 'file' : 'check')}</span><span><b>${esc(x.title)}</b><small>${esc(x.kind)} · for ${esc(x.audience.toLowerCase())}</small></span></a>`).join('')}<a class="asset reveal" href="${r}learn/books/"><span class="asset-ic">${icon('star')}</span><span><b>Yo's bookshelf</b><small>Books · recommended reading</small></span></a>
     </div>
   </div>
 </section>

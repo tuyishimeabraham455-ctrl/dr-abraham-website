@@ -22,7 +22,7 @@ const admin = m.requireMember('admin');
 const clean = (v, n = 2000) => String(v ?? '').trim().slice(0, n);
 const id = (v) => Number.parseInt(v, 10) || 0;
 const bad = (res, msg, code = 400) => res.status(code).json({ ok: false, message: msg });
-const PLACES = ['watch', 'about'];
+const PLACES = ['watch', 'about', 'books'];
 const isPhoto = (u) => /^\/uploads\/photos\/[a-f0-9]{24}\.(jpg|png|webp)$/.test(u) || /^https:\/\/[^\s<>"']+$/.test(u);
 
 // Only a few inline tags survive in edited text; everything else is removed
@@ -38,16 +38,16 @@ const publicItem = (r) => {
   const video = r.kind === 'video' ? (classifyVideo(r.src) || (r.src_type === 'file' ? { kind: 'file', src: r.src } : null)) : null;
   let thumb = r.thumb;
   if (!thumb && video && video.kind === 'youtube') thumb = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
-  return { id: r.id, kind: r.kind, title: r.title, description: r.description, category: r.category, featured: !!r.featured, show_on: r.show_on.split(',').filter(Boolean), src: r.kind === 'photo' ? r.src : undefined, video, thumb };
+  return { id: r.id, kind: r.kind, title: r.title, description: r.description, category: r.category, featured: !!r.featured, show_on: r.show_on.split(',').filter(Boolean), src: r.kind === 'photo' ? r.src : undefined, link: r.kind === 'book' ? r.src : undefined, video, thumb };
 };
 
 router.get('/media', (req, res) => {
-  const kind = ['video', 'photo'].includes(req.query.kind) ? req.query.kind : null;
+  const kind = ['video', 'photo', 'book'].includes(req.query.kind) ? req.query.kind : null;
   const on = PLACES.includes(req.query.on) ? req.query.on : null;
   const rows = db.prepare(`SELECT * FROM media_items WHERE (? IS NULL OR kind = ?) ORDER BY featured DESC, sort, id DESC`).all(kind, kind)
     .filter((r) => !on || r.show_on.split(',').includes(on));
   res.set('Cache-Control', 'no-store');
-  res.json({ ok: true, data: rows.map(publicItem).filter((r) => r.kind === 'photo' || r.video) });
+  res.json({ ok: true, data: rows.map(publicItem).filter((r) => r.kind !== 'video' || r.video) });
 });
 
 router.get('/content', (req, res) => {
@@ -71,7 +71,7 @@ router.get('/portal/media', admin, (req, res) => {
 });
 
 async function readItem(b, existing) {
-  const kind = existing ? existing.kind : (['video', 'photo'].includes(b.kind) ? b.kind : null);
+  const kind = existing ? existing.kind : (['video', 'photo', 'book'].includes(b.kind) ? b.kind : null);
   if (!kind) throw { message: 'Choose video or photo.' };
   const out = {
     kind,
@@ -86,7 +86,11 @@ async function readItem(b, existing) {
   if (b.show_on !== undefined) out.show_on = (Array.isArray(b.show_on) ? b.show_on : String(b.show_on).split(',')).map((x) => String(x).trim()).filter((x) => PLACES.includes(x)).join(',');
   if (b.src !== undefined) {
     const src = clean(b.src, 600);
-    if (kind === 'photo') {
+    if (kind === 'book') {
+      // A book's link is where to get it (bookshop, Amazon, Yo's own page); optional
+      if (src && !/^(https:\/\/|\/)[^\s<>"']+$/.test(src)) throw { message: 'The book link should start with https://' };
+      out.src = src;
+    } else if (kind === 'photo') {
       if (!isPhoto(src)) throw { message: 'Upload a photo, or use a link that starts with https://' };
       out.src = src;
     } else {
@@ -101,6 +105,7 @@ async function readItem(b, existing) {
     if (t && !isPhoto(t)) throw { message: 'The cover photo should be uploaded, or a link starting with https://' };
     out.thumb = t;
   }
+  if (kind === 'book') { if (!out.title) throw { message: 'Give the book a title.' }; return out; }
   if (!out.src) throw { message: kind === 'photo' ? 'Add the photo.' : 'Add the video link or upload the video.' };
   if (kind === 'video' && !out.title) throw { message: 'Give the video a title.' };
   return out;
@@ -111,7 +116,7 @@ router.post('/portal/media', admin, async (req, res) => {
     const it = await readItem(req.body || {});
     if (it.featured && it.kind === 'video') db.prepare(`UPDATE media_items SET featured = 0 WHERE kind = 'video'`).run();
     const { lastInsertRowid } = db.prepare(`INSERT INTO media_items (kind, title, description, category, src, src_type, thumb, show_on, featured, sort) VALUES (@kind, @title, @description, @category, @src, @src_type, @thumb, @show_on, @featured, @sort)`).run(it);
-    res.status(201).json({ ok: true, id: lastInsertRowid, message: it.kind === 'photo' ? 'Photo added.' : 'Video added.' });
+    res.status(201).json({ ok: true, id: lastInsertRowid, message: it.kind === 'photo' ? 'Photo added.' : it.kind === 'book' ? 'Book added.' : 'Video added.' });
   } catch (err) { bad(res, err.message || 'Could not save.'); }
 });
 

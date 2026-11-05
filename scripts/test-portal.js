@@ -255,6 +255,16 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     check('feed shows the photo and the playable video', feedT.some((p) => p.media.some((x) => x.type === 'photo' && x.src === cph.body.url)) && feedT.some((p) => p.media.some((x) => x.type === 'video' && x.video.kind === 'youtube')));
     await call('DELETE', `/portal/community/${pPost.body.id}`, M1);
     check('deleting a post removes its photo file', await new Promise((r) => setTimeout(() => r(!fs.existsSync(path.join(tmp, 'uploads', 'photos', path.basename(cph.body.url)))), 200)));
+
+    // Books
+    const bk = await call('POST', '/portal/media', A, { kind: 'book', title: 'Profit First', category: 'Mike Michalowicz', description: 'Cash system for small businesses.', src: 'https://bookshop.org/search?keywords=profit+first', show_on: ['books'] });
+    check('admin adds a book', bk.status === 201);
+    check('book without a title refused', (await call('POST', '/portal/media', A, { kind: 'book', title: '', show_on: ['books'] })).status === 400);
+    check('unsafe book link refused', (await call('POST', '/portal/media', A, { kind: 'book', title: 'x', src: 'javascript:alert(1)' })).status === 400);
+    check('members cannot add books', (await call('POST', '/portal/media', M1, { kind: 'book', title: 'x' })).status === 403);
+    const shelf = (await call('GET', '/media?kind=book&on=books')).body.data;
+    check('bookshelf lists the book with author and link', shelf.length === 1 && shelf[0].category === 'Mike Michalowicz' && shelf[0].link.startsWith('https://bookshop.org'));
+    check('books never show up as videos on Watch', !(await call('GET', '/media?on=watch')).body.data.some((x) => x.kind === 'book'));
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

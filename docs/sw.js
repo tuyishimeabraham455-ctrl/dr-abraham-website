@@ -1,6 +1,6 @@
-/* Service worker: offline support for the installed app. Version 20261105010238 */
-const CACHE = 'yo-20261105010238';
-const PRECACHE = ["","offline/","book/","speaking/","agent-yo/","portal/","assets/css/yo.css?v=20261105010238","assets/js/yo.js?v=20261105010238","assets/js/app.js?v=20261105010238","assets/app/icon-192.png","images/yolanda.jpg"];
+/* Service worker: offline support for the installed app. Version 20261105011408 */
+const CACHE = 'yo-20261105011408';
+const PRECACHE = ["","offline/","book/","speaking/","agent-yo/","portal/","assets/css/yo.css?v=20261105011408","assets/js/yo.js?v=20261105011408","assets/js/app.js?v=20261105011408","assets/app/icon-192.png","images/yolanda.jpg"];
 const base = new URL('./', self.location).href;
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => Promise.all(PRECACHE.map((p) => c.add(new Request(base + p, { cache: 'reload' })).catch(() => {})))).then(() => self.skipWaiting()));

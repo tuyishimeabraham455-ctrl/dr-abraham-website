@@ -2,8 +2,10 @@
 //  Sample data so the web app looks and works like it's in use.
 //    npm run seed-demo            add 10 sample accounts + activity
 //    npm run seed-demo -- --remove   remove every sample item
-//  Everything sample uses @demo.example.com emails (or is listed in
-//  the demo_seed manifest), so removal never touches real data.
+//  Sample people have real-looking names and first.last@example.com
+//  emails (example.com is reserved for examples, so no real person
+//  gets mail). Everything added is listed in the demo_seed manifest,
+//  so removal deletes exactly that and never touches real data.
 //  Sample accounts sign in with the password: demo12345
 // ============================================================
 const fs = require('fs');
@@ -15,7 +17,8 @@ const { scoreLead } = require('../lib/leads');
 const { allSlots } = require('../routes/booking');
 const { UPLOAD_DIR, removeUpload } = require('../lib/uploads');
 
-const DOMAIN = 'demo.example.com';
+const DOMAIN = 'example.com';
+const emailOf = (name) => `${name.replace(/^(Pastor|Dr\.?)\s+/, '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z ]/g, '').trim().split(/\s+/).join('.')}@${DOMAIN}`;
 const PASSWORD = 'demo12345';
 const like = `%@${DOMAIN}`;
 const ago = (days, hours = 0) => new Date(Date.now() - (days * 24 + hours) * 3600000).toISOString().replace('T', ' ').slice(0, 19);
@@ -25,19 +28,21 @@ const saveManifest = (v) => db.prepare(`INSERT INTO site_settings (key, value) V
 
 function remove() {
   const man = manifest();
-  const demoIds = db.prepare(`SELECT id FROM members WHERE email LIKE ?`).all(like).map((r) => r.id);
+  const demoIds = [...new Set([...(man.members || []), ...db.prepare(`SELECT id FROM members WHERE email LIKE ? AND role != 'admin'`).all(like).map((r) => r.id)])];
   const postIds = [...(man.posts || []), ...db.prepare(`SELECT id FROM community_posts WHERE member_id IN (${demoIds.map(() => '?').join(',') || 'NULL'})`).all(...demoIds).map((r) => r.id)];
   const files = postIds.flatMap((pid) => { try { return JSON.parse(db.prepare(`SELECT media FROM community_posts WHERE id = ?`).get(pid)?.media || '[]').map((x) => x.src); } catch { return []; } });
   db.transaction(() => {
     postIds.forEach((pid) => db.prepare(`DELETE FROM community_posts WHERE id = ?`).run(pid));
-    db.prepare(`DELETE FROM community_comments WHERE member_id IN (SELECT id FROM members WHERE email LIKE ?)`).run(like);
-    db.prepare(`DELETE FROM members WHERE email LIKE ?`).run(like); // sessions, messages, assignments, posts follow
+    demoIds.forEach((mid) => { db.prepare(`DELETE FROM community_comments WHERE member_id = ?`).run(mid); db.prepare(`DELETE FROM members WHERE id = ? AND role != 'admin'`).run(mid); }); // sessions, messages, assignments, posts follow
+    (man.media || []).forEach((mid) => { const r = db.prepare(`SELECT thumb FROM media_items WHERE id = ?`).get(mid); if (r) files.push(r.thumb); db.prepare(`DELETE FROM media_items WHERE id = ?`).run(mid); });
     (man.messages || []).forEach((id) => db.prepare(`DELETE FROM messages WHERE id = ?`).run(id));
     (man.comments || []).forEach((id) => db.prepare(`DELETE FROM community_comments WHERE id = ?`).run(id));
-    db.prepare(`DELETE FROM calls WHERE email LIKE ?`).run(like);
-    db.prepare(`DELETE FROM inquiries WHERE email LIKE ?`).run(like);
-    db.prepare(`DELETE FROM subscribers WHERE email LIKE ?`).run(like);
-    db.prepare(`DELETE FROM outbox WHERE to_email LIKE ?`).run(like);
+    (man.calls || []).forEach((x) => db.prepare(`DELETE FROM calls WHERE id = ?`).run(x));
+    (man.leads || []).forEach((x) => db.prepare(`DELETE FROM inquiries WHERE id = ?`).run(x));
+    (man.subscribers || []).forEach((x) => db.prepare(`DELETE FROM subscribers WHERE id = ?`).run(x));
+    db.prepare(`DELETE FROM calls WHERE email LIKE ?`).run('%@demo.example.com');
+    db.prepare(`DELETE FROM inquiries WHERE email LIKE ?`).run('%@demo.example.com');
+    db.prepare(`DELETE FROM subscribers WHERE email LIKE ?`).run('%@demo.example.com');
     db.prepare(`DELETE FROM page_views WHERE referrer = 'demo-seed'`).run();
     (man.resources || []).forEach((id) => db.prepare(`DELETE FROM portal_resources WHERE id = ?`).run(id));
     db.prepare(`DELETE FROM site_settings WHERE key = 'demo_seed'`).run();
@@ -54,13 +59,13 @@ function copyPhoto(name) {
 }
 
 function seed() {
-  if (db.prepare(`SELECT COUNT(*) n FROM members WHERE email LIKE ?`).get(like).n) {
+  if (manifest().members?.length) {
     console.log('Sample data is already there. To start over: npm run seed-demo -- --remove, then run it again.');
     return;
   }
   const admin = db.prepare(`SELECT * FROM members WHERE role = 'admin' AND status = 'active' ORDER BY id LIMIT 1`).get();
   if (!admin) { console.log('Create an admin first: npm run create-user -- --name "..." --email ... --role admin'); return; }
-  const man = { posts: [], messages: [], comments: [], resources: [] };
+  const man = { members: [], posts: [], messages: [], comments: [], resources: [], leads: [], calls: [], subscribers: [], media: [] };
   const hash = m.hashPassword(PASSWORD);
 
   // ---- 10 accounts ----
@@ -79,7 +84,8 @@ function seed() {
   const ins = db.prepare(`INSERT INTO members (name, email, password, programs, role, created_at) VALUES (?, ?, ?, ?, ?, ?)`);
   const id = {};
   db.transaction(() => people.forEach(([name, role, programs, days]) => {
-    id[name.split(' ')[0]] = ins.run(name, `${name.split(' ')[0].toLowerCase()}@${DOMAIN}`, hash, programs, role, ago(days)).lastInsertRowid;
+    id[name.split(' ')[0]] = ins.run(name, emailOf(name), hash, programs, role, ago(days)).lastInsertRowid;
+    man.members.push(id[name.split(' ')[0]]);
   }))();
   const Yo = admin.id;
 
@@ -147,19 +153,20 @@ function seed() {
   const insL = db.prepare(`INSERT INTO inquiries (name, email, organization, inquiry_type, event_type, event_date, budget, message, status, score, source, details, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   const leadIds = leads.map(([name, org, type, event, date, budget, audience, dm, source, status, days, message]) => {
     const score = event ? scoreLead({ event_date: date, budget, audience, decision_maker: dm, organization: org }) : 10;
-    return insL.run(name, `${name.split(' ').slice(-1)[0].toLowerCase()}@${DOMAIN}`, org, type, event, date, budget, message, status, score, source, JSON.stringify({ audience, decision_maker: dm, demo: true }), ago(days, 3)).lastInsertRowid;
+    return insL.run(name, emailOf(name), org, type, event, date, budget, message, status, score, source, JSON.stringify({ audience, decision_maker: dm, demo: true }), ago(days, 3)).lastInsertRowid;
   });
+  man.leads.push(...leadIds);
   const taken = new Set(db.prepare(`SELECT starts_at FROM calls`).all().map((r) => r.starts_at));
   const free = allSlots().filter((s) => !taken.has(s));
   [[0, 0], [2, 2], [3, 6], [6, 9]].forEach(([li, si]) => {
     if (!free[si]) return;
-    db.prepare(`INSERT INTO calls (name, email, inquiry_id, starts_at) VALUES (?, ?, ?, ?)`).run(leads[li][0], `${leads[li][0].split(' ').slice(-1)[0].toLowerCase()}@${DOMAIN}`, leadIds[li], free[si]);
+    man.calls.push(db.prepare(`INSERT INTO calls (name, email, inquiry_id, starts_at) VALUES (?, ?, ?, ?)`).run(leads[li][0], emailOf(leads[li][0]), leadIds[li], free[si]).lastInsertRowid);
   });
 
   // ---- Newsletter subscribers + a week of visits ----
   const sources = ['homepage', 'footer', 'workbook', 'blog', 'agent', 'podcast'];
   const insS = db.prepare(`INSERT INTO subscribers (email, first_name, source, created_at) VALUES (?, ?, ?, ?)`);
-  ['Nia', 'Carlos', 'Imani', 'Wei', 'Fatima', 'Luis', 'Hannah', 'Kwame', 'Elena', 'Brandon', 'Mei', 'Omar', 'Zara', 'Dev'].forEach((n, i) => insS.run(`${n.toLowerCase()}.${i}@${DOMAIN}`, n, sources[i % sources.length], ago(i * 2 + 1)));
+  ['Nia Carter', 'Carlos Mendoza', 'Imani Wallace', 'Wei Chen', 'Fatima Okafor', 'Luis Romero', 'Hannah Goldberg', 'Kwame Asante', 'Elena Petrova', 'Brandon Hayes', 'Mei Tanaka', 'Omar Haddad', 'Zara Ahmed', 'Dev Patel'].forEach((n, i) => man.subscribers.push(insS.run(emailOf(n), n.split(' ')[0], sources[i % sources.length], ago(i * 2 + 1)).lastInsertRowid));
   const pages = ['/', '/', '/', '/about/', '/speaking/', '/book/', '/watch/', '/podcast/', '/learn/', '/blog/is-your-business-idea-a-real-problem/', '/speaking/credit-capital-confidence/'];
   const insV = db.prepare(`INSERT INTO page_views (page, referrer, user_agent, ip_hash, created_at) VALUES (?, 'demo-seed', 'demo', ?, ?)`);
   db.transaction(() => { for (let i = 0; i < 140; i++) insV.run(pages[i % pages.length], crypto.randomBytes(4).toString('hex'), ago(Math.floor(i / 20), i % 24)); })();
@@ -170,13 +177,26 @@ function seed() {
   man.resources.push(insR.run('Funding-ready checklist', 'The 30-day checklist for business credit and lender files.', '/learn/funding-checklist/', 'Template', 'member', Yo).lastInsertRowid);
   man.resources.push(insR.run('Speaker booking checklist', 'What planners need from you, before and after the event.', '/learn/event-planner-checklist/', 'Template', 'all', Yo).lastInsertRowid);
 
+  // ---- Yo's bookshelf: sample recommendations (real books by other authors) ----
+  const insB = db.prepare(`INSERT INTO media_items (kind, title, description, category, src, thumb, show_on, featured, sort) VALUES ('book', ?, ?, ?, ?, ?, 'books', 0, ?)`);
+  [
+    ['Everything Is Figureoutable', 'Marie Forleo', 'cover-figureoutable.jpg', 'For the days you doubt you can build it. A practical push to stop waiting and start.'],
+    ['Profit First', 'Mike Michalowicz', 'cover-profit-first.jpg', 'A simple cash system for small businesses: pay yourself and your taxes before anything else.'],
+    ['The Psychology of Money', 'Morgan Housel', 'cover-psychology-money.jpg', 'Why money decisions are about behavior, not math. Great for founders rethinking their relationship with money.'],
+    ['Start with Why', 'Simon Sinek', 'cover-start-with-why.jpg', 'Every speaker should know their why before their how. The thinking behind step 1 of the framework.'],
+    ['Dare to Lead', 'Brené Brown', 'cover-dare-to-lead.jpg', 'Leadership that makes room for courage and honest conversations, for teams of two or two hundred.'],
+    ['Atomic Habits', 'James Clear', 'cover-atomic-habits.jpg', 'Small daily systems that compound. Pairs well with the Sustain yourself step.'],
+  ].forEach(([title, author, cover, why], i) => {
+    man.media.push(insB.run(title, `Sample pick: ${why}`, author, `https://bookshop.org/search?keywords=${encodeURIComponent(title + ' ' + author)}`, copyPhoto(cover), i).lastInsertRowid);
+  });
+
   saveManifest(man);
   console.log(`Added sample data:
   10 accounts (2 team, 8 members) — sign in with any of them using password ${PASSWORD}
-     e.g. amara@${DOMAIN}, keisha@${DOMAIN}
+     e.g. amara.johnson@${DOMAIN}, keisha.morgan@${DOMAIN}
   ${man.posts.length + 7} community posts with photos, a video and comments
   messages, 7 assignments at every stage, 8 booking requests, discovery calls,
-  14 subscribers, a week of page visits and 3 member resources
+  14 subscribers, a week of page visits, 3 member resources and 6 books on the bookshelf
 Remove it all any time: npm run seed-demo -- --remove`);
 }
 
