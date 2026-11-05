@@ -77,7 +77,7 @@
   const TABS = [
     ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
-    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['media', 'Admin · Media', 'admin'], ['books', 'Admin · Books', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
+    ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['media', 'Admin · Media', 'admin'], ['books', 'Admin · Books', 'admin'], ['podcast', 'Admin · Podcast', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
   ];
   const A_LABEL = { todo: 'To do', in_progress: 'In progress', submitted: 'Submitted', needs_changes: 'Needs changes', done: 'Done' };
   const today = () => new Date().toISOString().slice(0, 10);
@@ -98,10 +98,23 @@
   // Profile picture, or initials when there isn't one
   const initials = (name) => String(name || '?').split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
   const safeImg = (u) => (/^\/uploads\/avatars\/[a-f0-9]{24}\.(jpg|png|webp)$/.test(u || '') ? u : '');
+  // Designed profile picture for anyone without a photo: colours, pattern and monogram come from the name
+  const PALETTES = [['#6B1E2E', '#2A1A16', '#C9A66B'], ['#2A1A16', '#4A2A22', '#C9A66B'], ['#B8695A', '#6B1E2E', '#F8F1E7'], ['#1F3A3D', '#2A1A16', '#C9A66B'], ['#C9A66B', '#B8695A', '#2A1A16'], ['#4B2142', '#1C110E', '#EBD2C6'], ['#3D4A2F', '#1C110E', '#C9A66B'], ['#EBD2C6', '#B8695A', '#6B1E2E'], ['#23304F', '#1C110E', '#C9A66B'], ['#7A3B2E', '#2A1A16', '#EBD2C6']];
+  const nameHash = (s) => { let x = 7; for (const c of String(s || '')) x = (x * 31 + c.charCodeAt(0)) >>> 0; return x; };
+  const designedAvatar = (name) => {
+    const hsh = nameHash(name), [a, b, ink] = PALETTES[hsh % PALETTES.length], motif = (hsh >> 4) % 4, gid = 'g' + (hsh % 100000);
+    const deco = [
+      `<circle cx="78" cy="22" r="30" fill="none" stroke="${ink}" stroke-opacity=".35" stroke-width="1.2"/><circle cx="78" cy="22" r="20" fill="none" stroke="${ink}" stroke-opacity=".2"/>`,
+      `<path d="M-5 80 Q 50 40 105 80" fill="none" stroke="${ink}" stroke-opacity=".3" stroke-width="1.2"/><path d="M-5 92 Q 50 52 105 92" fill="none" stroke="${ink}" stroke-opacity=".18"/>`,
+      [12, 26, 40, 54, 68, 82].map((x, i) => `<circle cx="${x}" cy="${14 + (i % 2) * 6}" r="1.6" fill="${ink}" fill-opacity=".35"/>`).join(''),
+      `<path d="M0 100 L100 0" stroke="${ink}" stroke-opacity=".22" stroke-width="18"/><path d="M-20 100 L80 0" stroke="${ink}" stroke-opacity=".1" stroke-width="6"/>`,
+    ][motif];
+    return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" focusable="false"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="100" height="100" fill="url(#${gid})"/>${deco}<text x="50" y="62" text-anchor="middle" font-family="Times New Roman, Tinos, serif" font-style="italic" font-size="38" fill="${ink}">${h(initials(name))}</text></svg>`;
+  };
   const ava = (person, cls = 'p-ava-sm', idAttr = '') => {
     const img = safeImg(person && (person.avatar || person.author_avatar || person.from_avatar));
     const name = person && (person.name || person.author || person.from_name);
-    return `<span class="${cls}${img ? ' has-img' : ''}"${idAttr ? ` id="${idAttr}"` : ''} aria-hidden="true">${img ? `<img src="${h(img)}" alt="" loading="lazy"/>` : h(initials(name))}</span>`;
+    return `<span class="${cls} has-img"${idAttr ? ` id="${idAttr}"` : ''} aria-hidden="true">${img ? `<img src="${h(img)}" alt="" loading="lazy"/>` : designedAvatar(name)}</span>`;
   };
   // Shrink a picture in the browser to a 400×400 square JPEG before uploading
   const squareJpeg = (file, size = 400) => new Promise((resolve, reject) => {
@@ -590,6 +603,33 @@
             f.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         }));
+      });
+    },
+    async podcast(v) {
+      const [eps, lib] = await Promise.all([api('/podcast/episodes'), api('/portal/media')]);
+      const audio = lib.data.filter((x) => x.kind === 'audio');
+      const forEp = (slug) => audio.find((a) => a.category === slug);
+      v.innerHTML = `<p class="fine">Each episode page plays a short sample preview until you add the real episode here. Upload the audio file (MP3, M4A, WAV or OGG, up to 150 MB) or paste a link from your podcast host. It replaces the preview straight away.</p>
+        <section class="p-card"><h2>Episodes</h2><div class="p-eps">${eps.data.map((e) => { const a = forEp(e.slug); return `<article class="p-ep" data-slug="${h(e.slug)}">
+          <div class="p-ep-head"><span class="p-ep-n">${String(e.n).padStart(2, '0')}</span><div><b>${h(e.title)}</b><small>${a ? 'Real episode audio added' : 'Playing the sample preview'}</small></div><a class="linkish" href="/podcast/${h(e.slug)}/" target="_blank" rel="noopener">Open page</a></div>
+          ${a ? `<audio controls preload="none" src="${h(a.src)}"></audio><div class="p-row"><button type="button" class="linkish danger" data-rm="${a.id}">Remove and go back to the preview</button></div>`
+            : `<div class="p-row"><label class="btn btn-dark btn-sm p-file">Upload audio<input type="file" accept="audio/*,.m4a,.mp3,.wav,.ogg" hidden/></label><span>or</span><input class="p-ep-link" placeholder="https:// link to the audio file"/><button type="button" class="btn btn-ghost-dark btn-sm" data-link>Use link</button></div><div class="p-progress" hidden><span></span></div>`}
+          <span class="form-msg" aria-live="polite"></span>
+        </article>`; }).join('')}</div></section>`;
+      v.querySelectorAll('.p-ep').forEach((row) => {
+        const slug = row.dataset.slug, ep = eps.data.find((e) => e.slug === slug), msg = row.querySelector('.form-msg');
+        const save = async (src) => { const o = await api('/portal/media', { method: 'POST', body: { kind: 'audio', category: slug, title: ep.title, src, show_on: ['podcast'] } }); flash(msg, o.ok ? 'Saved. The episode page now plays this audio.' : o.message, o.ok); if (o.ok) setTimeout(route, 900); };
+        const file = row.querySelector('input[type=file]');
+        if (file) file.addEventListener('change', async () => {
+          const f = file.files[0]; if (!f) return;
+          const bar = row.querySelector('.p-progress'); bar.hidden = false; flash(msg, 'Uploading…');
+          const o = await sendFile('/portal/uploads?kind=audio', f, (p) => { bar.firstElementChild.style.width = Math.round(p * 100) + '%'; msg.textContent = `Uploading… ${Math.round(p * 100)}%`; });
+          bar.hidden = true; if (!o.ok) { flash(msg, o.message, false); return; } save(o.url);
+        });
+        const link = row.querySelector('[data-link]');
+        if (link) link.addEventListener('click', () => { const u = row.querySelector('.p-ep-link').value.trim(); if (u) save(u); });
+        const rm = row.querySelector('[data-rm]');
+        if (rm) rm.addEventListener('click', async () => { if (!confirm('Remove this audio? The page goes back to the sample preview.')) return; await api(`/portal/media/${rm.dataset.rm}`, { method: 'DELETE' }); route(); });
       });
     },
     async settings(v) {

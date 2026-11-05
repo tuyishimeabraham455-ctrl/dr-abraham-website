@@ -265,6 +265,19 @@ const login = async (email, password = 'password-123') => (await call('POST', '/
     const shelf = (await call('GET', '/media?kind=book&on=books')).body.data;
     check('bookshelf lists the book with author and link', shelf.length === 1 && shelf[0].category === 'Mike Michalowicz' && shelf[0].link.startsWith('https://bookshop.org'));
     check('books never show up as videos on Watch', !(await call('GET', '/media?on=watch')).body.data.some((x) => x.kind === 'book'));
+
+    // Podcast episode audio
+    const WAV = Buffer.concat([Buffer.from('RIFF'), Buffer.alloc(4), Buffer.from('WAVEfmt '), Buffer.alloc(64)]);
+    const au = await upload('/portal/uploads?kind=audio', A, WAV, 'audio/wav');
+    check('admin uploads episode audio', au.status === 201 && /^\/uploads\/audio\/[a-f0-9]{24}\.wav$/.test(au.body.url));
+    check('a picture is not accepted as audio', (await upload('/portal/uploads?kind=audio', A, JPG, 'audio/mpeg')).status === 415);
+    check('members cannot upload episode audio', (await upload('/portal/uploads?kind=audio', M1, WAV, 'audio/wav')).status === 403);
+    const epList = (await call('GET', '/podcast/episodes')).body.data;
+    check('episode list for the admin form', epList.length >= 6 && epList[0].slug);
+    check('audio must belong to a real episode', (await call('POST', '/portal/media', A, { kind: 'audio', category: 'no-such-episode', src: au.body.url })).status === 400);
+    check('admin attaches audio to an episode', (await call('POST', '/portal/media', A, { kind: 'audio', category: epList[0].slug, title: epList[0].title, src: au.body.url, show_on: ['podcast'] })).status === 201);
+    const pubAudio = (await call('GET', '/media?kind=audio')).body.data;
+    check('episode page can find the real audio', pubAudio.some((x) => x.category === epList[0].slug && x.src === au.body.url));
   } catch (e) {
     fail++; console.log('FAIL  test crashed: ' + e.stack);
   } finally {

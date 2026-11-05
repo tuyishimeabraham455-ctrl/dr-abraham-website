@@ -101,6 +101,15 @@
     }).catch(() => { $('#booksEmpty').hidden = false; });
   }
 
+  // ---------- Podcast episode: real audio uploaded by the admin replaces the preview ----------
+  const epBox = $('[data-episode]');
+  if (epBox) {
+    fetch('/api/media?kind=audio', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : Promise.reject())).then(({ data }) => {
+      const mine = data.find((x) => x.category === epBox.dataset.episode && safe(x.src));
+      if (mine) epBox.innerHTML = `<audio controls preload="metadata" src="${esc(safe(mine.src))}">Your browser does not support audio playback.</audio>`;
+    }).catch(() => {});
+  }
+
   // ---------- Media blocks on other pages (About) ----------
   document.querySelectorAll('[data-media-on]').forEach((block) => {
     load(block.dataset.mediaOn).then((items) => {

@@ -34,7 +34,8 @@ function remove() {
   db.transaction(() => {
     postIds.forEach((pid) => db.prepare(`DELETE FROM community_posts WHERE id = ?`).run(pid));
     demoIds.forEach((mid) => { db.prepare(`DELETE FROM community_comments WHERE member_id = ?`).run(mid); db.prepare(`DELETE FROM members WHERE id = ? AND role != 'admin'`).run(mid); }); // sessions, messages, assignments, posts follow
-    (man.media || []).forEach((mid) => { const r = db.prepare(`SELECT thumb FROM media_items WHERE id = ?`).get(mid); if (r) files.push(r.thumb); db.prepare(`DELETE FROM media_items WHERE id = ?`).run(mid); });
+    (man.media || []).forEach((mid) => { const r = db.prepare(`SELECT src, thumb FROM media_items WHERE id = ?`).get(mid); if (r) files.push(r.src, r.thumb); db.prepare(`DELETE FROM media_items WHERE id = ?`).run(mid); });
+    if (man.hero && db.prepare(`SELECT value FROM site_settings WHERE key = 'hero_video'`).get()?.value === man.hero) { db.prepare(`UPDATE site_settings SET value = '' WHERE key = 'hero_video'`).run(); files.push(man.hero); }
     (man.messages || []).forEach((id) => db.prepare(`DELETE FROM messages WHERE id = ?`).run(id));
     (man.comments || []).forEach((id) => db.prepare(`DELETE FROM community_comments WHERE id = ?`).run(id));
     (man.calls || []).forEach((x) => db.prepare(`DELETE FROM calls WHERE id = ?`).run(x));
@@ -51,12 +52,14 @@ function remove() {
   console.log('Sample data removed.');
 }
 
-function copyPhoto(name) {
-  const dir = path.join(UPLOAD_DIR, 'photos'); fs.mkdirSync(dir, { recursive: true });
-  const file = `${crypto.randomBytes(12).toString('hex')}.jpg`;
+function copyAsset(name, kind = 'photos') {
+  const dir = path.join(UPLOAD_DIR, kind); fs.mkdirSync(dir, { recursive: true });
+  const file = `${crypto.randomBytes(12).toString('hex')}${path.extname(name)}`;
   fs.copyFileSync(path.join(__dirname, 'demo-assets', name), path.join(dir, file));
-  return `/uploads/photos/${file}`;
+  return `/uploads/${kind}/${file}`;
 }
+const copyPhoto = (name) => copyAsset(name, 'photos');
+const copyVideo = (name) => copyAsset(path.join('videos', name), 'videos');
 
 function seed() {
   if (manifest().members?.length) {
@@ -111,6 +114,8 @@ function seed() {
   comment(p5, Yo, 'Slow and steady builds the file lenders want to see. Keep going, Marcus.', 3);
   const p6 = post(id.Tanya, 'My note to self this week.', [{ type: 'photo', src: copyPhoto('card-quote.jpg') }], 3);
   comment(p6, id.Grace, 'Needed this today. Thank you.', 2);
+  const pv = post(id.Keisha, 'New lesson is up on the Watch page: three questions to test your idea before you build. Two minutes, worth it.', [{ type: 'video', src: copyVideo('lesson-real-problem.mp4') }], 2, 0);
+  comment(pv, id.Jordan, 'Question three is the one I keep skipping. Not anymore.', 1);
   const p7 = post(id.Jordan, 'Question for the group: how did you price your first workshop? I\'m stuck between $49 and $149 for a 2-hour virtual session.', null, 2);
   comment(p7, id.Daniel, 'Start with the outcome, not the hours. What is it worth to them to have that solved? Bring it to Thursday\'s office hours.', 1);
   comment(p7, id.Amara, 'I started at $97 with a workbook included. Sold out twice.', 1);
@@ -190,13 +195,32 @@ function seed() {
     man.media.push(insB.run(title, `Sample pick: ${why}`, author, `https://bookshop.org/search?keywords=${encodeURIComponent(title + ' ' + author)}`, copyPhoto(cover), i).lastInsertRowid);
   });
 
+  // ---- Watch page: lesson videos (motion graphics made from Yo's own articles) ----
+  const insV2 = db.prepare(`INSERT INTO media_items (kind, title, description, category, src, thumb, show_on, featured, sort) VALUES ('video', ?, ?, 'Lessons', ?, ?, ?, ?, ?)`);
+  [
+    ['Is your idea a real problem?', 'Three questions to answer before you build: who has the problem, how much it hurts, and whether they will pay to fix it.', 'lesson-real-problem.mp4', 'thumb-lesson-real-problem.jpg', 'watch,about', 1],
+    ['Business credit, before you apply', 'Make it official and build a record of on-time payments, three to six months before you ask a lender. Education, not financial advice.', 'lesson-business-credit.mp4', 'thumb-lesson-business-credit.jpg', 'watch', 0],
+    ['Social capital is real capital', 'Each one, reach one: the relationships every business needs, and how to build them by giving first.', 'lesson-social-capital.mp4', 'thumb-lesson-social-capital.jpg', 'watch', 0],
+  ].forEach(([title, desc, file, thumb, on, featured], i) => {
+    if (featured) db.prepare(`UPDATE media_items SET featured = 0 WHERE kind = 'video'`).run();
+    man.media.push(insV2.run(title, desc, copyVideo(file), copyPhoto(thumb), on, featured, i).lastInsertRowid);
+  });
+
+  // ---- Homepage background video, only if none is set yet ----
+  const heroNow = db.prepare(`SELECT value FROM site_settings WHERE key = 'hero_video'`).get()?.value;
+  if (!heroNow) {
+    man.hero = copyVideo('hero-ambient.mp4');
+    db.prepare(`INSERT INTO site_settings (key, value) VALUES ('hero_video', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(man.hero);
+  }
+
   saveManifest(man);
   console.log(`Added sample data:
   10 accounts (2 team, 8 members) — sign in with any of them using password ${PASSWORD}
      e.g. amara.johnson@${DOMAIN}, keisha.morgan@${DOMAIN}
-  ${man.posts.length + 7} community posts with photos, a video and comments
+  ${man.posts.length + 8} community posts with photos, a video and comments
   messages, 7 assignments at every stage, 8 booking requests, discovery calls,
-  14 subscribers, a week of page visits, 3 member resources and 6 books on the bookshelf
+  14 subscribers, a week of page visits, 3 member resources, 6 books on the bookshelf,
+  3 lesson videos on the Watch page and a homepage background video (if none was set)
 Remove it all any time: npm run seed-demo -- --remove`);
 }
 
