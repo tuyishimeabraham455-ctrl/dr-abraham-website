@@ -34,6 +34,7 @@
     const set = (open) => { mnav.hidden = !open; burger.setAttribute('aria-expanded', String(open)); document.body.style.overflow = open ? 'hidden' : ''; };
     burger.addEventListener('click', () => set(mnav.hidden));
     mnav.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+    mnav.querySelectorAll('.js-mnav-close').forEach((b) => b.addEventListener('click', () => { set(false); burger.focus(); }));
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && !mnav.hidden) set(false); });
   }
 

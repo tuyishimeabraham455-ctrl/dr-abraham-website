@@ -1431,3 +1431,56 @@ html, body { max-width: 100%; overflow-x: clip; }
 .p-ep-n { font-style: italic; color: var(--clay); font-size: 1.6rem !important; }
 .p-ep audio { width: 100%; }
 .p-ep-link { flex: 1; min-width: 180px; border: 1px solid var(--line); border-radius: 999px; padding: .5rem .9rem; background: #FFFBF5; }
+
+/* ============================================================
+   ☰ MENU (phones): full-screen app menu
+============================================================ */
+.mnav { position: fixed; inset: 0 !important; z-index: 200; padding: 0 !important; overflow-y: auto; overscroll-behavior: contain;
+  background: radial-gradient(120% 70% at 100% 0%, #4A2A22 0%, var(--espresso) 45%, #1C110E 100%); color: var(--on-dark); }
+.mnav:not([hidden]) { animation: mnavIn .35s var(--ease) both; }
+@keyframes mnavIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+.mnav-top { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: calc(14px + env(safe-area-inset-top)) 16px 14px; background: rgba(28, 17, 14, .92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line-dark); }
+.mnav-close { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line-dark); background: transparent; color: var(--on-dark); display: grid; place-items: center; cursor: pointer; }
+.mnav-close .ic { width: 20px; height: 20px; }
+.mnav-body { display: flex; flex-direction: column; gap: .2rem; padding: 18px 16px calc(40px + env(safe-area-inset-bottom)); }
+.mnav-label { margin: 1.2rem 0 .6rem; color: var(--gold); font-weight: 700; letter-spacing: .14em !important; text-transform: uppercase; }
+.mnav-label:first-child { margin-top: .2rem; }
+.mnav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mnav a.mnav-tile { display: grid; justify-items: center; gap: .45rem; padding: 1rem .4rem; border-radius: 16px; border: 1px solid var(--line-dark); background: rgba(248, 241, 231, .04); color: var(--on-dark); text-decoration: none; text-align: center; font-family: inherit; transition: background .2s, border-color .2s; }
+.mnav a.mnav-tile .ic { width: 24px; height: 24px; color: var(--gold); }
+.mnav a.mnav-tile.on, .mnav a.mnav-tile:active { border-color: var(--gold); background: rgba(201, 166, 107, .12); }
+.mnav .mnav-cta { margin: 1rem 0 0; align-self: stretch; justify-content: center; display: flex; gap: .6rem; padding: 1rem; }
+.mnav-list { display: grid; border: 1px solid var(--line-dark); border-radius: 16px; overflow: hidden; }
+.mnav .mnav-list a { display: flex; align-items: center; gap: .8rem; padding: .95rem 1rem; color: var(--on-dark); text-decoration: none; font-family: inherit; border: 0; border-bottom: 1px solid var(--line-dark); }
+.mnav .mnav-list a:last-child { border-bottom: 0; }
+.mnav-list .ic { width: 20px; height: 20px; color: var(--gold); }
+.mnav-list span { flex: 1; }
+.mnav-list .mnav-chev { width: 16px; height: 16px; color: var(--on-dark-soft); }
+.mnav-acct { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mnav-acct .btn { margin: 0; justify-content: center; }
+.btn-ghost-light { background: transparent; color: var(--on-dark); border: 1px solid var(--line-dark); }
+.mnav .mnav-install { margin-top: 1rem; align-self: stretch; justify-content: center; }
+.mnav-social { display: flex; gap: .7rem; justify-content: center; margin-top: 1.6rem; }
+.mnav-social a { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-dark); display: grid; place-items: center; color: var(--on-dark-soft); }
+.mnav-social .ic { width: 18px; height: 18px; }
+
+/* ============================================================
+   FOOTER on phones: compact, two columns of links
+============================================================ */
+@media (max-width: 700px) {
+  .ftr { padding: 56px 0 calc(28px + var(--tabbar-h, 0px)); }
+  .ftr-top { grid-template-columns: 1fr 1fr !important; gap: 28px 18px; padding-bottom: 32px; }
+  .ftr-brand, .ftr-news { grid-column: 1 / -1; }
+  .ftr-brand { text-align: center; display: grid; justify-items: center; }
+  .ftr-brand p { margin: 1rem auto; }
+  .ftr-brand .social { justify-content: center; }
+  .ftr-col { gap: 0; }
+  .ftr-col h3 { margin-bottom: .6rem; }
+  .ftr-col a { padding: .55rem 0; border-bottom: 1px solid rgba(248, 241, 231, .06); }
+  .ftr-news { padding: 1.3rem 1.2rem; border: 1px solid var(--line-dark); border-radius: 16px; background: rgba(248, 241, 231, .03); }
+  .ftr-bottom { flex-direction: column; align-items: center; text-align: center; gap: .9rem; }
+  .ftr-bottom nav { justify-content: center; gap: .5rem 1.1rem; }
+  .ftr-note { text-align: center; }
+}
+.mnav .mnav-top .logo { border-bottom: 0; padding: 0; }
+@media (max-width: 700px) { .ftr-news .form-msg:empty { display: none; } .ftr-news p:last-child { margin-bottom: 0; } }

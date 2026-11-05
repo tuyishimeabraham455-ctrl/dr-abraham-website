@@ -185,12 +185,12 @@ function seed() {
   // ---- Yo's bookshelf: sample recommendations (real books by other authors) ----
   const insB = db.prepare(`INSERT INTO media_items (kind, title, description, category, src, thumb, show_on, featured, sort) VALUES ('book', ?, ?, ?, ?, ?, 'books', 0, ?)`);
   [
-    ['Everything Is Figureoutable', 'Marie Forleo', 'cover-figureoutable.jpg', 'For the days you doubt you can build it. A practical push to stop waiting and start.'],
-    ['Profit First', 'Mike Michalowicz', 'cover-profit-first.jpg', 'A simple cash system for small businesses: pay yourself and your taxes before anything else.'],
-    ['The Psychology of Money', 'Morgan Housel', 'cover-psychology-money.jpg', 'Why money decisions are about behavior, not math. Great for founders rethinking their relationship with money.'],
-    ['Start with Why', 'Simon Sinek', 'cover-start-with-why.jpg', 'Every speaker should know their why before their how. The thinking behind step 1 of the framework.'],
-    ['Dare to Lead', 'Brené Brown', 'cover-dare-to-lead.jpg', 'Leadership that makes room for courage and honest conversations, for teams of two or two hundred.'],
-    ['Atomic Habits', 'James Clear', 'cover-atomic-habits.jpg', 'Small daily systems that compound. Pairs well with the Sustain yourself step.'],
+    ['Everything Is Figureoutable', 'Marie Forleo', 'real-figureoutable.jpg', 'For the days you doubt you can build it. A practical push to stop waiting and start.'],
+    ['Profit First', 'Mike Michalowicz', 'real-profit-first.jpg', 'A simple cash system for small businesses: pay yourself and your taxes before anything else.'],
+    ['The Psychology of Money', 'Morgan Housel', 'real-psychology-money.jpg', 'Why money decisions are about behavior, not math. Great for founders rethinking their relationship with money.'],
+    ['Start with Why', 'Simon Sinek', 'real-start-with-why.jpg', 'Every speaker should know their why before their how. The thinking behind step 1 of the framework.'],
+    ['Dare to Lead', 'Brené Brown', 'real-dare-to-lead.jpg', 'Leadership that makes room for courage and honest conversations, for teams of two or two hundred.'],
+    ['Atomic Habits', 'James Clear', 'real-atomic-habits.jpg', 'Small daily systems that compound. Pairs well with the Sustain yourself step.'],
   ].forEach(([title, author, cover, why], i) => {
     man.media.push(insB.run(title, `Sample pick: ${why}`, author, `https://bookshop.org/search?keywords=${encodeURIComponent(title + ' ' + author)}`, copyPhoto(cover), i).lastInsertRowid);
   });

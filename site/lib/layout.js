@@ -71,6 +71,7 @@ const ICONS = {
   star: '<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
   home: '<path d="M3 11l9-7 9 7M5 9.5V20h5v-6h4v6h5V9.5"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  book: '<path d="M12 6c-2-1.6-5-2-8-1.5V19c3-.5 6-.1 8 1.5 2-1.6 5-2 8-1.5V4.5C17 4 14 4.4 12 6zM12 6v14.5"/>',
   install: '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
 };
 
@@ -178,11 +179,23 @@ ${sprite()}
   </div>
 </header>
 
-<div class="mnav" id="mnav" hidden>
-  <nav aria-label="Mobile">${site.nav.map((n) => `<a href="${href(n.href)}">${esc(n.label)}</a>`).join('')}
-    <a href="${href('book/')}" class="btn btn-gold">Book Yo</a>
-    <a href="${href('portal/')}">Sign in</a><a href="${href('portal/#signup')}">Create account</a><a href="${href('search/')}">Search</a><a href="${href('events/')}">Events</a><a href="${href('blog/')}">Insights</a><a href="${href('contact/')}">Contact</a>
+<div class="mnav" id="mnav" hidden role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="mnav-top">
+    <a class="logo logo-light" href="${href('')}"><span class="logo-mark">Yo</span><span class="logo-word">The Business <em>of</em> You</span></a>
+    <button type="button" class="mnav-close js-mnav-close" aria-label="Close menu">${icon('x')}</button>
+  </div>
+  <nav class="mnav-body" aria-label="Mobile">
+    <p class="mnav-label">Explore</p>
+    <div class="mnav-grid">${[['about/', 'About', 'user'], ['speaking/', 'Speaking', 'mic'], ['podcast/', 'Podcast', 'sound'], ['watch/', 'Watch', 'play'], ['learn/', 'Learn', 'build'], ['press/', 'Press kit', 'file']]
+      .map(([to, label, ic]) => `<a class="mnav-tile${active === to ? ' on' : ''}" href="${href(to)}">${icon(ic)}<span>${label}</span></a>`).join('')}</div>
+    <a href="${href('book/')}" class="btn btn-gold mnav-cta">Book Yo to speak ${icon('arrow')}</a>
+    <p class="mnav-label">More</p>
+    <div class="mnav-list">${[['learn/books/', 'Books', 'book'], ['blog/', 'Insights', 'spark'], ['events/', 'Events', 'ticket'], ['search/', 'Search', 'search'], ['contact/', 'Contact', 'mail']]
+      .map(([to, label, ic]) => `<a href="${href(to)}">${icon(ic)}<span>${label}</span>${icon('arrow', 'mnav-chev')}</a>`).join('')}</div>
+    <p class="mnav-label">Your account</p>
+    <div class="mnav-acct"><a class="btn btn-ghost-light" href="${href('portal/')}">Sign in</a><a class="btn btn-gold" href="${href('portal/#signup')}">Create account</a></div>
     <button type="button" class="btn mnav-install js-install" hidden>${icon('install')}Install the app</button>
+    <div class="mnav-social">${site.social.map((x) => `<a href="${esc(x.url)}" aria-label="${esc(x.name)}" rel="noopener" target="_blank">${icon(x.icon)}</a>`).join('')}</div>
   </nav>
 </div>
 
@@ -222,7 +235,7 @@ ${body}
 
 <!-- App tab bar (phones) -->
 <nav class="tabbar" aria-label="App">
-  ${[['home', 'Home', '', path === '' || path === 'index.html'], ['mic', 'Speaking', 'speaking/', path.startsWith('speaking')], ['cal', 'Book', 'book/', path.startsWith('book')]]
+  ${[['home', 'Home', '', path === '' || path === 'index.html'], ['mic', 'Speaking', 'speaking/', path.startsWith('speaking')], ['book', 'Books', 'learn/books/', path.startsWith('learn/books')]]
     .map(([ic, label, to, on]) => `<a href="${href(to)}"${on ? ' aria-current="page"' : ''}>${icon(ic)}<span>${label}</span></a>`).join('')}
   <button type="button" class="tab-yo js-agent-open" aria-label="Ask Agent Yo"><span class="tab-yo-ava">Yo</span><span>Ask Yo</span></button>
   <a href="${href('portal/')}"${path.startsWith('portal') ? ' aria-current="page"' : ''}>${icon('user')}<span>Portal</span></a>

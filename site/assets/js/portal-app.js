@@ -98,23 +98,55 @@
   // Profile picture, or initials when there isn't one
   const initials = (name) => String(name || '?').split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
   const safeImg = (u) => (/^\/uploads\/avatars\/[a-f0-9]{24}\.(jpg|png|webp)$/.test(u || '') ? u : '');
-  // Designed profile picture for anyone without a photo: colours, pattern and monogram come from the name
-  const PALETTES = [['#6B1E2E', '#2A1A16', '#C9A66B'], ['#2A1A16', '#4A2A22', '#C9A66B'], ['#B8695A', '#6B1E2E', '#F8F1E7'], ['#1F3A3D', '#2A1A16', '#C9A66B'], ['#C9A66B', '#B8695A', '#2A1A16'], ['#4B2142', '#1C110E', '#EBD2C6'], ['#3D4A2F', '#1C110E', '#C9A66B'], ['#EBD2C6', '#B8695A', '#6B1E2E'], ['#23304F', '#1C110E', '#C9A66B'], ['#7A3B2E', '#2A1A16', '#EBD2C6']];
-  const nameHash = (s) => { let x = 7; for (const c of String(s || '')) x = (x * 31 + c.charCodeAt(0)) >>> 0; return x; };
-  const designedAvatar = (name) => {
-    const hsh = nameHash(name), [a, b, ink] = PALETTES[hsh % PALETTES.length], motif = (hsh >> 4) % 4, gid = 'g' + (hsh % 100000);
-    const deco = [
-      `<circle cx="78" cy="22" r="30" fill="none" stroke="${ink}" stroke-opacity=".35" stroke-width="1.2"/><circle cx="78" cy="22" r="20" fill="none" stroke="${ink}" stroke-opacity=".2"/>`,
-      `<path d="M-5 80 Q 50 40 105 80" fill="none" stroke="${ink}" stroke-opacity=".3" stroke-width="1.2"/><path d="M-5 92 Q 50 52 105 92" fill="none" stroke="${ink}" stroke-opacity=".18"/>`,
-      [12, 26, 40, 54, 68, 82].map((x, i) => `<circle cx="${x}" cy="${14 + (i % 2) * 6}" r="1.6" fill="${ink}" fill-opacity=".35"/>`).join(''),
-      `<path d="M0 100 L100 0" stroke="${ink}" stroke-opacity=".22" stroke-width="18"/><path d="M-20 100 L80 0" stroke="${ink}" stroke-opacity=".1" stroke-width="6"/>`,
-    ][motif];
-    return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" focusable="false"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="100" height="100" fill="url(#${gid})"/>${deco}<text x="50" y="62" text-anchor="middle" font-family="Times New Roman, Tinos, serif" font-style="italic" font-size="38" fill="${ink}">${h(initials(name))}</text></svg>`;
+  // Illustrated portrait for anyone without a photo: skin tone, hair, clothing and background come from the name
+  const portraitAvatar = (name, uid = '') => {
+    // An independent hash per feature, so choices don't repeat together
+    const hash = (salt) => { let x = 2166136261; for (const c of salt + '|' + String(name || '?')) { x ^= c.charCodeAt(0); x = Math.imul(x, 16777619) >>> 0; } x ^= x >>> 13; x = Math.imul(x, 0x5bd1e995) >>> 0; return (x ^ (x >>> 15)) >>> 0; };
+    const pick = (arr, salt) => arr[hash('f' + salt) % arr.length];
+    const x = hash('id');
+      const SKIN = ['#3B2219', '#5C3317', '#7B4A2D', '#8D5524', '#A0662B', '#C68642', '#E0AC69', '#F1C27D', '#FFDBAC'];
+    const HAIR = ['#120B09', '#1C1110', '#2A1A16', '#4A2A1A', '#6B3E26', '#9A4E2F', '#B9B0A8'];
+    const CLOTH = ['#6B1E2E', '#C9A66B', '#1F3A3D', '#F8F1E7', '#23304F', '#B8695A', '#3D4A2F', '#2A1A16', '#7A3B2E', '#EBD2C6'];
+    const skin = pick(SKIN, 2), dark = SKIN.indexOf(skin) < 4;
+    // contrast: deeper skin tones sit on light backgrounds, lighter ones on deeper backgrounds
+    const [b1, b2] = pick(dark ? [['#EBD2C6', '#C9A66B'], ['#F3E1C7', '#EBD2C6'], ['#C9A66B', '#B8695A'], ['#E8D9C4', '#B8695A'], ['#D9C7A8', '#9FB5A6']] : [['#6B1E2E', '#2A1A16'], ['#1F3A3D', '#0F1F21'], ['#23304F', '#1C110E'], ['#B8695A', '#6B1E2E'], ['#3D4A2F', '#1C110E'], ['#4B2142', '#1C110E']], 1);
+    const hair = pick(HAIR, 3), cloth = pick(CLOTH, 4), style = pick([0, 1, 2, 3, 4, 5, 6, 7], 5), acc = pick([0, 0, 0, 1, 2, 2, 3], 6);
+    const id = 'p' + uid + (x % 1e6);
+    const shade = 'rgba(0,0,0,.12)';
+    const back = {
+      1: `<path d="M31 40 C30 22 42 17 50 17 C60 17 71 23 69 42 L72 82 C64 86 36 86 28 82 Z" fill="${hair}"/>`,
+      2: `<g fill="${hair}"><circle cx="50" cy="34" r="22"/><circle cx="31" cy="44" r="12"/><circle cx="69" cy="44" r="12"/><circle cx="36" cy="24" r="11"/><circle cx="64" cy="24" r="11"/></g>`,
+      4: `<g fill="${hair}"><rect x="29" y="34" width="6" height="40" rx="3"/><rect x="36" y="38" width="5" height="38" rx="2.5"/><rect x="59" y="38" width="5" height="38" rx="2.5"/><rect x="65" y="34" width="6" height="40" rx="3"/></g>`,
+    }[style] || '';
+    const front = {
+      0: `<path d="M33 42 C31 25 42 20 50 20 C60 20 70 26 67 42 C64 33 58 30 50 30 C42 30 36 34 33 42Z" fill="${hair}"/>`,
+      1: `<path d="M33 46 C31 26 42 20 50 20 C61 20 70 27 67 46 C63 34 57 29 46 31 C40 33 36 38 33 46Z" fill="${hair}"/>`,
+      2: `<path d="M34 38 C36 28 44 25 50 25 C57 25 64 28 66 38 C60 32 40 32 34 38Z" fill="${hair}"/>`,
+      3: `<circle cx="50" cy="17" r="8" fill="${hair}"/><path d="M33 42 C31 26 42 21 50 21 C60 21 70 27 67 42 C63 32 56 29 50 29 C44 29 37 32 33 42Z" fill="${hair}"/>`,
+      4: `<path d="M32 42 C30 24 42 19 50 19 C60 19 71 25 68 42 C64 31 57 28 50 28 C43 28 36 31 32 42Z" fill="${hair}"/>`,
+      5: `<path d="M33.5 40 C33 27 41 22.5 50 22.5 C59 22.5 67 27 66.5 40 C63 33.5 57 31.5 50 31.5 C43 31.5 37 33.5 33.5 40Z" fill="${hair}"/>`,
+      6: `<path d="M33 44 C30 25 44 18 54 21 C63 23 70 30 67 44 C66 36 60 30 52 31 C46 32 42 30 38 34 C36 37 34 40 33 44Z" fill="${hair}"/>`,
+      7: `<g fill="${hair}">${[[36, 33], [41, 27], [47, 24], [53, 24], [59, 27], [64, 33], [34, 39], [66, 39]].map(([cx, cy]) => `<circle cx="${cx}" cy="${cy}" r="5.2"/>`).join('')}</g>`,
+    }[style];
+    const accessory = acc === 1 ? `<g fill="none" stroke="#1C110E" stroke-width="1.3"><circle cx="43" cy="46" r="4.6"/><circle cx="57" cy="46" r="4.6"/><path d="M47.6 46 H52.4"/></g>`
+      : acc === 2 ? `<circle cx="33.2" cy="52" r="1.7" fill="#C9A66B"/><circle cx="66.8" cy="52" r="1.7" fill="#C9A66B"/>`
+      : acc === 3 ? `<path d="M40 74 L50 84 L60 74" fill="none" stroke="#C9A66B" stroke-width="1.4"/><circle cx="50" cy="84.5" r="1.6" fill="#C9A66B"/>` : '';
+    return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" focusable="false"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${b1}"/><stop offset="1" stop-color="${b2}"/></linearGradient></defs>
+      <rect width="100" height="100" fill="url(#${id})"/>${back}
+      <path d="M12 100 C12 80 28 70 50 70 C72 70 88 80 88 100 Z" fill="${cloth}"/><path d="M42 70 L50 79 L58 70" fill="${shade}"/>
+      <rect x="43" y="56" width="14" height="17" rx="6" fill="${skin}"/><rect x="43" y="56" width="14" height="8" fill="${shade}"/>
+      <ellipse cx="33.5" cy="47" rx="3" ry="4.2" fill="${skin}"/><ellipse cx="66.5" cy="47" rx="3" ry="4.2" fill="${skin}"/>
+      <ellipse cx="50" cy="44" rx="17" ry="20" fill="${skin}"/>
+      <ellipse cx="43" cy="46.5" rx="1.6" ry="1.9" fill="#1C110E"/><ellipse cx="57" cy="46.5" rx="1.6" ry="1.9" fill="#1C110E"/>
+      <path d="M39.5 41.5 Q43 39.6 46.5 41.2 M53.5 41.2 Q57 39.6 60.5 41.5" stroke="${hair === '#B9B0A8' ? '#6B5A50' : hair}" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      <path d="M45 54.5 Q50 58.5 55 54.5" stroke="#5A2A22" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <circle cx="40" cy="52" r="3" fill="#E8836E" opacity=".18"/><circle cx="60" cy="52" r="3" fill="#E8836E" opacity=".18"/>
+      ${front}${accessory}</svg>`;
   };
   const ava = (person, cls = 'p-ava-sm', idAttr = '') => {
     const img = safeImg(person && (person.avatar || person.author_avatar || person.from_avatar));
     const name = person && (person.name || person.author || person.from_name);
-    return `<span class="${cls} has-img"${idAttr ? ` id="${idAttr}"` : ''} aria-hidden="true">${img ? `<img src="${h(img)}" alt="" loading="lazy"/>` : designedAvatar(name)}</span>`;
+    return `<span class="${cls} has-img"${idAttr ? ` id="${idAttr}"` : ''} aria-hidden="true">${img ? `<img src="${h(img)}" alt="" loading="lazy"/>` : portraitAvatar(name)}</span>`;
   };
   // Shrink a picture in the browser to a 400×400 square JPEG before uploading
   const squareJpeg = (file, size = 400) => new Promise((resolve, reject) => {
