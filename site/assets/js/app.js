@@ -63,3 +63,21 @@
 
   store.set('yoViews', String(Number(store.get('yoViews') || 0) + 1));
 })();
+
+/* Header "Portal" button: shows your picture and name once you're signed in */
+(() => {
+  const links = [...document.querySelectorAll('.js-portal-link')];
+  let token = null; try { token = localStorage.getItem('yoPortalToken'); } catch { /* storage blocked */ }
+  if (!links.length || !token) return;
+  fetch('/api/portal/me', { headers: { Authorization: 'Bearer ' + token } }).then((r) => (r.ok ? r.json() : Promise.reject())).then(({ member }) => {
+    if (!member) return;
+    const firstName = String(member.name || '').split(' ')[0];
+    const safe = /^\/uploads\/avatars\/[a-f0-9]{24}\.(jpg|png|webp)$/.test(member.avatar || '') ? member.avatar : '';
+    links.forEach((a) => {
+      a.classList.add('signed-in');
+      a.setAttribute('aria-label', `Portal: signed in as ${member.name}`);
+      const txt = a.querySelector('.hdr-portal-txt'); if (txt) txt.textContent = firstName || 'Portal';
+      if (safe) { const ic = a.querySelector('.hdr-portal-ic'); if (ic) ic.innerHTML = `<img src="${safe}" alt="" width="28" height="28"/>`; }
+    });
+  }).catch(() => {});
+})();

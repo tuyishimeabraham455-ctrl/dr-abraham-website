@@ -172,6 +172,7 @@ ${sprite()}
     </a>
     <nav class="nav" aria-label="Main">${nav}</nav>
     <div class="hdr-cta">
+      <a class="hdr-portal js-portal-link" href="${href('portal/')}" aria-label="Portal: sign in to your account"><span class="hdr-portal-ic">${icon('user')}</span><span class="hdr-portal-txt">Portal</span></a>
       <button class="agent-chip js-agent-open" type="button">${icon('spark')}<span>Agent Yo</span></button>
       <a class="btn btn-gold btn-sm magnetic" href="${href('book/')}">Book Yo</a>
       <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mnav">${icon('menu')}</button>
@@ -192,8 +193,8 @@ ${sprite()}
     <p class="mnav-label">More</p>
     <div class="mnav-list">${[['learn/books/', 'Books', 'book'], ['blog/', 'Insights', 'spark'], ['events/', 'Events', 'ticket'], ['search/', 'Search', 'search'], ['contact/', 'Contact', 'mail']]
       .map(([to, label, ic]) => `<a href="${href(to)}">${icon(ic)}<span>${label}</span>${icon('arrow', 'mnav-chev')}</a>`).join('')}</div>
-    <p class="mnav-label">Your account</p>
-    <div class="mnav-acct"><a class="btn btn-ghost-light" href="${href('portal/')}">Sign in</a><a class="btn btn-gold" href="${href('portal/#signup')}">Create account</a></div>
+    <p class="mnav-label">Portal · your account</p>
+    <div class="mnav-acct"><a class="btn btn-ghost-light" href="${href('portal/')}">Sign in to portal</a><a class="btn btn-gold" href="${href('portal/#signup')}">Create account</a></div>
     <button type="button" class="btn mnav-install js-install" hidden>${icon('install')}Install the app</button>
     <div class="mnav-social">${site.social.map((x) => `<a href="${esc(x.url)}" aria-label="${esc(x.name)}" rel="noopener" target="_blank">${icon(x.icon)}</a>`).join('')}</div>
   </nav>
