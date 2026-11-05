@@ -7,6 +7,10 @@ const fs = require('fs');
 const path = require('path');
 const site = require('./content/site');
 
+// Version for this build: stamps asset URLs and the service worker cache
+const VERSION = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
+process.env.ASSET_V = VERSION;
+
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'docs');
 
@@ -120,8 +124,7 @@ write(path.join(OUT, 'manifest.webmanifest'), JSON.stringify({
 
 // Pages: network first (always fresh when online), cached copy when offline.
 // Assets: cached, refreshed in the background. /api/ is never cached.
-const VERSION = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
-const PRECACHE = ['', 'offline/', 'book/', 'speaking/', 'agent-yo/', 'portal/', 'assets/css/yo.css', 'assets/js/yo.js', 'assets/app/icon-192.png', 'images/yolanda.jpg'];
+const PRECACHE = ['', 'offline/', 'book/', 'speaking/', 'agent-yo/', 'portal/', `assets/css/yo.css?v=${VERSION}`, `assets/js/yo.js?v=${VERSION}`, `assets/js/app.js?v=${VERSION}`, 'assets/app/icon-192.png', 'images/yolanda.jpg'];
 write(path.join(OUT, 'sw.js'), `/* Service worker: offline support for the installed app. Version ${VERSION} */
 const CACHE = 'yo-${VERSION}';
 const PRECACHE = ${JSON.stringify(PRECACHE)};
@@ -140,6 +143,13 @@ self.addEventListener('fetch', (e) => {
       .catch(() => caches.match(req).then((hit) => hit || caches.match(base + 'offline/'))));
     return;
   }
+  // Code and styles: always the newest when online, the saved copy when offline
+  if (req.destination === 'script' || req.destination === 'style' || req.destination === 'manifest') {
+    e.respondWith(fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; })
+      .catch(() => caches.match(req, { ignoreSearch: true })));
+    return;
+  }
+  // Images and fonts: saved copy first, refreshed in the background
   e.respondWith(caches.match(req).then((hit) => {
     const net = fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; }).catch(() => hit);
     return hit || net;

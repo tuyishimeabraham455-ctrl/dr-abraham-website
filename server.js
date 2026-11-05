@@ -43,6 +43,9 @@ app.use('/api', require('./routes/portal'));
 app.use('/api', require('./routes/coach'));
 app.use('/api', require('./routes/media'));
 
+// ── Offline worker and app manifest: always fetched fresh ────
+app.get(['/sw.js', '/manifest.webmanifest'], (req, res, next) => { res.set('Cache-Control', 'no-cache'); next(); });
+
 // ── Uploaded files (profile pictures, background videos) ─────
 const { UPLOAD_DIR } = require('./lib/uploads');
 app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '30d', immutable: true, dotfiles: 'deny', index: false }));

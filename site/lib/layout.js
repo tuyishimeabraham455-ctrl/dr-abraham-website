@@ -114,6 +114,9 @@ const sprite = () => `<svg width="0" height="0" style="position:absolute" aria-h
 const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 
 // The page wrapper. `depth` = how many folders deep the page lives (for relative links).
+// Each build stamps its files (?v=…) so phones never keep an old copy
+const V = process.env.ASSET_V ? `?v=${process.env.ASSET_V}` : '';
+
 function page({ path = '', depth = 0, title, description, body, schema = [], active = '', ogImage, bodyClass = '', scripts = [], noindex = false }) {
   const r = depth ? '../'.repeat(depth) : './';
   const href = (p) => r + p;
@@ -153,7 +156,7 @@ function page({ path = '', depth = 0, title, description, body, schema = [], act
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap"/>
-<link rel="stylesheet" href="${href('assets/css/yo.css')}"/>
+<link rel="stylesheet" href="${href('assets/css/yo.css')}${V}"/>
 <script type="application/ld+json">${JSON.stringify(graph).replace(/</g, '\\u003c')}</script>
 </head>
 <body class="${bodyClass}" data-root="${r}">
@@ -256,10 +259,10 @@ ${body}
   <div><button type="button" class="btn btn-sm btn-ghost-dark" data-consent="no">Decline</button><button type="button" class="btn btn-sm btn-dark" data-consent="yes">Accept</button></div>
 </div>
 
-<script src="${href('assets/js/yo.js')}" defer></script>
-<script src="${href('assets/js/app.js')}" defer></script>
-<script src="${href('assets/js/editor.js')}" defer></script>
-${scripts.map((sc) => `<script src="${href(sc)}" defer></script>`).join('\n')}
+<script src="${href('assets/js/yo.js')}${V}" defer></script>
+<script src="${href('assets/js/app.js')}${V}" defer></script>
+<script src="${href('assets/js/editor.js')}${V}" defer></script>
+${scripts.map((sc) => `<script src="${href(sc)}${V}" defer></script>`).join('\n')}
 </body>
 </html>
 `;

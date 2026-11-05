@@ -14,7 +14,11 @@
 
   // Offline support (needs https or localhost)
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    addEventListener('load', () => navigator.serviceWorker.register(ROOT + 'sw.js', { scope: ROOT }).catch(() => {}));
+    // When a new version of the site is published, the new worker takes over and the page reloads once
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+    addEventListener('load', () => navigator.serviceWorker.register(ROOT + 'sw.js', { scope: ROOT, updateViaCache: 'none' }).then((reg) => reg.update()).catch(() => {}));
   }
 
   // Install prompts
