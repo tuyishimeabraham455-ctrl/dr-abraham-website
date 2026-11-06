@@ -75,7 +75,7 @@
 
   /* ---------- Shell ---------- */
   const TABS = [
-    ['overview', 'Overview', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'], ['train', 'Train Agent Yo', 'staff'],
+    ['overview', 'Dashboard', 'staff'], ['coach', 'AI Coach', 'staff'], ['leads', 'Leads', 'staff'], ['calls', 'Calls', 'staff'], ['agent', 'Agent Yo', 'staff'], ['train', 'Train Agent Yo', 'staff'],
     ['subscribers', 'Subscribers', 'staff'], ['outbox', 'Email outbox', 'staff'], ['home', 'Home', 'member'],
     ['inbox', 'Inbox', 'all'], ['assignments', 'Assignments', 'all'], ['community', 'Community', 'all'], ['resources', 'Resources', 'all'], ['people', 'Admin · People', 'admin'], ['revenue', 'Admin · Revenue', 'admin'], ['media', 'Admin · Media', 'admin'], ['books', 'Admin · Books', 'admin'], ['podcast', 'Admin · Podcast', 'admin'], ['settings', 'Admin · Site settings', 'admin'], ['account', 'Account', 'all'],
   ];
